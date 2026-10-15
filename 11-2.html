@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>11-2 CSS3 3D动画</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            font-family: "Microsoft YaHei", sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .wang_container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        .wang_section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+        }
+
+        .wang_section h2 {
+            margin-top: 0;
+            color: #007bff;
+        }
+
+        .wang_demo {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-left: 4px solid #007bff;
+            margin: 10px 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .wang_code {
+            display: block;
+            text-align: left;
+            background: #f1f1f1;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow-x: auto;
+            font-family: Consolas, monospace;
+        }
+
+        .wang_tip {
+            background: #e7f3ff;
+            border-radius: 5px;
+            padding: 10px 15px;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .wang_card_3d {
+            width: 110px;
+            height: 140px;
+            margin: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            transition: transform 0.6s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .wang_bg_x { background: linear-gradient(135deg, #ff6b6b, #ee5a24); }
+        .wang_bg_y { background: linear-gradient(135deg, #4ecdc4, #0abde3); }
+        .wang_bg_z { background: linear-gradient(135deg, #feca57, #ff9f43); color: #333; }
+        .wang_bg_3d { background: linear-gradient(135deg, #5f27cd, #341f97); }
+
+        .wang_scene_3d {
+            perspective: 600px;
+        }
+
+        .wang_hover_x:hover { transform: rotateX(180deg); }
+        .wang_hover_y:hover { transform: rotateY(180deg); }
+        .wang_hover_z:hover { transform: rotateZ(180deg); }
+        .wang_hover_3d:hover { transform: rotate3d(1, 1, 0, 90deg); }
+
+        .wang_persp_wrap {
+            display: inline-block;
+            margin: 20px;
+        }
+
+        .wang_persp_wrap p {
+            margin: 8px 0 0;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .wang_persp_card {
+            width: 100px;
+            height: 130px;
+            background: rgba(0, 123, 255, 0.65);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transform: rotateY(45deg);
+        }
+
+        .wang_persp_200 { perspective: 200px; }
+        .wang_persp_600 { perspective: 600px; }
+        .wang_persp_1200 { perspective: 1200px; }
+
+        #wang_cube_scene {
+            width: 240px;
+            height: 240px;
+            perspective: 800px;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        .wang_cube {
+            width: 150px;
+            height: 150px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -75px;
+            margin-left: -75px;
+            transform-style: preserve-3d;
+        }
+
+        .wang_cube_face {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+        }
+
+        .wang_cube_front  { transform: translateZ(75px); background: rgba(255, 107, 107, 0.85); }
+        .wang_cube_back   { transform: rotateY(180deg) translateZ(75px); background: rgba(78, 205, 196, 0.85); }
+        .wang_cube_right  { transform: rotateY(90deg) translateZ(75px); background: rgba(69, 183, 209, 0.85); }
+        .wang_cube_left   { transform: rotateY(-90deg) translateZ(75px); background: rgba(254, 202, 87, 0.85); color: #333; }
+        .wang_cube_top    { transform: rotateX(90deg) translateZ(75px); background: rgba(255, 159, 243, 0.85); }
+        .wang_cube_bottom { transform: rotateX(-90deg) translateZ(75px); background: rgba(84, 160, 255, 0.85); }
+
+        .wang_controls {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .wang_btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+
+        .wang_btn:hover {
+            background: #0056b3;
+        }
+
+        .wang_speed_label {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        #wang_cube_speed {
+            vertical-align: middle;
+            margin: 0 8px;
+        }
+
+        .wang_flip_scene {
+            width: 150px;
+            height: 190px;
+            perspective: 900px;
+            display: inline-block;
+            margin: 25px;
+            cursor: pointer;
+        }
+
+        .wang_flip_scene p {
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+            margin: 8px 0 0;
+        }
+
+        .wang_flip_card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease;
+        }
+
+        .wang_flip_scene:hover .wang_flip_card {
+            transform: rotateY(180deg);
+        }
+
+        .wang_flip_face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            backface-visibility: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .wang_flip_front {
+            background: linear-gradient(135deg, #007bff, #00c6ff);
+        }
+
+        .wang_flip_back {
+            background: linear-gradient(135deg, #f5576c, #f093fb);
+            transform: rotateY(180deg);
+        }
+
+        .wang_backface_card {
+            width: 110px;
+            height: 140px;
+            margin: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            transform: rotateY(140deg);
+        }
+
+        .wang_backface_visible {
+            backface-visibility: visible;
+        }
+
+        .wang_backface_hidden {
+            backface-visibility: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="wang_container">
+        <h1>CSS3 3D动画演示</h1>
+
+        <div class="wang_section">
+            <h2>1. 3D 变换函数 - rotateX / rotateY / rotateZ</h2>
+            <p>CSS3 可以在三维空间中旋转元素：<code>rotateX()</code> 绕水平轴旋转，<code>rotateY()</code> 绕垂直轴旋转，<code>rotateZ()</code> 绕屏幕法线旋转。鼠标悬停查看效果。</p>
+            <div class="wang_demo wang_scene_3d">
+                <div class="wang_card_3d wang_bg_x wang_hover_x">rotateX(180deg)</div>
+                <div class="wang_card_3d wang_bg_y wang_hover_y">rotateY(180deg)</div>
+                <div class="wang_card_3d wang_bg_z wang_hover_z">rotateZ(180deg)</div>
+                <div class="wang_card_3d wang_bg_3d wang_hover_3d">rotate3d(1,1,0,90deg)</div>
+            </div>
+            <code class="wang_code">transform: rotateX(180deg); transform: rotateY(180deg); transform: rotateZ(180deg);</code>
+            <div class="wang_tip">
+                <strong>注意：</strong>父元素需要设置 <code>perspective</code>（透视），子元素的 3D 旋转才有纵深感。
+            </div>
+        </div>
+
+        <div class="wang_section">
+            <h2>2. perspective 透视属性</h2>
+            <p>三个卡片执行相同的 <code>transform: rotateY(45deg)</code>，但父容器分别设置不同的 <code>perspective</code> 值。值越小，3D 效果越强烈。</p>
+            <div class="wang_demo">
+                <div class="wang_persp_wrap wang_persp_200">
+                    <div class="wang_persp_card">perspective: 200px</div>
+                    <p>perspective: 200px（效果最强）</p>
+                </div>
+                <div class="wang_persp_wrap wang_persp_600">
+                    <div class="wang_persp_card">perspective: 600px</div>
+                    <p>perspective: 600px（适中）</p>
+                </div>
+                <div class="wang_persp_wrap wang_persp_1200">
+                    <div class="wang_persp_card">perspective: 1200px</div>
+                    <p>perspective: 1200px（最弱）</p>
+                </div>
+            </div>
+            <code class="wang_code">.parent { perspective: 600px; } .child { transform: rotateY(45deg); }</code>
+        </div>
+
+        <div class="wang_section">
+            <h2>3. 3D 立方体动画（原生 JS 交互控制）</h2>
+            <p>立方体的 6 个面通过 <code>transform-style: preserve-3d</code> 保持在同一个三维空间中，再用 <code>rotateX / rotateY + translateZ</code> 摆放到正确位置，JS 通过 <code>requestAnimationFrame</code> 实时更新旋转角度。</p>
+            <div class="wang_demo">
+                <div id="wang_cube_scene">
+                    <div class="wang_cube" id="wang_cube">
+                        <div class="wang_cube_face wang_cube_front">前面</div>
+                        <div class="wang_cube_face wang_cube_back">后面</div>
+                        <div class="wang_cube_face wang_cube_right">右面</div>
+                        <div class="wang_cube_face wang_cube_left">左面</div>
+                        <div class="wang_cube_face wang_cube_top">顶面</div>
+                        <div class="wang_cube_face wang_cube_bottom">底面</div>
+                    </div>
+                </div>
+                <div class="wang_controls">
+                    <button class="wang_btn" id="wang_play_btn">暂停</button>
+                    <button class="wang_btn" id="wang_axis_btn">双轴旋转</button>
+                    <label>速度：<input type="range" id="wang_cube_speed" min="0.1" max="3" step="0.1" value="1"><span class="wang_speed_label" id="wang_speed_label">1.0x</span></label>
+                </div>
+            </div>
+            <code class="wang_code">.wang_cube { transform-style: preserve-3d; }
+.wang_cube_face { position: absolute; }
+.wang_cube_front { transform: translateZ(75px); }
+.wang_cube_back  { transform: rotateY(180deg) translateZ(75px); }</code>
+        </div>
+
+        <div class="wang_section">
+            <h2>4. 翻转卡片与 backface-visibility</h2>
+            <p>鼠标悬停，卡片绕 Y 轴翻转 180°。正面和背面都设置了 <code>backface-visibility: hidden</code>，保证各自只在自己朝向观察者时可见。</p>
+            <div class="wang_demo">
+                <div class="wang_flip_scene">
+                    <div class="wang_flip_card">
+                        <div class="wang_flip_face wang_flip_front">正面</div>
+                        <div class="wang_flip_face wang_flip_back">背面</div>
+                    </div>
+                    <p>悬停翻转卡片</p>
+                </div>
+            </div>
+            <p>对比：下面两个卡片都旋转了 140°，一个背面可见（能看到镜像文字），一个背面隐藏（完全透明）：</p>
+            <div class="wang_demo">
+                <div class="wang_backface_card wang_backface_visible">backface-visibility: visible</div>
+                <div class="wang_backface_card wang_backface_hidden">backface-visibility: hidden</div>
+            </div>
+            <code class="wang_code">.wang_flip_face { backface-visibility: hidden; }
+.wang_flip_back { transform: rotateY(180deg); }</code>
+        </div>
+
+        <div class="wang_section">
+            <h2>3D 相关属性对比表</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>属性 / 函数</th>
+                        <th>作用</th>
+                        <th>常用值</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>perspective</td>
+                        <td>设置透视距离，产生近大远小效果</td>
+                        <td>200px ~ 1200px</td>
+                    </tr>
+                    <tr>
+                        <td>perspective-origin</td>
+                        <td>设置透视消失点的位置</td>
+                        <td>50% 50%（默认居中）</td>
+                    </tr>
+                    <tr>
+                        <td>transform-style</td>
+                        <td>子元素是否处于同一 3D 空间</td>
+                        <td>preserve-3d / flat</td>
+                    </tr>
+                    <tr>
+                        <td>rotateX / rotateY / rotateZ</td>
+                        <td>绕 X / Y / Z 轴旋转</td>
+                        <td>角度值，如 45deg</td>
+                    </tr>
+                    <tr>
+                        <td>rotate3d(x, y, z, angle)</td>
+                        <td>绕自定义轴旋转</td>
+                        <td>rotate3d(1, 1, 0, 90deg)</td>
+                    </tr>
+                    <tr>
+                        <td>translateZ</td>
+                        <td>沿 Z 轴位移（靠近/远离观察者）</td>
+                        <td>长度值，如 75px</td>
+                    </tr>
+                    <tr>
+                        <td>backface-visibility</td>
+                        <td>元素背面是否可见</td>
+                        <td>visible / hidden</td>
+                    </tr>
+                    <tr>
+                        <td>animation</td>
+                        <td>配合 @keyframes 制作连续 3D 动画</td>
+                        <td>wang_spin 8s infinite linear</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p style="text-align: center; margin-top: 20px;">
+            <a href="index.html" style="color: #007bff; text-decoration: none;">&larr; 返回首页</a>
+        </p>
+        <p style="text-align: center; color: #666; margin-top: 20px;">
+            王宇智 - 《高级网页设计》课堂实践
+        </p>
+    </div>
+
+    <script>
+        (function () {
+            var wang_cube = document.getElementById('wang_cube');
+            var wang_play_btn = document.getElementById('wang_play_btn');
+            var wang_axis_btn = document.getElementById('wang_axis_btn');
+            var wang_cube_speed = document.getElementById('wang_cube_speed');
+            var wang_speed_label = document.getElementById('wang_speed_label');
+
+            var wang_angle_x = 0;
+            var wang_angle_y = 0;
+            var wang_speed = 1;
+            var wang_is_playing = true;
+            var wang_axis = 'both';
+            var wang_last_time = 0;
+
+            function wang_tick(wang_time) {
+                if (!wang_last_time) {
+                    wang_last_time = wang_time;
+                }
+                var wang_dt = wang_time - wang_last_time;
+                wang_last_time = wang_time;
+
+                if (wang_is_playing) {
+                    if (wang_axis === 'both' || wang_axis === 'y') {
+                        wang_angle_y += wang_dt * 0.06 * wang_speed;
+                    }
+                    if (wang_axis === 'both' || wang_axis === 'x') {
+                        wang_angle_x += wang_dt * 0.02 * wang_speed;
+                    }
+                    wang_cube.style.transform = 'rotateX(' + wang_angle_x + 'deg) rotateY(' + wang_angle_y + 'deg)';
+                }
+                requestAnimationFrame(wang_tick);
+            }
+            requestAnimationFrame(wang_tick);
+
+            wang_play_btn.addEventListener('click', function () {
+                wang_is_playing = !wang_is_playing;
+                wang_play_btn.textContent = wang_is_playing ? '暂停' : '播放';
+            });
+
+            wang_axis_btn.addEventListener('click', function () {
+                if (wang_axis === 'both') {
+                    wang_axis = 'x';
+                    wang_axis_btn.textContent = '绕X轴旋转';
+                } else if (wang_axis === 'x') {
+                    wang_axis = 'y';
+                    wang_axis_btn.textContent = '绕Y轴旋转';
+                } else {
+                    wang_axis = 'both';
+                    wang_axis_btn.textContent = '双轴旋转';
+                }
+            });
+
+            wang_cube_speed.addEventListener('input', function () {
+                wang_speed = parseFloat(wang_cube_speed.value);
+                wang_speed_label.textContent = wang_speed.toFixed(1) + 'x';
+            });
+        })();
+    </script>
+</body>
+</html>

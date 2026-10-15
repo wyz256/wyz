@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    *{
+          padding:0;
+          margin:0;     
+    }
+    ul{
+        list-style:none;
+    }
+    img{}
+    .ilist{
+        display:flex;
+
+    }
+    .ilist li{
+        width:30%;
+        margin-right:3px;
+        flex-grow:1;
+        position:relative;
+    }
+    .ilist img{
+        width:100%;
+    }
+    .ilist p{
+      text-align:center;
+      font-size:14px;
+      line-height:33px;
+      /* 绝对定位 */
+      position:absolute;
+      bottom:0;
+      width:100%;
+      background:rgba(0,0,0,0.5);
+      color:#fff;
+      /* 加粗 */
+        font-weight:bold;
+    }
+
+    </style>
+</head>
+<body>
+         <ul class="ilist">
+         <li>
+                <img src="./img/8.jpg">
+                <p>王宇智的上图下文</p>
+            </li>
+            <li>
+                <img src="./img/9.jpg">
+                <p>图二</p>
+            </li>
+            <li>
+                <img src="./img/10.jpg">
+                <p>图三</p>
+            </li>
+          </ul>
+</body>
+</html>

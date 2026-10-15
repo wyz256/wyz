@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>王宇智｜高级网页设计课堂实践</title>
+    <style>
+        :root {
+            --ink: #17212b;
+            --muted: #61707d;
+            --paper: #f7f3eb;
+            --white: #fffdf8;
+            --orange: #e86b3d;
+            --orange-dark: #bc4524;
+            --blue: #1f5665;
+            --line: #e3d8c8;
+            --shadow: 0 18px 50px rgba(52, 44, 33, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 8% 10%, rgba(232, 107, 61, 0.14), transparent 24rem),
+                linear-gradient(135deg, #f7f3eb 0%, #eef3f0 100%);
+            font-family: Georgia, "Microsoft YaHei", "PingFang SC", sans-serif;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .page-shell {
+            width: min(1120px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0;
+            color: var(--blue);
+            font-size: 14px;
+            letter-spacing: 0.08em;
+        }
+
+        .mark {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+        }
+
+        .mark::before {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--orange);
+            content: "";
+        }
+
+        .topbar a {
+            text-decoration: none;
+            border-bottom: 1px solid currentColor;
+        }
+
+        .hero {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.75fr);
+            gap: 48px;
+            align-items: end;
+            min-height: 420px;
+            padding: 70px 0 76px;
+        }
+
+        .hero::after {
+            position: absolute;
+            right: 8%;
+            top: 55px;
+            z-index: -1;
+            width: 190px;
+            height: 190px;
+            border: 1px solid rgba(31, 86, 101, 0.22);
+            border-radius: 50%;
+            content: "";
+        }
+
+        .eyebrow {
+            margin: 0 0 18px;
+            color: var(--orange-dark);
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 0.18em;
+        }
+
+        h1 {
+            max-width: 720px;
+            margin: 0;
+            font-size: clamp(42px, 7vw, 82px);
+            line-height: 0.98;
+            letter-spacing: -0.04em;
+        }
+
+        .hero-copy {
+            max-width: 470px;
+            margin: 28px 0 0;
+            color: var(--muted);
+            font-size: 17px;
+            line-height: 1.8;
+        }
+
+        .profile-note {
+            align-self: center;
+            padding: 26px;
+            border-left: 3px solid var(--orange);
+            background: rgba(255, 253, 248, 0.68);
+            box-shadow: var(--shadow);
+        }
+
+        .profile-note strong {
+            display: block;
+            margin-bottom: 12px;
+            color: var(--blue);
+            font-size: 22px;
+        }
+
+        .profile-note p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .section-heading span {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .work-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px;
+        }
+
+        .work-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 190px;
+            padding: 20px;
+            border: 1px solid var(--line);
+            background: var(--white);
+            text-decoration: none;
+            transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+        }
+
+        .work-card:hover,
+        .work-card:focus-visible {
+            border-color: var(--orange);
+            box-shadow: 0 12px 25px rgba(52, 44, 33, 0.12);
+            outline: none;
+            transform: translateY(-5px);
+        }
+
+        .work-number {
+            color: var(--orange);
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .work-card h3 {
+            margin: 28px 0 10px;
+            color: var(--blue);
+            font-size: 20px;
+        }
+
+        .work-card p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .prompt-section {
+            margin: 76px 0 42px;
+            padding: 32px;
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .prompt-section blockquote {
+            max-width: 850px;
+            margin: 18px 0 0;
+            color: var(--blue);
+            font-size: 20px;
+            line-height: 1.8;
+        }
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 0 0 28px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        @media (max-width: 900px) {
+            .work-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 680px) {
+            .page-shell {
+                width: min(100% - 28px, 560px);
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 32px;
+                min-height: 0;
+                padding: 48px 0 58px;
+            }
+
+            .hero::after {
+                right: 2%;
+                top: 20px;
+                width: 120px;
+                height: 120px;
+            }
+
+            .work-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .prompt-section {
+                margin-top: 54px;
+                padding: 24px 0;
+            }
+
+            .prompt-section blockquote {
+                font-size: 17px;
+            }
+
+            footer {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 390px) {
+            .work-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <header class="topbar">
+            <div class="mark">CLASSROOM PRACTICE / 2026</div>
+            <a href="#works">浏览实践作品</a>
+        </header>
+
+        <main>
+            <section class="hero" aria-labelledby="page-title">
+                <div>
+                    <p class="eyebrow">ADVANCED WEB DESIGN</p>
+                    <h1 id="page-title">王宇智的<br>高级网页设计</h1>
+                    <p class="hero-copy">课堂实践作品集入口。这里收集了本目录中的网页练习，从 HTML 基础结构到 CSS 选择器与页面样式，记录每一步的学习痕迹。</p>
+                </div>
+                <aside class="profile-note">
+                    <strong>课堂实践</strong>
+                    <p>姓名：王宇智<br>课程：《高级网页设计》<br>形式：原生 HTML + CSS</p>
+                </aside>
+            </section>
+
+            <section id="works" aria-labelledby="works-title">
+                <div class="section-heading">
+                    <h2 id="works-title">实践作品</h2>
+                    <span>共 19 个网页</span>
+                </div>
+                <div class="work-grid">
+                    <a class="work-card" href="2-1.html">
+                        <span class="work-number">01 / HTML</span>
+                        <div>
+                            <h3>页面练习 2-1</h3>
+                            <p>打开 2-1.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="2-2.html">
+                        <span class="work-number">02 / HTML</span>
+                        <div>
+                            <h3>页面练习 2-2</h3>
+                            <p>打开 2-2.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="3-1.html">
+                        <span class="work-number">03 / CSS</span>
+                        <div>
+                            <h3>样式练习 3-1</h3>
+                            <p>打开 3-1.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="3-2%20css.html">
+                        <span class="work-number">04 / CSS</span>
+                        <div>
+                            <h3>样式练习 3-2</h3>
+                            <p>打开 3-2 css.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="4-1%20css2.html">
+                        <span class="work-number">05 / CSS</span>
+                        <div>
+                            <h3>样式练习 4-1</h3>
+                            <p>打开 4-1 css2.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="5-1%20%E5%B1%82%E5%8F%A0%E4%B8%8E%E7%BB%A7%E6%89%BF.html">
+                        <span class="work-number">06 / CSS</span>
+                        <div>
+                            <h3>层叠与继承</h3>
+                            <p>打开 5-1 层叠与继承.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="5-2%20%E7%9B%92%E6%A8%A1%E5%9E%8B.html">
+                        <span class="work-number">07 / CSS</span>
+                        <div>
+                            <h3>盒模型</h3>
+                            <p>打开 5-2 盒模型.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="6-1%20flex.html">
+                        <span class="work-number">08 / CSS</span>
+                        <div>
+                            <h3>Flex 布局</h3>
+                            <p>打开 6-1 flex.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="6-2.html">
+                        <span class="work-number">09 / CSS</span>
+                        <div>
+                            <h3>布局练习 6-2</h3>
+                            <p>打开 6-2.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="7-1%20%E4%B8%8A%E5%9B%BE%E4%B8%8B%E6%96%87.html">
+                        <span class="work-number">10 / CSS</span>
+                        <div>
+                            <h3>上图下文</h3>
+                            <p>打开 7-1 上图下文.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="7-2%20%E5%B7%A6%E5%9B%BE%E5%8F%B3%E6%96%87.html">
+                        <span class="work-number">11 / CSS</span>
+                        <div>
+                            <h3>左图右文</h3>
+                            <p>打开 7-2 左图右文.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="8-1%20css3%E9%80%89%E6%8B%A9%E5%99%A8.html">
+                        <span class="work-number">12 / CSS</span>
+                        <div>
+                            <h3>CSS3 选择器</h3>
+                            <p>打开 8-1 css3选择器.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="9-1%20transition.html">
+                        <span class="work-number">13 / CSS</span>
+                        <div>
+                            <h3>Transition 过渡</h3>
+                            <p>打开 9-1 transition.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="10-1%20animation.html">
+                        <span class="work-number">14 / CSS</span>
+                        <div>
+                            <h3>Animation 动画</h3>
+                            <p>打开 10-1 animation.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="10-2.html">
+                        <span class="work-number">15 / CSS</span>
+                        <div>
+                            <h3>Animation 幻灯片</h3>
+                            <p>打开 10-2.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="10-3.html">
+                        <span class="work-number">16 / CSS</span>
+                        <div>
+                            <h3>媒体查询演示</h3>
+                            <p>打开 10-3.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="10-4.html">
+                        <span class="work-number">17 / CSS</span>
+                        <div>
+                            <h3>媒体查询布局</h3>
+                            <p>打开 10-4.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="11-1.html">
+                        <span class="work-number">18 / CSS</span>
+                        <div>
+                            <h3>CSS单位长度</h3>
+                            <p>打开 11-1.html</p>
+                        </div>
+                    </a>
+                    <a class="work-card" href="11-2.html">
+                        <span class="work-number">19 / CSS</span>
+                        <div>
+                            <h3>CSS3 3D动画</h3>
+                            <p>打开 11-2.html</p>
+                        </div>
+                    </a>
+                    <!-- 新增：四级项目（淘宝泡面页面） -->
+                    <a class="work-card" href="%E5%9B%9B%E7%BA%A7%E9%A1%B9%E7%9B%AE/index.html">
+                         <span class="work-number">20 / 项目</span>
+                         <div>
+                             <h3>四级项目 - 淘宝泡面</h3>
+                             <p>打开 四级项目/index.html</p>
+                         </div>
+                     </a>
+                </div>
+            </section>
+
+            <section class="prompt-section" aria-labelledby="prompt-title">
+                <div class="section-heading">
+                    <h2 id="prompt-title">本次提示词</h2>
+                    <span>原文收录</span>
+                </div>
+                <blockquote>“创建一个新页面，包括本目录下的所有网页的超链接，使用原生代码，不使用cdn，新页面名称为index.html，主题为王宇智的《高级网页设计》课堂实践，美化页面，页面中包括本提示词。”</blockquote>
+            </section>
+        </main>
+
+        <footer>
+            <span>王宇智 · 计算机24003</span>
+            <span>HTML / CSS / Practice</span>
+        </footer>
+    </div>
+</body>
+</html>

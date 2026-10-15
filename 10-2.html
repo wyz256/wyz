@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>王宇智的 CSS Animation 幻灯片</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 32px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #eef2ff, #fdf2f8);
+            color: #20243a;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        .page {
+            width: min(760px, 100%);
+            text-align: center;
+        }
+
+        .eyebrow {
+            margin: 0 0 10px;
+            color: #6c63d9;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 4px;
+        }
+
+        h1 {
+            margin: 0 0 26px;
+            font-size: clamp(24px, 5vw, 34px);
+        }
+
+        .slideshow {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            overflow: hidden;
+            border: 8px solid #fff;
+            border-radius: 22px;
+            background: #252943;
+            box-shadow: 0 24px 60px rgb(47 45 88 / 22%);
+        }
+
+        .slides-track {
+            display: flex;
+            width: 400%;
+            height: 100%;
+            animation: slide-track 16s ease-in-out infinite;
+        }
+
+        .slide {
+            flex: 0 0 25%;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+        }
+
+        .slide img {
+            display: block;
+            width: 100%;
+            min-height: 0;
+            flex: 1;
+            object-fit: cover;
+        }
+
+        .slide figcaption {
+            flex: 0 0 auto;
+            padding: 14px 18px;
+            background: #fff;
+            color: #292d48;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .hint {
+            margin: 18px 0 0;
+            color: #75798e;
+            font-size: 14px;
+        }
+
+        @keyframes slide-track {
+            0%, 20% {
+                transform: translateX(0);
+            }
+            25%, 45% {
+                transform: translateX(-25%);
+            }
+            50%, 70% {
+                transform: translateX(-50%);
+            }
+            75%, 95% {
+                transform: translateX(-75%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .slides-track {
+                animation: none;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <p class="eyebrow">CSS ANIMATION</p>
+        <h1>王宇智的图片幻灯片</h1>
+        <section class="slideshow" aria-label="自动播放的图片幻灯片">
+            <div class="slides-track">
+                <figure class="slide">
+                    <img src="./img/1.jpg" alt="幻灯片图片一">
+                    <figcaption>精彩瞬间 · 01</figcaption>
+                </figure>
+                <figure class="slide">
+                    <img src="./img/2.jpg" alt="幻灯片图片二">
+                    <figcaption>精彩瞬间 · 02</figcaption>
+                </figure>
+                <figure class="slide">
+                    <img src="./img/3.jpg" alt="幻灯片图片三">
+                    <figcaption>精彩瞬间 · 03</figcaption>
+                </figure>
+                <figure class="slide" aria-hidden="true">
+                    <img src="./img/1.jpg" alt="">
+                    <figcaption>精彩瞬间 · 01</figcaption>
+                </figure>
+            </div>
+        </section>
+        <p class="hint">纯 CSS 自动播放 · 图片沿水平方向滑动切换</p>
+    </main>
+</body>
+</html>

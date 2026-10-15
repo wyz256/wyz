@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>11-1 CSS 单位长度</title>
+    <style>
+        :root {
+            font-size: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            font-family: "Microsoft YaHei", sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .wang_container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        .wang_section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+        }
+
+        .wang_section h2 {
+            margin-top: 0;
+            color: #007bff;
+        }
+
+        .wang_demo {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-left: 4px solid #007bff;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        .wang_px_box {
+            width: 200px;
+            height: 50px;
+            background-color: #ff6b6b;
+            color: white;
+            text-align: center;
+            line-height: 50px;
+        }
+
+        .wang_em_container {
+            font-size: 20px;
+        }
+
+        .wang_em_box {
+            width: 10em;
+            height: 2.5em;
+            background-color: #4ecdc4;
+            color: white;
+            text-align: center;
+            line-height: 2.5em;
+        }
+
+        .wang_rem_box {
+            width: 15rem;
+            height: 3rem;
+            background-color: #45b7d1;
+            color: white;
+            text-align: center;
+            line-height: 3rem;
+        }
+
+        .wang_percent_container {
+            width: 300px;
+            background-color: #e0e0e0;
+            padding: 5px;
+        }
+
+        .wang_percent_box {
+            width: 50%;
+            height: 40px;
+            background-color: #96ceb4;
+            color: white;
+            text-align: center;
+            line-height: 40px;
+        }
+
+        .wang_vw_box {
+            width: 30vw;
+            height: 10vh;
+            background-color: #feca57;
+            color: #333;
+            text-align: center;
+            line-height: 10vh;
+            margin-bottom: 10px;
+        }
+
+        .wang_vh_box {
+            width: 20vw;
+            height: 5vh;
+            background-color: #ff9ff3;
+            color: white;
+            text-align: center;
+            line-height: 5vh;
+        }
+
+        .wang_vmin_box {
+            width: 20vmin;
+            height: 10vmin;
+            background-color: #54a0ff;
+            color: white;
+            text-align: center;
+            line-height: 10vmin;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .wang_vmax_box {
+            width: 15vmax;
+            height: 8vmax;
+            background-color: #5f27cd;
+            color: white;
+            text-align: center;
+            line-height: 8vmax;
+            display: inline-block;
+        }
+
+        .wang_ch_box {
+            width: 20ch;
+            background-color: #00d2d3;
+            color: white;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .wang_ex_box {
+            width: 20ex;
+            background-color: #ff9f43;
+            color: white;
+            padding: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="wang_container">
+        <h1>CSS 单位长度演示</h1>
+
+        <div class="wang_section">
+            <h2>1. 绝对单位 - px（像素）</h2>
+            <p>px是最常用的绝对单位，表示屏幕上的一个物理像素点。</p>
+            <div class="wang_demo">
+                <div class="wang_px_box">宽200px 高50px</div>
+            </div>
+            <code>width: 200px; height: 50px;</code>
+        </div>
+
+        <div class="wang_section">
+            <h2>2. 相对单位 - em</h2>
+            <p>em相对于父元素的font-size。例如：父元素font-size:20px，则1em=20px。</p>
+            <div class="wang_demo wang_em_container">
+                <div class="wang_em_box">宽10em 高2.5em</div>
+            </div>
+            <code>font-size: 20px; width: 10em; (200px)</code>
+        </div>
+
+        <div class="wang_section">
+            <h2>3. 相对单位 - rem（root em）</h2>
+            <p>rem相对于根元素（html）font-size。:root设为16px，则1rem=16px。</p>
+            <div class="wang_demo">
+                <div class="wang_rem_box">宽15rem 高3rem</div>
+            </div>
+            <code>width: 15rem; (240px) height: 3rem; (48px)</code>
+        </div>
+
+        <div class="wang_section">
+            <h2>4. 相对单位 - %（百分比）</h2>
+            <p>%相对于父元素的对应属性值。</p>
+            <div class="wang_demo wang_percent_container">
+                <div class="wang_percent_box">宽50%</div>
+            </div>
+            <code>width: 50%;（父元素宽度的50%）</code>
+        </div>
+
+        <div class="wang_section">
+            <h2>5. 视窗单位 - vw、vh</h2>
+            <p>vw = 视窗宽度的1%，vh = 视窗高度的1%。</p>
+            <div class="wang_demo">
+                <div class="wang_vw_box">宽30vw</div>
+                <div class="wang_vh_box">高5vh</div>
+            </div>
+            <code>width: 30vw; height: 10vh;</code>
+        </div>
+
+        <div class="wang_section">
+            <h2>6. 视窗单位 - vmin、vmax</h2>
+            <p>vmin = 视窗较小边的1%，vmax = 视窗较大边的1%。</p>
+            <div class="wang_demo">
+                <div class="wang_vmin_box">20vmin</div>
+                <div class="wang_vmax_box">15vmax</div>
+            </div>
+            <code>width: 20vmin; height: 10vmin;</code>
+        </div>
+
+        <div class="wang_section">
+            <h2>7. 字符单位 - ch、ex</h2>
+            <p>ch = 字符"0"的宽度，ex = 字符"x"的高度。</p>
+            <div class="wang_demo">
+                <div class="wang_ch_box">这是20ch宽度的文本内容</div>
+                <div class="wang_ex_box">这是20ex宽度的文本内容</div>
+            </div>
+            <code>width: 20ch; width: 20ex;</code>
+        </div>
+
+        <div class="wang_section">
+            <h2>长度单位对比表</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>单位</th>
+                        <th>类型</th>
+                        <th>相对于</th>
+                        <th>说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>px</td>
+                        <td>绝对</td>
+                        <td>屏幕像素</td>
+                        <td>固定大小，精确控制</td>
+                    </tr>
+                    <tr>
+                        <td>em</td>
+                        <td>相对</td>
+                        <td>父元素font-size</td>
+                        <td>可继承，常用于排版</td>
+                    </tr>
+                    <tr>
+                        <td>rem</td>
+                        <td>相对</td>
+                        <td>根元素font-size</td>
+                        <td>统一缩放，响应式常用</td>
+                    </tr>
+                    <tr>
+                        <td>%</td>
+                        <td>相对</td>
+                        <td>父元素</td>
+                        <td>根据父容器自适应</td>
+                    </tr>
+                    <tr>
+                        <td>vw/vh</td>
+                        <td>视窗</td>
+                        <td>视窗宽高</td>
+                        <td>全屏相关布局</td>
+                    </tr>
+                    <tr>
+                        <td>vmin/vmax</td>
+                        <td>视窗</td>
+                        <td>视窗最小/最大边</td>
+                        <td>保持比例的响应式</td>
+                    </tr>
+                    <tr>
+                        <td>ch</td>
+                        <td>字符</td>
+                        <td>"0"的宽度</td>
+                        <td>基于字符的宽度</td>
+                    </tr>
+                    <tr>
+                        <td>ex</td>
+                        <td>字符</td>
+                        <td>"x"的高度</td>
+                        <td>基于字符的高度</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p style="text-align: center; margin-top: 20px;">
+            <a href="index.html" style="color: #007bff; text-decoration: none;">&larr; 返回首页</a>
+        </p>
+        <p style="text-align: center; color: #666; margin-top: 20px;">
+            王宇智 - 《高级网页设计》课堂实践
+        </p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>308 王宇智 Flex布局演示</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+        body{
+            padding:30px;
+        }
+        h2{
+            text-align:center;
+            margin-bottom:30px;
+            font-size:40px;
+        }
+        .container{
+            display:flex;
+            flex-wrap:nowrap;
+            gap:30px;
+            justify-content:center;
+        }
+        /* 公共盒子样式 */
+        .box{
+            width:300px;
+            height:300px;
+            border:1px solid #333;
+        }
+        /* 案例1：内部居中1个方块 */
+        .box1{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+        .inner1{
+            width:80px;
+            height:80px;
+            background:#f1f2f3;
+        }
+        /* 案例2：垂直排列2个方块 */
+        .box2{
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            gap:10px;
+        }
+        .inner2{
+            width:80px;
+            height:80px;
+            background:#f1f2f3;
+        }
+        /* 案例3：2行2列4个方块 */
+        .box3{
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+            padding:10px;
+        }
+        .inner3{
+            width:calc(50% - 5px);
+            height:calc(50% - 5px);
+            background:#f1f2f3;
+        }
+        /* 案例4：上1通栏，下面并排2个（图二样式） */
+        .box4{
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+            padding:10px;
+        }
+        .row-top{
+            width:100%;
+            height:50%;
+            background:#f1f2f3;
+        }
+        .row-bottom{
+            display:flex;
+            gap:10px;
+            height:50%;
+        }
+        .inner-bottom{
+            width:calc(50% - 5px);
+            height:100%;
+            background:#f1f2f3;
+        }
+    </style>
+</head>
+<body>
+    <h2>308 王宇智</h2>
+    <div class="container">
+        <!--案例1-->
+        <div class="box box1">
+            <div class="inner1"></div>
+        </div>
+        <!--案例2-->
+        <div class="box box2">
+            <div class="inner2"></div>
+            <div class="inner2"></div>
+        </div>
+        <!--案例3-->
+        <div class="box box3">
+            <div class="inner3"></div>
+            <div class="inner3"></div>
+            <div class="inner3"></div>
+            <div class="inner3"></div>
+        </div>
+        <!--案例4 【改成图二布局：上方通栏，底部左右两个方块】 -->
+        <div class="box box4">
+            <div class="row-top"></div>
+            <div class="row-bottom">
+                <div class="inner-bottom"></div>
+                <div class="inner-bottom"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

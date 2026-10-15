@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>淘宝泡面优选 | 高级网页设计课堂实践</title>
+    <style>
+        :root {
+            --tb-red: #ff5000;
+            --tb-orange: #ff7700;
+            --bg-gray: #f4f4f4;
+            --white: #ffffff;
+            --text-dark: #333333;
+            --text-gray: #999999;
+            --line: #eeeeee;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--text-dark);
+            background-color: var(--bg-gray);
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page-shell {
+            width: min(1200px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        /* ===== 淘宝顶部导航 ===== */
+        .topbar {
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            padding: 15px 0;
+        }
+
+        .topbar-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            color: var(--tb-red);
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo::before {
+            content: "🛒";
+            font-size: 28px;
+        }
+
+        .search-box {
+            display: flex;
+            border: 2px solid var(--tb-red);
+            border-radius: 20px;
+            overflow: hidden;
+            width: 400px;
+        }
+
+        .search-box input {
+            border: none;
+            padding: 10px 20px;
+            outline: none;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .search-box button {
+            background: var(--tb-red);
+            color: #fff;
+            border: none;
+            padding: 0 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .cart-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--tb-red);
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        /* ===== 主视觉（活动Banner） ===== */
+        .hero {
+            background: linear-gradient(135deg, #ff5000 0%, #ff7700 100%);
+            color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            margin: 0 0 10px 0;
+            font-size: 36px;
+            letter-spacing: 2px;
+        }
+
+        .hero-text p {
+            margin: 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .hero-badge {
+            background: #fff;
+            color: var(--tb-red);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* ===== 典型元素一：左图右文（主推商品） ===== */
+        .feature-section {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            background: var(--white);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .feature-section img {
+            width: 50%;
+            height: 320px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        .promo-tag {
+            background: var(--tb-red);
+            color: #fff;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .feature-text h3 {
+            font-size: 24px;
+            margin: 10px 0;
+            line-height: 1.4;
+        }
+
+        .price-box {
+            margin: 15px 0;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .current-price {
+            color: var(--tb-red);
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .current-price small {
+            font-size: 18px;
+        }
+
+        .original-price {
+            color: var(--text-gray);
+            text-decoration: line-through;
+            font-size: 14px;
+        }
+
+        .sales-info {
+            color: var(--text-gray);
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 35px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .btn-cart {
+            background: #fff;
+            color: var(--tb-red);
+            border: 1px solid var(--tb-red);
+        }
+
+        .btn-buy {
+            background: var(--tb-red);
+            color: #fff;
+            border: 1px solid var(--tb-red);
+        }
+
+        /* ===== 典型元素二：上图下文列表（商品网格） ===== */
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-heading h2 {
+            font-size: 22px;
+            margin: 0;
+            color: var(--text-dark);
+            border-left: 4px solid var(--tb-red);
+            padding-left: 10px;
+        }
+
+        .section-heading span {
+            color: var(--text-gray);
+            font-size: 13px;
+        }
+
+        .work-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .work-card {
+            background: var(--white);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .work-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .goods-title {
+            font-size: 13px;
+            color: var(--text-dark);
+            line-height: 1.5;
+            height: 39px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .goods-price {
+            color: var(--tb-red);
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .goods-price small {
+            font-size: 12px;
+        }
+
+        .goods-sales {
+            color: var(--text-gray);
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .tag {
+            background: #fff0e6;
+            color: var(--tb-red);
+            font-size: 10px;
+            padding: 1px 4px;
+            border-radius: 2px;
+        }
+
+        /* ===== 底部 ===== */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--text-gray);
+            font-size: 13px;
+            border-top: 1px solid var(--line);
+        }
+
+        /* ===== 响应式（多视口适配） ===== */
+        @media (max-width: 900px) {
+            .work-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            .feature-section {
+                flex-direction: column;
+            }
+            .feature-section img {
+                width: 100%;
+                height: 240px;
+            }
+            .search-box {
+                width: 250px;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .topbar-inner {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .search-box {
+                width: 100%;
+            }
+            .work-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 390px) {
+            .work-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body id="top">
+
+    <!-- 顶部导航 -->
+    <header class="topbar">
+        <div class="page-shell topbar-inner">
+            <div class="logo-area">
+                <a href="javascript:void(0);" class="logo">淘宝泡面优选</a>
+            </div>
+            <div class="search-box">
+                <input type="text" placeholder="搜索：红烧牛肉面、老坛酸菜...">
+                <button type="button">搜索</button>
+            </div>
+            <a href="javascript:void(0);" class="cart-btn">🛒 购物车 (0)</a>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        <!-- 活动Banner -->
+        <section class="hero">
+            <div class="hero-text">
+                <h1>淘宝泡面节 · 深夜食堂专场</h1>
+                <p>汇聚全球风味，满199减30，抢购从速！</p>
+            </div>
+            <div class="hero-badge">🔥 限时秒杀</div>
+        </section>
+
+        <!-- 典型元素一：左图右文（主推商品） -->
+        <section class="feature-section">
+            <img src="banner1.jpg" alt="经典红烧牛肉面">
+            <div class="feature-text">
+                <span class="promo-tag">百亿补贴</span>
+                <h3>【官方直营】经典红烧牛肉面 整箱装 慢炖入味 劲道爽滑</h3>
+                <div class="price-box">
+                    <div class="current-price"><small>¥</small>19.9</div>
+                    <div class="original-price">¥39.9</div>
+                </div>
+                <div class="sales-info">月销 1万+ | 好评率 98% | 48小时内发货</div>
+                <div class="btn-group">
+                    <a href="javascript:void(0);" class="btn btn-cart">加入购物车</a>
+                    <a href="javascript:void(0);" class="btn btn-buy">立即购买</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 典型元素二：上图下文列表（商品网格） -->
+        <section aria-labelledby="works-title">
+            <div class="section-heading">
+                <h2 id="works-title">热销泡面推荐</h2>
+                <span>共 10 件商品</span>
+            </div>
+            <div class="work-grid">
+                <!-- 卡片 1 -->
+                <a class="work-card" href="javascript:void(0);">
+                    <img src="goods_instant_noodle1.jpg" alt="老坛酸菜牛肉面">
+                    <div class="card-content">
+                        <div class="goods-title">老坛酸菜牛肉面 整箱装 酸爽过瘾 地道风味</div>
+                        <div class="goods-price"><small>¥</small>15.9</div>
+                        <div class="goods-sales">
+                            <span>月销 5000+</span>
+                            <span class="tag">包邮</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- 卡片 2 -->
+                <a class="work-card" href="javascript:void(0);">
+                    <img src="goods_instant_noodle2.jpg" alt="香辣牛肉面">
+                    <div class="card-content">
+                        <div class="goods-title">香辣牛肉面 特制辣椒油包 香气扑鼻 无辣不欢</div>
+                        <div class="goods-price"><small>¥</small>16.9</div>
+                        <div class="goods-sales">
+                            <span>月销 8000+</span>
+                            <span class="tag">包邮</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- 卡片 3 -->
+                <a class="work-card" href="javascript:void(0);">
+                    <img src="goods_instant_noodle3.jpg" alt="番茄鸡蛋面">
+                    <div class="card-content">
+                        <div class="goods-title">番茄鸡蛋面 浓郁番茄汤底 酸甜可口 不吃辣首选</div>
+                        <div class="goods-price"><small>¥</small>14.9</div>
+                        <div class="goods-sales">
+                            <span>月销 3000+</span>
+                            <span class="tag">包邮</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- 卡片 4 -->
+                <a class="work-card" href="javascript:void(0);">
+                    <img src="goods_instant_noodle4.jpg" alt="藤椒牛肉面">
+                    <div class="card-content">
+                        <div class="goods-title">藤椒牛肉面 清香麻辣 独特藤椒风味 挑战味蕾</div>
+                        <div class="goods-price"><small>¥</small>18.9</div>
+                        <div class="goods-sales">
+                            <span>月销 2000+</span>
+                            <span class="tag">新品</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- 卡片 5 -->
+                <a class="work-card" href="javascript:void(0);">
+                    <img src="goods_instant_noodle5.jpg" alt="日式豚骨拉面">
+                    <div class="card-content">
+                        <div class="goods-title">日式豚骨拉面 浓郁高汤 软糯叉烧 日式经典</div>
+                        <div class="goods-price"><small>¥</small>22.9</div>
+                        <div class="goods-sales">
+                            <span>月销 6000+</span>
+                            <span class="tag">进口</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- 卡片 6 -->
+                <a class="work-card" href="javascript:void(0);">
+                    <img src="goods_instant_noodle6.jpg" alt="冬阴功海鲜面">
+                    <div class="card-content">
+                        <div class="goods-title">冬阴功海鲜面 酸辣开胃 泰式风味 东南亚风情</div>
+                        <div class="goods-price"><small>¥</small>23.9</div>
+                        <div class="goods-sales">
+                            <span>月销 1500+</span>
+                            <span class="tag">进口</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- 卡片 7 -->
+                <a class="work-card" href="javascript:void(0);">
+                    <img src="banner2.jpg" alt="老北京炸酱面">
+                    <div class="card-content">
+                        <div class="goods-title">老北京炸酱面 地道京味 浓郁酱香 丰富菜码</div>
+                        <div class="goods-price"><small>¥</small>17.9</div>
+                        <div class="goods-sales">
+                            <span>月销 4000+</span>
+                            <span class="tag">包邮</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- 卡片 8 -->
+                <a class="work-card" href="javascript:void(0);">
+                    <img src="banner3.jpg" alt="韩式火鸡面">
+                    <div class="card-content">
+                        <div class="goods-title">韩式火鸡面 甜辣过瘾 挑战极限辣度 年轻人最爱</div>
+                        <div class="goods-price"><small>¥</small>25.9</div>
+                        <div class="goods-sales">
+                            <span>月销 2万+</span>
+                            <span class="tag">爆款</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- 卡片 9 -->
+                <a class="work-card" href="javascript:void(0);">
+                    <img src="banner4.jpg" alt="上海葱油拌面">
+                    <div class="card-content">
+                        <div class="goods-title">上海葱油拌面 葱香四溢 简单纯粹 劲道爽滑</div>
+                        <div class="goods-price"><small>¥</small>12.9</div>
+                        <div class="goods-sales">
+                            <span>月销 7000+</span>
+                            <span class="tag">包邮</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- 卡片 10 -->
+                <a class="work-card" href="javascript:void(0);">
+                    <img src="banner5.jpg" alt="四川麻辣拌面">
+                    <div class="card-content">
+                        <div class="goods-title">四川麻辣拌面 麻辣鲜香 佐料丰富 一口入魂</div>
+                        <div class="goods-price"><small>¥</small>19.9</div>
+                        <div class="goods-sales">
+                            <span>月销 9000+</span>
+                            <span class="tag">包邮</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>淘宝泡面优选 · 高级网页设计I 课堂实践</p>
+        <p>学号：24003 | 姓名：王宇智</p>
+    </footer>
+
+</body>
+</html>
