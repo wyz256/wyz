@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>13-4 · iconfont SVG 方式 · 移动端底部导航</title>
+    <style>
+        :root {
+            --wang-bg: #f4f5f7;
+            --wang-card: #ffffff;
+            --wang-ink: #17212b;
+            --wang-muted: #9aa3ad;
+            --wang-orange: #f86302;
+            --wang-blue: #1f5665;
+            --wang-line: #eceff2;
+            --wang-shadow: 0 10px 30px rgba(23, 33, 43, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--wang-ink);
+            background: var(--wang-bg);
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .wang-stage {
+            width: min(480px, 100vw);
+            min-height: 100vh;
+            margin: 0 auto;
+            padding-bottom: calc(76px + env(safe-area-inset-bottom));
+            background: var(--wang-bg);
+        }
+
+        .wang-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 52px;
+            padding: 0 16px;
+            background: var(--wang-card);
+            border-bottom: 1px solid var(--wang-line);
+        }
+
+        .wang-topbar .wang-title {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .wang-topbar a {
+            color: var(--wang-muted);
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .wang-hero {
+            padding: 22px 16px 6px;
+        }
+
+        .wang-hero h1 {
+            margin: 0 0 6px;
+            font-size: 22px;
+        }
+
+        .wang-hero p {
+            margin: 0 0 18px;
+            color: var(--wang-muted);
+            font-size: 14px;
+        }
+
+        .wang-feed {
+            padding: 0 16px 20px;
+        }
+
+        .wang-product {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 14px;
+            border-radius: 14px;
+            background: var(--wang-card);
+            box-shadow: var(--wang-shadow);
+        }
+
+        .wang-product .wang-thumb {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 84px;
+            height: 84px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #e2f3ff, #cfe9ff);
+            color: var(--wang-blue);
+            flex-shrink: 0;
+        }
+
+        .wang-product .wang-thumb svg {
+            width: 42px;
+            height: 42px;
+        }
+
+        .wang-product .wang-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .wang-product .wang-info b {
+            display: block;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .wang-product .wang-info .wang-price {
+            color: var(--wang-orange);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .wang-product .wang-info .wang-price small {
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--wang-muted);
+        }
+
+        /* ===== 底部固定自适应导航 ===== */
+        .wang-tabbar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 100;
+            display: flex;
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            padding-bottom: env(safe-area-inset-bottom);
+            background: var(--wang-card);
+            border-top: 1px solid var(--wang-line);
+            box-shadow: 0 -6px 20px rgba(23, 33, 43, 0.06);
+        }
+
+        .wang-tab {
+            position: relative;
+            flex: 1 1 0;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            height: 58px;
+            color: var(--wang-muted);
+            text-decoration: none;
+            font-size: 10px;
+            transition: color 180ms ease, opacity 180ms ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .wang-tab .wang-tab-icon {
+            position: relative;
+            display: inline-flex;
+        }
+
+        .wang-tab .wang-tab-icon svg {
+            width: 26px;
+            height: 26px;
+            display: block;
+            transition: transform 180ms ease, filter 180ms ease;
+        }
+
+        .wang-tab.wang-active {
+            color: var(--wang-orange);
+        }
+
+        .wang-tab.wang-active .wang-tab-icon svg {
+            transform: translateY(-2px);
+            filter: drop-shadow(0 4px 6px rgba(248, 99, 2, 0.35));
+        }
+
+        .wang-tab:not(.wang-active) {
+            opacity: 0.72;
+        }
+
+        .wang-tab .wang-tab-label {
+            transform: scale(0.92);
+        }
+
+        /* 数字徽章 */
+        .wang-badge {
+            position: absolute;
+            top: -6px;
+            right: -12px;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 5px;
+            border-radius: 9px;
+            background: #f5222d;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 17px;
+            text-align: center;
+            box-shadow: 0 0 0 2px var(--wang-card);
+        }
+
+        .wang-badge.wang-badge-lg {
+            right: -16px;
+        }
+
+        /* 红点 */
+        .wang-dot {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #f5222d;
+            box-shadow: 0 0 0 2px var(--wang-card);
+        }
+
+        .wang-tip {
+            margin: 0 16px 90px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            background: #f0f7ff;
+            border: 1px solid #d3e6fb;
+            color: #1f5665;
+            font-size: 13px;
+        }
+
+        .wang-tip code {
+            font-family: Consolas, monospace;
+            background: #fff;
+            padding: 1px 5px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- SVG Symbol 精灵：源数据来自 font/font_5244705_jfikdi7y3ca/iconfont.js -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+            <symbol id="icon-shouye_huaban1" viewBox="0 0 1024 1024"><path d="M904.533333 501.333333H119.466667c-14.933333 0-27.733333-8.533333-32-23.466666-4.266667-12.8-2.133333-27.733333 8.533333-38.4L488.533333 93.866667c12.8-12.8 32-12.8 46.933334 0l392.533333 345.6c10.666667 8.533333 14.933333 25.6 8.533333 38.4-4.266667 12.8-17.066667 23.466667-32 23.466666zM211.2 430.933333H810.666667L512 166.4 211.2 430.933333z" fill="#F86302"></path><path d="M789.333333 938.666667H234.666667c-19.2 0-34.133333-14.933333-34.133334-34.133334V465.066667c0-19.2 14.933333-34.133333 34.133334-34.133334s34.133333 14.933333 34.133333 34.133334v403.2h484.266667V465.066667c0-19.2 14.933333-34.133333 34.133333-34.133334s34.133333 14.933333 34.133333 34.133334v437.333333c2.133333 21.333333-12.8 36.266667-32 36.266667z" fill="#F86302"></path><path d="M608 915.2c-19.2 0-34.133333-14.933333-34.133333-34.133333v-181.333334c0-34.133333-27.733333-59.733333-59.733334-59.733333-34.133333 0-59.733333 27.733333-59.733333 59.733333v181.333334c0 19.2-14.933333 34.133333-34.133333 34.133333-19.2 0-34.133333-14.933333-34.133334-34.133333v-181.333334c0-72.533333 57.6-130.133333 130.133334-130.133333 72.533333 0 130.133333 57.6 130.133333 130.133333v181.333334c-4.266667 19.2-19.2 34.133333-38.4 34.133333z" fill="#32C5FF"></path><path d="M608 915.2c19.2 0 34.133333-14.933333 34.133333-34.133333v-10.666667h-68.266666v10.666667c0 19.2 14.933333 34.133333 34.133333 34.133333zM416 915.2c19.2 0 34.133333-14.933333 34.133333-34.133333v-10.666667h-68.266666v10.666667c0 19.2 14.933333 34.133333 34.133333 34.133333z" fill="#324D00"></path><path d="M789.333333 430.933333c-19.2 0-34.133333 14.933333-34.133333 34.133334v34.133333h68.266667v-34.133333c0-19.2-14.933333-34.133333-34.133334-34.133334zM268.8 501.333333v-34.133333c0-19.2-14.933333-34.133333-34.133333-34.133333s-34.133333 14.933333-34.133334 34.133333v34.133333h68.266667z" fill="#F52701"></path></symbol>
+            <symbol id="icon-sousuo_huaban1" viewBox="0 0 1024 1024"><path d="M581.973333 846.933333a380.8 380.8 0 1 1 380.8-380.8A381.226667 381.226667 0 0 1 581.973333 846.933333z m0-688a307.2 307.2 0 1 0 307.2 307.2 307.413333 307.413333 0 0 0-307.2-307.2z" fill="#FA6302"></path><path d="M146.56 938.666667a36.906667 36.906667 0 0 1-26.026667-64l192-190.933334a36.906667 36.906667 0 0 1 52.053334 52.266667l-192 192a37.333333 37.333333 0 0 1-26.026667 10.666667z" fill="#43D7B4"></path><path d="M470.826667 274.773333m-49.066667 0a49.066667 49.066667 0 1 0 98.133333 0 49.066667 49.066667 0 1 0-98.133333 0Z" fill="#43D7B4"></path><path d="M312.106667 684.8l-23.68 23.466667A388.693333 388.693333 0 0 0 341.333333 760.32l23.466667-23.253333a36.906667 36.906667 0 0 0-52.053333-52.266667z" fill="#425300"></path></symbol>
+            <symbol id="icon-pinglun" viewBox="0 0 1024 1024"><path d="M290.8 417.7c-29.7 0-53.8 24.1-53.8 53.8 0 29.7 24.1 53.8 53.8 53.8s53.8-24.1 53.8-53.8c-0.1-29.8-24.1-53.8-53.8-53.8zM512.1 417.7c-29.7 0-53.8 24.1-53.8 53.8 0 29.7 24.1 53.8 53.8 53.8 29.7 0 53.8-24.1 53.8-53.8 0-29.8-24.1-53.8-53.8-53.8zM733.4 417.7c-29.7 0-53.8 24.1-53.8 53.8 0 29.7 24.1 53.8 53.8 53.8 29.7 0 53.8-24.1 53.8-53.8 0-29.8-24.1-53.8-53.8-53.8z" fill="#0636FF"></path><path d="M512.1 104.2C229.8 104.2 0.1 264.5 0.1 461.5c0 108 67.3 207.9 185.3 275.8-2.6 10.7-8.6 27-12.5 37.8-13.8 37.9-24.7 67.9-13 92.1 5.1 10.6 14 18.4 25.1 22.1 4.2 1.4 8.3 2.1 12.7 2.1 20.6 0 46.1-15.6 99.6-50.1 20.7-13.3 51-32.8 63.7-38.2 48.7 10.4 99.4 15.7 150.9 15.7 282.3 0 511.9-160.3 511.9-357.4 0.2-196.9-229.4-357.2-511.7-357.2z m0 648.9c-48.9 0-97-5.2-142.9-15.5-21.8-4.9-44.2 7.8-107.4 48.5-8.8 5.7-19.4 12.5-29.6 18.9 0.9-2.6 1.8-5.1 2.6-7.3 15.4-42.4 32.9-90.5-5.2-111.1C125.6 630.4 66 548.4 66 461.5 66 300.8 266.1 170 512.1 170s446.1 130.8 446.1 291.5c0 160.8-200.1 291.6-446.1 291.6z" fill="#0636FF"></path></symbol>
+            <symbol id="icon-wode_huaban1" viewBox="0 0 1024 1024"><path d="M512 594.986667a246.186667 246.186667 0 0 1-245.973333-245.973334V298.666667a245.973333 245.973333 0 0 1 491.946666 0v49.706666A246.186667 246.186667 0 0 1 512 594.986667zM512 117.333333a182.186667 182.186667 0 0 0-181.973333 181.333334v49.706666a181.973333 181.973333 0 0 0 363.946666 0V298.666667A182.186667 182.186667 0 0 0 512 117.333333zM512 945.92a32 32 0 0 1-32-32v-192a32 32 0 0 1 64 0v192a32 32 0 0 1-32 32z" fill="#FA6401"></path><path d="M874.666667 957.653333H149.333333a32 32 0 0 1-32-32 394.666667 394.666667 0 0 1 789.333334 0 32 32 0 0 1-32 32z m-691.84-64h658.346666a330.666667 330.666667 0 0 0-658.346666 0z" fill="#0190FF"></path><path d="M512 945.92a32 32 0 0 0 32-32v-21.333333h-64v21.333333a32 32 0 0 0 32 32z" fill="#013701"></path><path d="M646.186667 554.666667a388.693333 388.693333 0 0 0-268.373334 0 244.48 244.48 0 0 0 268.373334 0z" fill="#013900"></path></symbol>
+        </defs>
+    </svg>
+
+    <div class="wang-stage">
+        <header class="wang-topbar">
+            <span class="wang-title">泡面商城</span>
+            <a href="index.html">← 返回首页</a>
+        </header>
+
+        <section class="wang-hero">
+            <h1>移动端底部导航</h1>
+            <p>iconfont SVG Sprite 方式 · 固定底部 · 自适应宽度 · 数字徽章 / 红点</p>
+        </section>
+
+        <div class="wang-feed">
+            <div class="wang-product">
+                <div class="wang-thumb">
+                    <svg aria-hidden="true"><use xlink:href="#icon-shouye_huaban1"></use></svg>
+                </div>
+                <div class="wang-info">
+                    <b>手工花卷面（袋装）</b>
+                    <span class="wang-price">¥19.9 <small>/ 5 包</small></span>
+                </div>
+            </div>
+            <div class="wang-product">
+                <div class="wang-thumb">
+                    <svg aria-hidden="true"><use xlink:href="#icon-sousuo_huaban1"></use></svg>
+                </div>
+                <div class="wang-info">
+                    <b>鲜牛奶风味拌面</b>
+                    <span class="wang-price">¥12.5 <small>/ 3 包</small></span>
+                </div>
+            </div>
+            <div class="wang-product">
+                <div class="wang-thumb">
+                    <svg aria-hidden="true"><use xlink:href="#icon-pinglun"></use></svg>
+                </div>
+                <div class="wang-info">
+                    <b>冷泡饮料面组合</b>
+                    <span class="wang-price">¥25.0 <small>/ 礼盒</small></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="wang-tip">
+            导航使用 <code>&lt;svg&gt;&lt;use xlink:href="#icon-xxx"&gt;&lt;/use&gt;&lt;/svg&gt;</code> 引用页面顶部内嵌的 Symbol 精灵，源数据来自 <code>font/font_5244705_jfikdi7y3ca/iconfont.js</code>。
+        </div>
+
+        <!-- ===== 底部固定导航 ===== -->
+        <nav class="wang-tabbar" aria-label="底部导航">
+            <a class="wang-tab wang-active" href="13-4.html">
+                <span class="wang-tab-icon"><svg aria-hidden="true"><use xlink:href="#icon-shouye_huaban1"></use></svg></span>
+                <span class="wang-tab-label">首页</span>
+            </a>
+            <a class="wang-tab" href="13-4.html">
+                <span class="wang-tab-icon"><svg aria-hidden="true"><use xlink:href="#icon-sousuo_huaban1"></use></svg></span>
+                <span class="wang-tab-label">搜索</span>
+            </a>
+            <a class="wang-tab" href="13-4.html">
+                <span class="wang-tab-icon">
+                    <svg aria-hidden="true"><use xlink:href="#icon-pinglun"></use></svg>
+                    <span class="wang-badge">12</span>
+                </span>
+                <span class="wang-tab-label">评论</span>
+            </a>
+            <a class="wang-tab" href="13-4.html">
+                <span class="wang-tab-icon">
+                    <svg aria-hidden="true"><use xlink:href="#icon-wode_huaban1"></use></svg>
+                    <span class="wang-dot"></span>
+                </span>
+                <span class="wang-tab-label">我的</span>
+            </a>
+        </nav>
+    </div>
+</body>
+</html>

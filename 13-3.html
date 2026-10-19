@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>13-3 · iconfont 字体图标 · 移动端底部导航</title>
+    <link rel="stylesheet" href="font/font_5244705_jfikdi7y3ca/iconfont.css">
+    <style>
+        :root {
+            --wang-bg: #f4f5f7;
+            --wang-card: #ffffff;
+            --wang-ink: #17212b;
+            --wang-muted: #9aa3ad;
+            --wang-orange: #f86302;
+            --wang-blue: #1f5665;
+            --wang-line: #eceff2;
+            --wang-shadow: 0 10px 30px rgba(23, 33, 43, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--wang-ink);
+            background: var(--wang-bg);
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .wang-stage {
+            width: min(480px, 100vw);
+            min-height: 100vh;
+            margin: 0 auto;
+            padding-bottom: calc(76px + env(safe-area-inset-bottom));
+            background: var(--wang-bg);
+        }
+
+        .wang-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 52px;
+            padding: 0 16px;
+            background: var(--wang-card);
+            border-bottom: 1px solid var(--wang-line);
+        }
+
+        .wang-topbar .wang-title {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .wang-topbar a {
+            color: var(--wang-muted);
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .wang-hero {
+            padding: 22px 16px 6px;
+        }
+
+        .wang-hero h1 {
+            margin: 0 0 6px;
+            font-size: 22px;
+        }
+
+        .wang-hero p {
+            margin: 0 0 18px;
+            color: var(--wang-muted);
+            font-size: 14px;
+        }
+
+        .wang-feed {
+            padding: 0 16px 20px;
+        }
+
+        .wang-product {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 14px;
+            border-radius: 14px;
+            background: var(--wang-card);
+            box-shadow: var(--wang-shadow);
+        }
+
+        .wang-product .wang-thumb {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 84px;
+            height: 84px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #ffe6d5, #ffd0b8);
+            color: var(--wang-orange);
+            font-size: 38px;
+            flex-shrink: 0;
+        }
+
+        .wang-product .wang-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .wang-product .wang-info b {
+            display: block;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .wang-product .wang-info .wang-price {
+            color: var(--wang-orange);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .wang-product .wang-info .wang-price small {
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--wang-muted);
+        }
+
+        /* ===== 底部固定自适应导航 ===== */
+        .wang-tabbar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 100;
+            display: flex;
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            padding-bottom: env(safe-area-inset-bottom);
+            background: var(--wang-card);
+            border-top: 1px solid var(--wang-line);
+            box-shadow: 0 -6px 20px rgba(23, 33, 43, 0.06);
+        }
+
+        .wang-tab {
+            position: relative;
+            flex: 1 1 0;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            height: 58px;
+            color: var(--wang-muted);
+            text-decoration: none;
+            font-size: 10px;
+            transition: color 180ms ease, opacity 180ms ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .wang-tab .wang-tab-icon {
+            position: relative;
+            font-size: 24px;
+            line-height: 1;
+            transition: transform 180ms ease;
+        }
+
+        .wang-tab.wang-active {
+            color: var(--wang-orange);
+        }
+
+        .wang-tab.wang-active .wang-tab-icon {
+            transform: translateY(-2px);
+        }
+
+        .wang-tab:not(.wang-active) {
+            opacity: 0.72;
+        }
+
+        .wang-tab .wang-tab-label {
+            transform: scale(0.92);
+        }
+
+        /* 数字徽章 */
+        .wang-badge {
+            position: absolute;
+            top: -6px;
+            right: -12px;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 5px;
+            border-radius: 9px;
+            background: #f5222d;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 17px;
+            text-align: center;
+            box-shadow: 0 0 0 2px var(--wang-card);
+        }
+
+        .wang-badge.wang-badge-lg {
+            right: -16px;
+        }
+
+        /* 红点 */
+        .wang-dot {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #f5222d;
+            box-shadow: 0 0 0 2px var(--wang-card);
+        }
+
+        /* 说明区 */
+        .wang-tip {
+            margin: 0 16px 90px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            background: #fff7ef;
+            border: 1px solid #ffe1c7;
+            color: #8a4b1f;
+            font-size: 13px;
+        }
+
+        .wang-tip code {
+            font-family: Consolas, monospace;
+            background: #fff;
+            padding: 1px 5px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wang-stage">
+        <header class="wang-topbar">
+            <span class="wang-title">泡面商城</span>
+            <a href="index.html">← 返回首页</a>
+        </header>
+
+        <section class="wang-hero">
+            <h1>移动端底部导航</h1>
+            <p>iconfont 字体图标方式 · 固定底部 · 自适应宽度 · 数字徽章 / 红点</p>
+        </section>
+
+        <div class="wang-feed">
+            <div class="wang-product">
+                <div class="wang-thumb iconfont icon-huajuan"></div>
+                <div class="wang-info">
+                    <b>手工花卷面（袋装）</b>
+                    <span class="wang-price">¥19.9 <small>/ 5 包</small></span>
+                </div>
+            </div>
+            <div class="wang-product">
+                <div class="wang-thumb iconfont icon-niunai"></div>
+                <div class="wang-info">
+                    <b>鲜牛奶风味拌面</b>
+                    <span class="wang-price">¥12.5 <small>/ 3 包</small></span>
+                </div>
+            </div>
+            <div class="wang-product">
+                <div class="wang-thumb iconfont icon-yinliao"></div>
+                <div class="wang-info">
+                    <b>冷泡饮料面组合</b>
+                    <span class="wang-price">¥25.0 <small>/ 礼盒</small></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="wang-tip">
+            导航使用 <code>font/font_5244705_jfikdi7y3ca/iconfont.css</code>，通过 <code>&lt;span class="iconfont icon-xxx"&gt;</code> 像文字一样调用图标，<code>font-size</code> 控制大小、<code>color</code> 控制颜色。
+        </div>
+
+        <!-- ===== 底部固定导航 ===== -->
+        <nav class="wang-tabbar" aria-label="底部导航">
+            <a class="wang-tab wang-active" href="13-3.html">
+                <span class="wang-tab-icon iconfont icon-shouye_huaban1"></span>
+                <span class="wang-tab-label">首页</span>
+            </a>
+            <a class="wang-tab" href="13-3.html">
+                <span class="wang-tab-icon iconfont icon-sousuo_huaban1"></span>
+                <span class="wang-tab-label">搜索</span>
+            </a>
+            <a class="wang-tab" href="13-3.html">
+                <span class="wang-tab-icon iconfont icon-pinglun">
+                    <span class="wang-badge">12</span>
+                </span>
+                <span class="wang-tab-label">评论</span>
+            </a>
+            <a class="wang-tab" href="13-3.html">
+                <span class="wang-tab-icon iconfont icon-wode_huaban1">
+                    <span class="wang-dot"></span>
+                </span>
+                <span class="wang-tab-label">我的</span>
+            </a>
+        </nav>
+    </div>
+</body>
+</html>
