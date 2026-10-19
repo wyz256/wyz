@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>13-2 · Lucide 图标（SVG 方式）</title>
+    <style>
+        :root {
+            --wang-ink: #17212b;
+            --wang-muted: #61707d;
+            --wang-paper: #f7f3eb;
+            --wang-white: #fffdf8;
+            --wang-orange: #e86b3d;
+            --wang-orange-dark: #bc4524;
+            --wang-blue: #1f5665;
+            --wang-line: #e3d8c8;
+            --wang-shadow: 0 18px 50px rgba(52, 44, 33, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--wang-ink);
+            background:
+                radial-gradient(circle at 8% 10%, rgba(31, 86, 101, 0.14), transparent 24rem),
+                linear-gradient(135deg, #f7f3eb 0%, #eef3f0 100%);
+            font-family: Georgia, "Microsoft YaHei", "PingFang SC", sans-serif;
+            line-height: 1.7;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .wang-shell {
+            width: min(1120px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        .wang-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0;
+            color: var(--wang-blue);
+            font-size: 14px;
+            letter-spacing: 0.08em;
+        }
+
+        .wang-mark {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+        }
+
+        .wang-mark::before {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--wang-blue);
+            content: "";
+        }
+
+        .wang-back {
+            text-decoration: none;
+            border-bottom: 1px solid currentColor;
+        }
+
+        .wang-back:hover {
+            color: var(--wang-orange-dark);
+        }
+
+        .wang-hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.75fr);
+            gap: 48px;
+            align-items: center;
+            min-height: 340px;
+            padding: 50px 0 40px;
+        }
+
+        .wang-eyebrow {
+            margin: 0 0 14px;
+            color: var(--wang-blue);
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 0.18em;
+        }
+
+        .wang-hero h1 {
+            margin: 0;
+            font-size: clamp(38px, 6vw, 68px);
+            line-height: 1;
+            letter-spacing: -0.03em;
+        }
+
+        .wang-hero-copy {
+            max-width: 470px;
+            margin: 22px 0 0;
+            color: var(--wang-muted);
+            font-size: 16px;
+        }
+
+        .wang-note {
+            padding: 24px;
+            border-left: 3px solid var(--wang-blue);
+            background: rgba(255, 253, 248, 0.68);
+            box-shadow: var(--wang-shadow);
+        }
+
+        .wang-note strong {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--wang-blue);
+            font-size: 20px;
+        }
+
+        .wang-note p {
+            margin: 0;
+            color: var(--wang-muted);
+            font-size: 14px;
+        }
+
+        .wang-section {
+            margin: 46px 0;
+            padding: 30px;
+            border: 1px solid var(--wang-line);
+            background: var(--wang-white);
+            box-shadow: var(--wang-shadow);
+        }
+
+        .wang-section > h2 {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 20px;
+            margin: 0 0 8px;
+            color: var(--wang-blue);
+            font-size: 26px;
+        }
+
+        .wang-section > h2 span {
+            color: var(--wang-muted);
+            font-size: 13px;
+            font-weight: normal;
+        }
+
+        .wang-section > p {
+            margin: 0 0 20px;
+            color: var(--wang-muted);
+            font-size: 15px;
+        }
+
+        .wang-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 12px;
+        }
+
+        .wang-icon-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 120px;
+            padding: 16px 8px;
+            border: 1px solid var(--wang-line);
+            background: var(--wang-paper);
+            text-align: center;
+            transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+        }
+
+        .wang-icon-card:hover {
+            border-color: var(--wang-blue);
+            box-shadow: 0 10px 22px rgba(52, 44, 33, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .wang-icon-card:hover .wang-svg {
+            color: var(--wang-orange-dark);
+            transform: scale(1.12);
+        }
+
+        .wang-svg {
+            width: 34px;
+            height: 34px;
+            color: var(--wang-blue);
+            transition: color 180ms ease, transform 180ms ease;
+        }
+
+        .wang-icon-card span {
+            color: var(--wang-muted);
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 11px;
+        }
+
+        .wang-ctrl {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 22px;
+        }
+
+        .wang-ctrl-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            border: 1px solid var(--wang-line);
+            background: var(--wang-paper);
+        }
+
+        .wang-ctrl-box .wang-svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        .wang-ctrl-box.wang-c-orange .wang-svg {
+            color: var(--wang-orange);
+        }
+
+        .wang-ctrl-box.wang-c-green .wang-svg {
+            color: #2e8b57;
+        }
+
+        .wang-ctrl-box.wang-c-purple .wang-svg {
+            color: #6a4fb6;
+        }
+
+        .wang-ctrl-box.wang-c-lg .wang-svg {
+            width: 46px;
+            height: 46px;
+        }
+
+        .wang-code {
+            margin: 18px 0 0;
+            padding: 18px 20px;
+            background: var(--wang-ink);
+            color: #cfe3d8;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .wang-code .wang-c-tag {
+            color: #f4a261;
+        }
+
+        .wang-code .wang-c-str {
+            color: #a8d5a2;
+        }
+
+        .wang-compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .wang-compare > div {
+            padding: 18px;
+            border: 1px solid var(--wang-line);
+            background: var(--wang-paper);
+        }
+
+        .wang-compare h3 {
+            margin: 0 0 8px;
+            font-size: 15px;
+        }
+
+        .wang-compare .wang-col-font h3 {
+            color: var(--wang-orange-dark);
+        }
+
+        .wang-compare .wang-col-svg h3 {
+            color: var(--wang-blue);
+        }
+
+        .wang-compare p {
+            margin: 0;
+            color: var(--wang-muted);
+            font-size: 13px;
+        }
+
+        .wang-footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 20px 0 30px;
+            color: var(--wang-muted);
+            font-size: 13px;
+        }
+
+        @media (max-width: 760px) {
+            .wang-hero {
+                grid-template-columns: 1fr;
+                gap: 28px;
+                min-height: 0;
+            }
+
+            .wang-compare {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wang-shell">
+        <header class="wang-topbar">
+            <div class="wang-mark">ICON PRACTICE / 2026</div>
+            <a class="wang-back" href="index.html">← 返回首页</a>
+        </header>
+
+        <main>
+            <section class="wang-hero">
+                <div>
+                    <p class="wang-eyebrow">INLINE SVG · LUCIDE</p>
+                    <h1>Lucide 图标<br>SVG 方式</h1>
+                    <p class="wang-hero-copy">Lucide 采用「内联 SVG」方案：每个图标就是一段矢量 SVG 标记，直接写进 HTML。本页面图标源文件已本地化到 <code>cdn/lucide/</code>，无需联网即可使用。</p>
+                </div>
+                <aside class="wang-note">
+                    <strong>SVG 图标要点</strong>
+                    <p>· 纯矢量，任意缩放不模糊<br>· 可用 CSS 直接改色、加滤镜<br>· 无需加载字体，按需内联</p>
+                </aside>
+            </section>
+
+            <section class="wang-section">
+                <h2>原理：内联 SVG <span>Inline SVG</span></h2>
+                <p>SVG 与 HTML 同属 XML 家族，可以像普通标签一样嵌入页面。Lucide 的每个图标都是一段带 viewBox 的矢量标记，使用 stroke="currentColor" 跟随文字颜色，天然适配 CSS 主题。</p>
+                <div class="wang-code"><span class="wang-c-tag">&lt;svg</span> xmlns=<span class="wang-c-str">"http://www.w3.org/2000/svg"</span>
+     viewBox=<span class="wang-c-str">"0 0 24 24"</span> fill=<span class="wang-c-str">"none"</span> stroke=<span class="wang-c-str">"currentColor"</span>
+     stroke-width=<span class="wang-c-str">"2"</span> stroke-linecap=<span class="wang-c-str">"round"</span><span class="wang-c-tag">&gt;</span>
+  <span class="wang-c-tag">&lt;path</span> d=<span class="wang-c-str">"M20 6 9 17l-5-5"</span> /<span class="wang-c-tag">&gt;</span>   <span style="color:#7a8b97">/* 对勾 */</span>
+<span class="wang-c-tag">&lt;/svg&gt;</span></div>
+
+                <div class="wang-compare">
+                    <div class="wang-col-font">
+                        <h3>字体图标（Font Awesome）</h3>
+                        <p>图标 = 字形，靠 font-size / color 控制；一次加载整套字体文件；颜色单一，难以局部着色。</p>
+                    </div>
+                    <div class="wang-col-svg">
+                        <h3>SVG 图标（Lucide）</h3>
+                        <p>图标 = 矢量标签，可用 width / height / fill / stroke / filter 精细控制；随用随写，无字体请求。</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 以下图标的 SVG 源码均来自本地 cdn/lucide/ 目录（lucide-static v1.59.0，从 CDN 下载） -->
+            <section class="wang-section">
+                <h2>图标展示 <span>Inline SVG · Lucide</span></h2>
+                <p>20 个常用 Lucide 图标，以内联 SVG 方式呈现，悬停查看变色与缩放效果。</p>
+                <div class="wang-grid">
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" /></svg><span>heart</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" /></svg><span>star</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></svg><span>home</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg><span>user</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg><span>search</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /><circle cx="12" cy="12" r="3" /></svg><span>settings</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.268 21a2 2 0 0 0 3.464 0" /><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" /></svg><span>bell</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 11v6" /><path d="M14 11v6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg><span>trash</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /><path d="m15 5 4 4" /></svg><span>pencil</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg><span>plus</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg><span>check</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg><span>x</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg><span>arrow-right</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" /><circle cx="12" cy="13" r="3" /></svg><span>camera</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v3" /><path d="M16 2v3" /><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18" /></svg><span>calendar</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /><rect x="2" y="4" width="20" height="16" rx="2" /></svg><span>mail</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></svg><span>phone</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" /></svg><span>globe</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V3a1 1 0 0 0-1.28-.96l-10 2.917a1 1 0 0 0-.72.96V19" /><circle cx="18" cy="16" r="3" /><circle cx="6" cy="19" r="3" /></svg><span>music</span></div>
+                    <div class="wang-icon-card"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z" /></svg><span>zap</span></div>
+                </div>
+            </section>
+
+            <section class="wang-section">
+                <h2>CSS 控制 SVG 图标 <span>width · color · filter</span></h2>
+                <p>SVG 图标的优势在于可被 CSS 完全掌控：用 width / height 缩放，用 color 改色（依赖 stroke="currentColor"），还能叠加滤镜与动画。</p>
+                <div class="wang-ctrl">
+                    <div class="wang-ctrl-box"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" /></svg><span>30px</span></div>
+                    <div class="wang-ctrl-box wang-c-lg"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" /></svg><span>46px</span></div>
+                    <div class="wang-ctrl-box wang-c-orange"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" /></svg><span>orange</span></div>
+                    <div class="wang-ctrl-box wang-c-green"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" /></svg><span>green</span></div>
+                    <div class="wang-ctrl-box wang-c-purple"><svg class="wang-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" /></svg><span>purple</span></div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="wang-footer">
+            <span>王宇智 · 计算机24003</span>
+            <span>Lucide v1.59.0 · 内联 SVG（Inline SVG）</span>
+        </footer>
+    </div>
+</body>
+</html>

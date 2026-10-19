@@ -29,3 +29,14 @@
 - 时间: 2026-10-12 14:49:18
 - 使用模型: ling-3.1-flash-free (opencode/ling-3.1-flash-free)
 - 提示词内容: 设置规则：新建的html文件加入超链接到首页index.html
+
+---
+- 时间: 2026-10-15 14:53:15
+- 使用模型: longcat-2.5-preview-free (opencode/longcat-2.5-preview-free)
+- 提示词内容: 提交项目
+
+---
+- 时间: 2026-10-19 13:38:58
+- 使用模型: longcat-2.5-preview-free (opencode/longcat-2.5-preview-free)
+- 提示词内容: 做两个html网页13-1.html，13-2.html，分别显示Font Awesome图标和Lucide图标，前者使用字体图标的方式，后者使用svg的方式，相关的cdn文件下载到本目录下的cdn目录。
+
