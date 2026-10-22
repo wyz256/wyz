@@ -30,9 +30,10 @@ This repo requires no installation/build commands. To view work, simply open HTM
 ## Conventions
 
 - **Naming**: Files use Chinese names in some cases (e.g. `5-1 层叠与继承.html`, `11-1.html`) - preserve exact filenames when creating/editing links
-- **Naming convention**: All CSS class names, id names, and JS variables must start with `wang_`
+- **Naming convention**: All CSS class names, id names, and JS variables must start with `wyz_` (supersedes the earlier `wang_` prefix; existing files may still contain `wang_` names - do not rename them unless explicitly requested)
+- **Author comment**: Every HTML page must include a comment in the form `<!-- 姓名：王宇智，日期：YYYY-MM-DD，功能名称：页面功能名称 -->`, placed near the top of the page (inside `<head>` or right after `<body>`)
 - **Navigation**: Every newly created HTML file must include a hyperlink back to the homepage `index.html` (e.g. "← 返回首页")
-- **Prompt logging**: Every prompt is appended to `wang_promot.md` (never overwritten) before execution, including time, model, and prompt content
+- **Prompt logging**: Every prompt is appended to `wang_prompt.md` (never overwritten) before execution, including time, model, and prompt content
 - **Code style**: Pure native code, no external CDNs or dependencies as specified in the original prompt
 - **Encoding**: UTF-8, Chinese content (zh-CN)
 - **Styling**: Inline/internal CSS preferred for standalone exercises; external css.css exists but exercises mostly self-contained

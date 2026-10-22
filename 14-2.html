@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 六种基本数据类型 - 王宇智</title>
+    <style>
+        /* 所有类名以 wyz_ 开始 */
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 24px;
+            color: #2c3e50;
+        }
+        .wyz_back {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .wyz_back:hover { text-decoration: underline; }
+        .wyz_header { text-align: center; margin: 8px 0 24px; }
+        .wyz_header h2 { margin: 0 0 8px; }
+        .wyz_header p { color: #666; font-size: 14px; margin: 0; }
+        .wyz_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 16px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .wyz_card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        .wyz_card h3 { margin: 0 0 10px; font-size: 18px; }
+        .wyz_tag {
+            display: inline-block;
+            background: #eef3ff;
+            color: #3b5bdb;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+        .wyz_code {
+            background: #f1f3f5;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin: 0;
+        }
+        .wyz_result {
+            margin: 10px 0 0;
+            font-size: 13px;
+            font-family: Consolas, "Courier New", monospace;
+            color: #2b8a3e;
+        }
+        .wyz_tip { font-size: 12px; color: #888; margin: 10px 0 0; }
+        .wyz_note {
+            max-width: 1000px;
+            margin: 20px auto 0;
+            background: #fff8e6;
+            border: 1px solid #ffe58f;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 姓名：王宇智，日期：2026-10-22，功能名称：JavaScript六种基本数据类型演示 -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+
+    <div class="wyz_header">
+        <h2>王宇智的JavaScript · 六种基本数据类型</h2>
+        <p>使用 typeof 运算符检测数据的类型，结果会写入下方卡片，同时输出到控制台（按 F12 查看）</p>
+    </div>
+
+    <div class="wyz_grid">
+        <div class="wyz_card">
+            <h3>1. String 字符串</h3>
+            <span class="wyz_tag">typeof 结果：string</span>
+            <pre class="wyz_code">var wyz_str = "王宇智";</pre>
+            <p class="wyz_result" id="wyz_out_string"></p>
+            <p class="wyz_tip">用单引号或双引号包裹的一串文本</p>
+        </div>
+
+        <div class="wyz_card">
+            <h3>2. Number 数值</h3>
+            <span class="wyz_tag">typeof 结果：number</span>
+            <pre class="wyz_code">var wyz_num = 3.14;</pre>
+            <p class="wyz_result" id="wyz_out_number"></p>
+            <p class="wyz_tip">整数和小数统称数值，不区分整型与浮点型</p>
+        </div>
+
+        <div class="wyz_card">
+            <h3>3. Boolean 布尔</h3>
+            <span class="wyz_tag">typeof 结果：boolean</span>
+            <pre class="wyz_code">var wyz_bool = true;</pre>
+            <p class="wyz_result" id="wyz_out_boolean"></p>
+            <p class="wyz_tip">只有 true 和 false 两个值，表示真和假</p>
+        </div>
+
+        <div class="wyz_card">
+            <h3>4. Undefined 未定义</h3>
+            <span class="wyz_tag">typeof 结果：undefined</span>
+            <pre class="wyz_code">var wyz_undef;
+// 只声明，未赋值</pre>
+            <p class="wyz_result" id="wyz_out_undefined"></p>
+            <p class="wyz_tip">变量声明后没有赋值，它的类型就是 undefined</p>
+        </div>
+
+        <div class="wyz_card">
+            <h3>5. Null 空</h3>
+            <span class="wyz_tag">typeof 结果：object（历史遗留）</span>
+            <pre class="wyz_code">var wyz_null = null;
+// 表示“空值”</pre>
+            <p class="wyz_result" id="wyz_out_null"></p>
+            <p class="wyz_tip">表示“什么都没有”，通常用于主动清空一个变量</p>
+        </div>
+
+        <div class="wyz_card">
+            <h3>6. Object 对象</h3>
+            <span class="wyz_tag">typeof 结果：object</span>
+            <pre class="wyz_code">var wyz_obj = {
+    wyz_name: "王宇智",
+    wyz_age: 18
+};</pre>
+            <p class="wyz_result" id="wyz_out_object"></p>
+            <p class="wyz_tip">花括号包裹的“键值对”集合，数组也属于对象</p>
+        </div>
+    </div>
+
+    <div class="wyz_note">
+        <strong>注意：</strong>null 用 typeof 检测时返回 "object"，这是 JavaScript 早期设计留下的
+        历史遗留问题；null 本身并不是对象，它表示空值。
+    </div>
+
+    <script>
+        // ========== 六种基本数据类型演示 ==========
+        // 1. String 字符串
+        var wyz_str = "王宇智";
+        // 2. Number 数值
+        var wyz_num = 3.14;
+        // 3. Boolean 布尔
+        var wyz_bool = true;
+        // 4. Undefined 未定义（只声明，不赋值）
+        var wyz_undef;
+        // 5. Null 空
+        var wyz_null = null;
+        // 6. Object 对象
+        var wyz_obj = { wyz_name: "王宇智", wyz_age: 18 };
+
+        // 在控制台输出每个变量的值和类型
+        console.log("wyz_str   = " + wyz_str + "  ，类型：" + typeof wyz_str);
+        console.log("wyz_num   = " + wyz_num + "  ，类型：" + typeof wyz_num);
+        console.log("wyz_bool  = " + wyz_bool + "  ，类型：" + typeof wyz_bool);
+        console.log("wyz_undef = " + wyz_undef + "  ，类型：" + typeof wyz_undef);
+        console.log("wyz_null  = " + wyz_null + "  ，类型：" + typeof wyz_null);
+        console.log("wyz_obj   = " + wyz_obj + "  ，类型：" + typeof wyz_obj);
+
+        // 把检测结果写到页面对应的卡片里
+        function wyz_show(wyz_id, wyz_text) {
+            document.getElementById(wyz_id).textContent = wyz_text;
+        }
+        wyz_show("wyz_out_string", 'typeof wyz_str → "' + typeof wyz_str + '"');
+        wyz_show("wyz_out_number", 'typeof wyz_num → "' + typeof wyz_num + '"');
+        wyz_show("wyz_out_boolean", 'typeof wyz_bool → "' + typeof wyz_bool + '"');
+        wyz_show("wyz_out_undefined", 'typeof wyz_undef → "' + typeof wyz_undef + '"');
+        wyz_show("wyz_out_null", 'typeof wyz_null → "' + typeof wyz_null + '"');
+        wyz_show("wyz_out_object", 'typeof wyz_obj → "' + typeof wyz_obj + '"');
+    </script>
+</body>
+</html>
