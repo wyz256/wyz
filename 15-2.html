@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 程序结构：条件与循环 - 王宇智</title>
+    <style>
+        /* 所有类名以 wyz_ 开始 */
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 24px;
+            color: #2c3e50;
+        }
+        .wyz_back {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .wyz_back:hover { text-decoration: underline; }
+        .wyz_header { text-align: center; margin: 8px 0 20px; }
+        .wyz_header h2 { margin: 0 0 8px; }
+        .wyz_header p { color: #666; font-size: 14px; margin: 0; }
+        .wyz_panel {
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            max-width: 860px;
+            margin: 0 auto 16px;
+        }
+        .wyz_panel h3 { margin: 0 0 12px; font-size: 17px; }
+        .wyz_panel p { font-size: 14px; color: #555; margin: 6px 0; }
+        .wyz_input {
+            border: 1px solid #dbe2ef;
+            border-radius: 6px;
+            padding: 7px 10px;
+            font-size: 14px;
+            width: 120px;
+            outline: none;
+        }
+        .wyz_input:focus { border-color: #3b82f6; }
+        .wyz_btn {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 18px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+        .wyz_btn:hover { background: #2563eb; }
+        .wyz_output {
+            font-family: Consolas, "Courier New", monospace;
+            color: #2b8a3e;
+            font-size: 15px;
+            min-height: 22px;
+            margin: 10px 0 0;
+        }
+        .wyz_table_box { margin-top: 12px; }
+        .wyz_row { margin-bottom: 4px; }
+        .wyz_cell {
+            display: inline-block;
+            background: #eef3ff;
+            color: #3b5bdb;
+            border-radius: 4px;
+            padding: 4px 8px;
+            margin: 2px;
+            font-size: 12px;
+            font-family: Consolas, "Courier New", monospace;
+        }
+    </style>
+</head>
+<body>
+    <!-- 王宇智，建立时间：2026-10-26 14:39，使用大模型：GLM-5.3，功能名称：JavaScript条件与循环程序结构演示 -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+
+    <div class="wyz_header">
+        <h2>王宇智的JavaScript · 程序结构（条件与循环）</h2>
+        <p>条件结构：if / else if / else、switch；循环结构：for、while。所有结果同时输出到控制台（F12 查看）</p>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>一、条件结构 if / else if / else（成绩等级）</h3>
+        <p>输入成绩（0-100）：≥90 优秀，≥80 良好，≥60 及格，否则不及格</p>
+        <input class="wyz_input" id="wyz_score_input" type="number" min="0" max="100" placeholder="如 85">
+        <button class="wyz_btn" onclick="wyz_check_score()">判断等级</button>
+        <p class="wyz_output" id="wyz_score_output"></p>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>二、条件结构 switch（星期查询）</h3>
+        <p>输入数字 1-7，用 switch 语句显示对应的星期</p>
+        <input class="wyz_input" id="wyz_day_input" type="number" min="1" max="7" placeholder="如 3">
+        <button class="wyz_btn" onclick="wyz_check_day()">显示星期</button>
+        <p class="wyz_output" id="wyz_day_output"></p>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>三、循环结构 for（九九乘法表）</h3>
+        <p>双重 for 循环生成九九乘法表</p>
+        <button class="wyz_btn" onclick="wyz_make_table()">生成九九乘法表</button>
+        <div class="wyz_table_box" id="wyz_table_box"></div>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>四、循环结构 while（累加求和）</h3>
+        <p>用 while 循环计算 1 + 2 + 3 + … + 100 的和</p>
+        <button class="wyz_btn" onclick="wyz_sum_100()">计算 1+2+…+100</button>
+        <p class="wyz_output" id="wyz_sum_output"></p>
+    </div>
+
+    <script>
+        // ========== 一、条件结构：if / else if / else ==========
+        function wyz_check_score() {
+            var wyz_score = Number(document.getElementById("wyz_score_input").value);
+            var wyz_grade;
+            if (isNaN(wyz_score) || document.getElementById("wyz_score_input").value === "") {
+                wyz_grade = "请先输入成绩";
+            } else if (wyz_score < 0 || wyz_score > 100) {
+                wyz_grade = "成绩必须在 0-100 之间";
+            } else if (wyz_score >= 90) {
+                wyz_grade = "优秀";
+            } else if (wyz_score >= 80) {
+                wyz_grade = "良好";
+            } else if (wyz_score >= 60) {
+                wyz_grade = "及格";
+            } else {
+                wyz_grade = "不及格";
+            }
+            document.getElementById("wyz_score_output").textContent =
+                "输入：" + document.getElementById("wyz_score_input").value + " → " + wyz_grade;
+            console.log("[if/else] " + document.getElementById("wyz_score_input").value + " → " + wyz_grade);
+        }
+
+        // ========== 二、条件结构：switch ==========
+        function wyz_check_day() {
+            var wyz_day = Number(document.getElementById("wyz_day_input").value);
+            var wyz_name;
+            switch (wyz_day) {
+                case 1: wyz_name = "星期一 (Monday)"; break;
+                case 2: wyz_name = "星期二 (Tuesday)"; break;
+                case 3: wyz_name = "星期三 (Wednesday)"; break;
+                case 4: wyz_name = "星期四 (Thursday)"; break;
+                case 5: wyz_name = "星期五 (Friday)"; break;
+                case 6: wyz_name = "星期六 (Saturday)"; break;
+                case 7: wyz_name = "星期日 (Sunday)"; break;
+                default: wyz_name = "请输入 1-7 之间的数字";
+            }
+            document.getElementById("wyz_day_output").textContent = "输入：" + wyz_day + " → " + wyz_name;
+            console.log("[switch] " + wyz_day + " → " + wyz_name);
+        }
+
+        // ========== 三、循环结构：for（九九乘法表） ==========
+        function wyz_make_table() {
+            var wyz_html = "";
+            for (var wyz_i = 1; wyz_i <= 9; wyz_i++) {
+                wyz_html += "<div class='wyz_row'>";
+                for (var wyz_j = 1; wyz_j <= wyz_i; wyz_j++) {
+                    wyz_html += "<span class='wyz_cell'>" + wyz_j + "×" + wyz_i + "=" + (wyz_i * wyz_j) + "</span>";
+                }
+                wyz_html += "</div>";
+            }
+            document.getElementById("wyz_table_box").innerHTML = wyz_html;
+            console.log("[for] 九九乘法表已生成");
+        }
+
+        // ========== 四、循环结构：while（1+2+…+100） ==========
+        function wyz_sum_100() {
+            var wyz_sum = 0;
+            var wyz_k = 1;
+            while (wyz_k <= 100) {
+                wyz_sum = wyz_sum + wyz_k;
+                wyz_k = wyz_k + 1;
+            }
+            var wyz_text = "1 + 2 + 3 + … + 100 = " + wyz_sum;
+            document.getElementById("wyz_sum_output").textContent = wyz_text;
+            console.log("[while] " + wyz_text);
+        }
+    </script>
+</body>
+</html>
