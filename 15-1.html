@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数7游戏 · 一百个盒子 - 王宇智</title>
+    <style>
+        /* 所有类名以 wyz_ 开始 */
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 24px;
+            color: #2c3e50;
+        }
+        .wyz_back {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .wyz_back:hover { text-decoration: underline; }
+        .wyz_header { text-align: center; margin: 8px 0 16px; }
+        .wyz_header h2 { margin: 0 0 8px; }
+        .wyz_header p { color: #666; font-size: 14px; margin: 0; }
+        .wyz_stat {
+            max-width: 860px;
+            margin: 0 auto 16px;
+            text-align: center;
+            font-size: 14px;
+            color: #555;
+        }
+        .wyz_box_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+            gap: 8px;
+            max-width: 860px;
+            margin: 0 auto;
+        }
+        .wyz_box {
+            height: 56px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: Consolas, "Courier New", monospace;
+        }
+        .wyz_num {
+            background: #fff;
+            border: 1px solid #dbe2ef;
+            color: #2c3e50;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+        .wyz_pass {
+            background: #fff7e8;
+            border: 2px dashed #ffb84d;
+            color: transparent;
+        }
+        .wyz_pass:hover::after {
+            content: "过";
+            color: #e8890c;
+            font-size: 14px;
+        }
+        .wyz_legend {
+            max-width: 860px;
+            margin: 16px auto 0;
+            text-align: center;
+            font-size: 13px;
+            color: #888;
+        }
+        .wyz_legend .wyz_demo_num,
+        .wyz_legend .wyz_demo_pass {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            vertical-align: middle;
+            margin: 0 4px;
+        }
+        .wyz_demo_num { background: #fff; border: 1px solid #dbe2ef; }
+        .wyz_demo_pass { background: #fff7e8; border: 2px dashed #ffb84d; }
+    </style>
+</head>
+<body>
+    <!-- 姓名：王宇智，日期：2026-10-26，功能名称：数7游戏一百个盒子演示 -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+
+    <div class="wyz_header">
+        <h2>王宇智的JavaScript · 数7游戏（一百个盒子）</h2>
+        <p>规则（逢7过）：7 的倍数、个位为 7、十位为 7 的数字要“过”，显示为空盒子；其余盒子显示数字。鼠标悬停空盒子可见“过”。</p>
+    </div>
+
+    <p class="wyz_stat" id="wyz_stat"></p>
+
+    <div class="wyz_box_grid" id="wyz_box_grid"></div>
+
+    <p class="wyz_legend">
+        <span class="wyz_demo_num"></span>数字盒子
+        <span class="wyz_demo_pass"></span>空盒子（逢7过）
+    </p>
+
+    <script>
+        // ========== 数7游戏：生成 100 个盒子 ==========
+        var wyz_grid = document.getElementById("wyz_box_grid");
+        var wyz_pass_count = 0;
+
+        // 判断一个数字是否“逢7过”（空盒子）
+        function wyz_is_pass(wyz_n) {
+            // 7 的倍数、个位是 7、十位是 7
+            return wyz_n % 7 === 0 || wyz_n % 10 === 7 || Math.floor(wyz_n / 10) === 7;
+        }
+
+        for (var wyz_i = 1; wyz_i <= 100; wyz_i++) {
+            var wyz_box = document.createElement("div");
+            if (wyz_is_pass(wyz_i)) {
+                // 满足数7规则：空盒子
+                wyz_box.className = "wyz_box wyz_pass";
+                wyz_pass_count++;
+            } else {
+                // 不满足：显示数字
+                wyz_box.className = "wyz_box wyz_num";
+                wyz_box.textContent = wyz_i;
+            }
+            wyz_grid.appendChild(wyz_box);
+        }
+
+        // 统计结果
+        var wyz_stat_text = "共 100 个盒子：空盒子（逢7过）" + wyz_pass_count +
+            " 个，数字盒子 " + (100 - wyz_pass_count) + " 个";
+        document.getElementById("wyz_stat").textContent = wyz_stat_text;
+        console.log(wyz_stat_text);
+    </script>
+</body>
+</html>

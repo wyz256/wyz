@@ -50,6 +50,9 @@
 - 使用模型: longcat-2.5-preview-free (opencode/longcat-2.5-preview-free)
 - 提示词内容: 检查13-4.html中symbol标签是否写入成功，记录时间。
 
+# 提示词记录
+
+---
 
 ## 2026-10-22 | 模型: GLM-5.3
 
@@ -83,26 +86,34 @@
 
 ---
 
-## 2026-10-22 | 模型: GLM-5.3
+## 2026-10-26 | 模型: GLM-5.3
 
-**提示词**: 提交项目
+**提示词**: 编写15-1.html,一百个盒子，里面有数字，按照数7的规则（7的倍数，个位数为7的数字等），不满足要求的显示数字，满足要求的显示空盒子。
 
-**执行内容**: 提交并推送 14-2.html（六种数据类型演示）、index.html 卡片网格更新、AGENTS.md wyz_ 命名规则及提示词记录到 Gitee。
-
----
-
-## 2026-10-22 | 模型: GLM-5.3
-
-**提示词**: 设置项目规则：使用原生的html、css和javascript实现，图标使用font目录下的iconfont图标，不适用第三方库和cdn。
-
-**执行内容**: 更新 AGENTS.md 代码风格规则（原生 HTML/CSS/JS 实现，图标使用 font/ 目录本地 iconfont，禁用第三方库与 CDN）；提示词记录文件规范为 wang_prompt.md。
+**执行内容**: 新增 15-1.html，用 JS 动态生成 100 个盒子：7 的倍数、个位或十位为 7 的显示为空盒子（逢7过），其余显示数字，并更新 index.html 作品卡片网格。
 
 ---
 
-## 2026-10-22 | 模型: GLM-5.3
+## 2026-10-26 | 模型: GLM-5.3
 
-**提示词**: 提交项目到gitee
+**提示词**: 修改规则AGENTS.md，在新建一个html文件时，都要加入注释，注释包括：王宇智，建立时间，使用的大模型，功能名称。
 
-**执行内容**: 提交并推送项目规则更新（原生实现、本地 iconfont 图标）及提示词记录文件统一为 wang_prompt.md 的变更。
+**执行内容**: 更新 AGENTS.md 作者注释规则：新建 HTML 页面的注释需包含王宇智、建立时间、使用的大模型、功能名称四项。
+
+---
+
+## 2026-10-26 | 模型: GLM-5.3
+
+**提示词**: 创建技能skill：提交到github，commit和push整个项目到 `https://github.com/wyz256/wyz.git`，公钥已设置。
+
+**执行内容**: 新增 Trae 项目 skill（.trae/skills/commit-push-github）：使用 SSH 远程 git@github.com:wyz256/wyz.git（github 远程，与 Gitee 的 origin 并存），工作流为记录提示词→提交→推送 github master。
+
+---
+
+## 2026-10-26 | 模型: GLM-5.3
+
+**提示词**: 上传到github
+
+**执行内容**: 提交并推送 15-1.html（数7游戏百盒子）、index.html 卡片更新、AGENTS.md 注释规则更新及 commit-push-github 技能到 GitHub（github 远程，首次推送）。
 
 ---
