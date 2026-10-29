@@ -133,3 +133,19 @@
 **执行内容**: 新增 15-2.html，演示条件结构（if/else if/else 成绩等级、switch 星期）与循环结构（for 九九乘法表、while 累加 1-100），更新 index.html 卡片网格，并提交推送到 GitHub。
 
 ---
+
+## 2026-10-29 | 妯″瀷: GLM-5.3
+
+**鎻愮ず璇?*: 瀹屾垚16-1.html锛屽睍绀簀avascript鏁扮粍鐨勪富瑕佹柟娉曪紝褰㈣薄涓€浜涖€俙r
+
+**鎵ц鍐呭**: 鏂板 16-1.html锛岀敤鍙鍖栨暟缁勮垶鍙板姩鐢绘紨绀烘暟缁勫鍒狅紙push/pop/shift/unshift锛夈€佹埅鍙栨嫾鎺ワ紙slice/splice/concat/join锛夈€佹煡鎵撅紙indexOf/includes锛夈€佹帓搴忥紙sort/reverse锛変笌楂橀樁鏂规硶锛坢ap/filter/reduce/forEach锛夛紝鏇存柊 index.html 鍗＄墖缃戞牸銆俙r
+---
+
+
+## 2026-10-29 | 模型: GLM-5.3
+
+**提示词**: 上传项目到gitee，github
+
+**执行内容**: 提交工作区变更并推送 master 到 Gitee（origin）与 GitHub（github）双远程。
+
+---

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 对象 - 王宇智</title>
+    <style>
+        /* 所有类名以 wyz_ 开始 */
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 24px;
+            color: #2c3e50;
+        }
+        .wyz_back {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .wyz_back:hover { text-decoration: underline; }
+        .wyz_header { text-align: center; margin: 8px 0 20px; }
+        .wyz_header h2 { margin: 0 0 8px; }
+        .wyz_header p { color: #666; font-size: 14px; margin: 0; }
+        .wyz_panel {
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            max-width: 860px;
+            margin: 0 auto 16px;
+        }
+        .wyz_panel h3 { margin: 0 0 12px; font-size: 17px; }
+        .wyz_panel p { font-size: 14px; color: #555; margin: 6px 0; }
+        .wyz_input {
+            border: 1px solid #dbe2ef;
+            border-radius: 6px;
+            padding: 7px 10px;
+            font-size: 14px;
+            width: 140px;
+            outline: none;
+        }
+        .wyz_input:focus { border-color: #3b82f6; }
+        .wyz_btn {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 18px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+        .wyz_btn:hover { background: #2563eb; }
+        .wyz_output {
+            font-family: Consolas, "Courier New", monospace;
+            color: #2b8a3e;
+            font-size: 15px;
+            min-height: 22px;
+            margin: 10px 0 0;
+            white-space: pre-wrap;
+        }
+        .wyz_card {
+            display: inline-block;
+            background: #eef3ff;
+            border: 1px solid #c9d8ff;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin: 6px 8px 6px 0;
+            font-size: 13px;
+            vertical-align: top;
+        }
+        .wyz_card b { color: #3b5bdb; font-size: 14px; }
+        .wyz_card span {
+            font-family: Consolas, "Courier New", monospace;
+            color: #555;
+        }
+        .wyz_tag {
+            display: inline-block;
+            background: #fff7e8;
+            color: #e8890c;
+            border-radius: 4px;
+            padding: 2px 8px;
+            margin: 2px 4px 2px 0;
+            font-size: 12px;
+            font-family: Consolas, "Courier New", monospace;
+        }
+    </style>
+</head>
+<body>
+    <!-- 王宇智，建立时间：2026-10-29 13:41，使用大模型：GLM-5.3，功能名称：JavaScript对象演示 -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+
+    <div class="wyz_header">
+        <h2>王宇智的JavaScript · 对象（Object）</h2>
+        <p>对象字面量、属性访问（点语法 / 中括号）、方法与 this、构造函数、for...in 遍历。所有结果同时输出到控制台（F12 查看）</p>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>一、对象字面量与属性访问</h3>
+        <p>定义学生对象 wyz_stu（姓名、年龄、专业），用点语法和中括号访问属性</p>
+        <button class="wyz_btn" onclick="wyz_show_stu()">查看学生对象</button>
+        <p class="wyz_output" id="wyz_stu_output"></p>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>二、对象的方法与 this（自我介绍）</h3>
+        <p>对象的方法中用 this 访问自身属性</p>
+        <button class="wyz_btn" onclick="wyz_call_intro()">调用 intro() 方法</button>
+        <p class="wyz_output" id="wyz_intro_output"></p>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>三、构造函数创建对象（手机）</h3>
+        <p>用构造函数批量创建手机对象，输入品牌和价格，点击按钮创建</p>
+        <input class="wyz_input" id="wyz_brand_input" type="text" placeholder="品牌，如 华为">
+        <input class="wyz_input" id="wyz_price_input" type="number" placeholder="价格，如 5999">
+        <button class="wyz_btn" onclick="wyz_make_phone()">创建手机对象</button>
+        <p class="wyz_output" id="wyz_phone_output"></p>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>四、for...in 遍历对象属性</h3>
+        <p>用 for...in 循环列出 wyz_stu 的所有属性名和属性值</p>
+        <button class="wyz_btn" onclick="wyz_for_in()">遍历学生对象</button>
+        <div id="wyz_forin_output"></div>
+    </div>
+
+    <script>
+        // ========== 一、对象字面量与属性访问 ==========
+        var wyz_stu = {
+            name: "王宇智",
+            age: 19,
+            major: "Web前端开发",
+            school: "信息工程学院"
+        };
+
+        function wyz_show_stu() {
+            var wyz_text =
+                "点语法访问：   wyz_stu.name = " + wyz_stu.name + "\n" +
+                "中括号访问：   wyz_stu[\"major\"] = " + wyz_stu["major"] + "\n" +
+                "修改属性：     wyz_stu.age = 20（原值 " + wyz_stu.age + "）\n" +
+                "新增属性：     wyz_stu.hobby = \"打篮球\"";
+            wyz_stu.age = 20;
+            wyz_stu.hobby = "打篮球";
+            wyz_text += "\n修改后输出对象：{ name: \"" + wyz_stu.name + "\", age: " + wyz_stu.age +
+                ", major: \"" + wyz_stu.major + "\", hobby: \"" + wyz_stu.hobby + "\" }";
+            document.getElementById("wyz_stu_output").textContent = wyz_text;
+            console.log("[对象字面量]", wyz_stu);
+        }
+
+        // ========== 二、对象的方法与 this ==========
+        wyz_stu.intro = function () {
+            // this 代表当前对象本身
+            return "大家好，我叫 " + this.name + "，今年 " + this.age +
+                " 岁，就读于" + this.school + "，专业是" + this.major + "。";
+        };
+
+        function wyz_call_intro() {
+            var wyz_text = wyz_stu.intro();
+            document.getElementById("wyz_intro_output").textContent = wyz_text;
+            console.log("[方法与this]", wyz_text);
+        }
+
+        // ========== 三、构造函数创建对象 ==========
+        // 构造函数约定首字母大写
+        function Phone(brand, price) {
+            this.brand = brand;
+            this.price = price;
+            this.call = function () {
+                return "用 " + this.brand + " 手机打电话…";
+            };
+        }
+
+        var wyz_phone_count = 0;
+        function wyz_make_phone() {
+            var wyz_brand = document.getElementById("wyz_brand_input").value.trim();
+            var wyz_price = Number(document.getElementById("wyz_price_input").value);
+            if (wyz_brand === "" || isNaN(wyz_price) || wyz_price <= 0) {
+                document.getElementById("wyz_phone_output").textContent = "请输入正确的品牌和价格";
+                return;
+            }
+            // 用 new 调用构造函数创建新对象
+            var wyz_phone = new Phone(wyz_brand, wyz_price);
+            wyz_phone_count++;
+            var wyz_text = "第 " + wyz_phone_count + " 部手机（new Phone 创建）：\n" +
+                "品牌 brand = \"" + wyz_phone.brand + "\"，价格 price = " + wyz_phone.price + " 元\n" +
+                "调用方法 call() → " + wyz_phone.call();
+            document.getElementById("wyz_phone_output").textContent = wyz_text;
+            console.log("[构造函数]", wyz_phone);
+        }
+
+        // ========== 四、for...in 遍历对象属性 ==========
+        function wyz_for_in() {
+            var wyz_html = "<div class='wyz_card'><b>wyz_stu 的全部属性</b><br>";
+            for (var wyz_key in wyz_stu) {
+                // 只遍历普通属性，跳过函数类型的方法
+                if (typeof wyz_stu[wyz_key] !== "function") {
+                    wyz_html += "<span class='wyz_tag'>" + wyz_key + " : " + wyz_stu[wyz_key] + "</span>";
+                }
+            }
+            wyz_html += "</div>";
+            document.getElementById("wyz_forin_output").innerHTML = wyz_html;
+            console.log("[for...in] 遍历完成，属性个数见页面标签");
+        }
+    </script>
+</body>
+</html>
