@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fetch 获取接口数据演示 - 王宇智</title>
+    <style>
+        /* 所有类名以 wyz_ 开始 */
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 24px;
+            color: #2c3e50;
+        }
+        .wyz_back {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .wyz_back:hover { text-decoration: underline; }
+        .wyz_header { text-align: center; margin: 8px 0 20px; }
+        .wyz_header h2 { margin: 0 0 8px; }
+        .wyz_header p { color: #666; font-size: 14px; margin: 0; }
+        .wyz_panel {
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            max-width: 900px;
+            margin: 0 auto 16px;
+        }
+        .wyz_panel h3 { margin: 0 0 6px; font-size: 17px; }
+        .wyz_panel p { font-size: 14px; color: #555; margin: 6px 0; }
+        .wyz_api {
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+            background: #f0f7ff;
+            color: #1d4ed8;
+            border-radius: 4px;
+            padding: 2px 8px;
+            word-break: break-all;
+        }
+        .wyz_btn {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 18px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .wyz_btn:hover { background: #2563eb; }
+        .wyz_btn:disabled { background: #9db8e8; cursor: not-allowed; }
+        .wyz_status { font-size: 13px; margin: 10px 0 0; min-height: 18px; }
+        .wyz_status.wyz_ok { color: #16a34a; }
+        .wyz_status.wyz_loading { color: #d97706; }
+        .wyz_status.wyz_err { color: #dc2626; }
+        .wyz_table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+        .wyz_table th, .wyz_table td {
+            border: 1px solid #dbe2ef;
+            padding: 8px 10px;
+            text-align: center;
+        }
+        .wyz_table th { background: #eef3ff; color: #3b5bdb; }
+        .wyz_dog_box { text-align: center; margin-top: 12px; }
+        .wyz_dog_img {
+            max-width: 340px;
+            max-height: 280px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            display: none;
+        }
+        .wyz_goods {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px;
+            margin-top: 12px;
+        }
+        .wyz_goods_card {
+            border: 1px solid #e5eaf3;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fafbff;
+        }
+        .wyz_goods_img {
+            width: 100%;
+            height: 150px;
+            object-fit: contain;
+            background: #fff;
+            padding: 8px;
+        }
+        .wyz_goods_info { padding: 10px 12px; }
+        .wyz_goods_title {
+            font-size: 13px;
+            color: #333;
+            margin: 0 0 6px;
+            height: 36px;
+            overflow: hidden;
+        }
+        .wyz_goods_price { color: #dc2626; font-weight: bold; font-size: 15px; margin: 0; }
+        .wyz_note {
+            background: #fffbea;
+            border-left: 4px solid #f59e0b;
+            border-radius: 6px;
+            padding: 10px 16px;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.9;
+        }
+        .wyz_note code {
+            background: #fdf1cd;
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-family: Consolas, "Courier New", monospace;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <!-- 王宇智，建立时间：2026-11-02 13:40，使用大模型：GLM-5.3，功能名称：fetch获取跨域接口数据演示 -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+
+    <div class="wyz_header">
+        <h2>王宇智的JavaScript · fetch 获取接口数据</h2>
+        <p>使用原生 fetch + async/await 请求允许跨域（CORS）的公开接口，数据渲染到页面。结果同时输出到控制台（F12 查看）</p>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>一、fetch 使用要点</h3>
+        <div class="wyz_note">
+            ① <code>fetch(url)</code> 返回 Promise，配合 <code>async/await</code> 可用同步写法处理异步请求<br>
+            ② <code>response.ok</code> 为 true 表示 HTTP 状态码在 200-299 之间，请求成功<br>
+            ③ <code>response.json()</code> 把响应体解析为 JS 对象（也是 Promise）<br>
+            ④ 用 <code>try / catch</code> 捕获网络错误，用状态提示区分 加载中 / 成功 / 失败
+        </div>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>二、获取用户列表并渲染表格</h3>
+        <p>接口：<span class="wyz_api">https://jsonplaceholder.typicode.com/users</span></p>
+        <button class="wyz_btn" id="wyz_user_btn" onclick="wyz_load_users()">加载用户数据</button>
+        <p class="wyz_status" id="wyz_user_status"></p>
+        <div id="wyz_user_box"></div>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>三、获取随机狗狗图片</h3>
+        <p>接口：<span class="wyz_api">https://dog.ceo/api/breeds/image/random</span></p>
+        <button class="wyz_btn" id="wyz_dog_btn" onclick="wyz_load_dog()">换一张狗狗图片</button>
+        <p class="wyz_status" id="wyz_dog_status"></p>
+        <div class="wyz_dog_box">
+            <img class="wyz_dog_img" id="wyz_dog_img" alt="随机狗狗图片">
+        </div>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>四、获取商品列表并渲染卡片</h3>
+        <p>接口：<span class="wyz_api">https://fakestoreapi.com/products</span>（取前 8 件商品）</p>
+        <button class="wyz_btn" id="wyz_goods_btn" onclick="wyz_load_goods()">加载商品数据</button>
+        <p class="wyz_status" id="wyz_goods_status"></p>
+        <div class="wyz_goods" id="wyz_goods_box"></div>
+    </div>
+
+    <script>
+        // ========== 二、fetch 用户列表：async/await + 表格渲染 ==========
+        async function wyz_load_users() {
+            var wyz_btn = document.getElementById("wyz_user_btn");
+            var wyz_status = document.getElementById("wyz_user_status");
+            wyz_btn.disabled = true;
+            wyz_status.className = "wyz_status wyz_loading";
+            wyz_status.textContent = "加载中，请稍候……";
+            try {
+                var wyz_res = await fetch("https://jsonplaceholder.typicode.com/users");
+                if (!wyz_res.ok) {
+                    throw new Error("HTTP 状态码 " + wyz_res.status);
+                }
+                var wyz_users = await wyz_res.json();
+                var wyz_html = "<table class='wyz_table'><tr><th>姓名</th><th>邮箱</th><th>电话</th><th>公司</th></tr>";
+                for (var wyz_i = 0; wyz_i < wyz_users.length; wyz_i++) {
+                    wyz_html += "<tr><td>" + wyz_users[wyz_i].name + "</td><td>" +
+                                wyz_users[wyz_i].email + "</td><td>" +
+                                wyz_users[wyz_i].phone + "</td><td>" +
+                                wyz_users[wyz_i].company.name + "</td></tr>";
+                }
+                wyz_html += "</table>";
+                document.getElementById("wyz_user_box").innerHTML = wyz_html;
+                wyz_status.className = "wyz_status wyz_ok";
+                wyz_status.textContent = "加载成功，共 " + wyz_users.length + " 位用户";
+                console.log("[fetch users] 成功获取 " + wyz_users.length + " 位用户");
+            } catch (wyz_err) {
+                wyz_status.className = "wyz_status wyz_err";
+                wyz_status.textContent = "加载失败：" + wyz_err.message + "（请检查网络后重试）";
+                console.log("[fetch users] 失败：" + wyz_err.message);
+            }
+            wyz_btn.disabled = false;
+        }
+
+        // ========== 三、fetch 随机狗狗图片 ==========
+        async function wyz_load_dog() {
+            var wyz_btn = document.getElementById("wyz_dog_btn");
+            var wyz_status = document.getElementById("wyz_dog_status");
+            var wyz_img = document.getElementById("wyz_dog_img");
+            wyz_btn.disabled = true;
+            wyz_status.className = "wyz_status wyz_loading";
+            wyz_status.textContent = "加载中，请稍候……";
+            try {
+                var wyz_res = await fetch("https://dog.ceo/api/breeds/image/random");
+                if (!wyz_res.ok) {
+                    throw new Error("HTTP 状态码 " + wyz_res.status);
+                }
+                var wyz_data = await wyz_res.json();
+                wyz_img.src = wyz_data.message;
+                wyz_img.style.display = "inline-block";
+                wyz_status.className = "wyz_status wyz_ok";
+                wyz_status.textContent = "加载成功：" + wyz_data.message;
+                console.log("[fetch dog] 图片地址：" + wyz_data.message);
+            } catch (wyz_err) {
+                wyz_status.className = "wyz_status wyz_err";
+                wyz_status.textContent = "加载失败：" + wyz_err.message + "（请检查网络后重试）";
+                console.log("[fetch dog] 失败：" + wyz_err.message);
+            }
+            wyz_btn.disabled = false;
+        }
+
+        // ========== 四、fetch 商品列表：卡片渲染 ==========
+        async function wyz_load_goods() {
+            var wyz_btn = document.getElementById("wyz_goods_btn");
+            var wyz_status = document.getElementById("wyz_goods_status");
+            wyz_btn.disabled = true;
+            wyz_status.className = "wyz_status wyz_loading";
+            wyz_status.textContent = "加载中，请稍候……";
+            try {
+                var wyz_res = await fetch("https://fakestoreapi.com/products");
+                if (!wyz_res.ok) {
+                    throw new Error("HTTP 状态码 " + wyz_res.status);
+                }
+                var wyz_products = await wyz_res.json();
+                var wyz_html = "";
+                for (var wyz_j = 0; wyz_j < 8 && wyz_j < wyz_products.length; wyz_j++) {
+                    var wyz_p = wyz_products[wyz_j];
+                    wyz_html += "<div class='wyz_goods_card'>" +
+                                "<img class='wyz_goods_img' src='" + wyz_p.image + "' alt='商品图片'>" +
+                                "<div class='wyz_goods_info'>" +
+                                "<p class='wyz_goods_title'>" + wyz_p.title + "</p>" +
+                                "<p class='wyz_goods_price'>￥" + wyz_p.price + "</p>" +
+                                "</div></div>";
+                }
+                document.getElementById("wyz_goods_box").innerHTML = wyz_html;
+                wyz_status.className = "wyz_status wyz_ok";
+                wyz_status.textContent = "加载成功，共展示 " + Math.min(8, wyz_products.length) + " 件商品";
+                console.log("[fetch goods] 成功获取 " + wyz_products.length + " 件商品，展示前 8 件");
+            } catch (wyz_err) {
+                wyz_status.className = "wyz_status wyz_err";
+                wyz_status.textContent = "加载失败：" + wyz_err.message + "（请检查网络后重试）";
+                console.log("[fetch goods] 失败：" + wyz_err.message);
+            }
+            wyz_btn.disabled = false;
+        }
+    </script>
+</body>
+</html>

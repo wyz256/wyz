@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品列表 - 王宇智</title>
+    <style>
+        /* 所有类名以 wyz_ 开始 */
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 24px;
+            color: #2c3e50;
+        }
+        .wyz_back {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .wyz_back:hover { text-decoration: underline; }
+        .wyz_header { text-align: center; margin: 8px 0 20px; }
+        .wyz_header h2 { margin: 0 0 8px; }
+        .wyz_header p { color: #666; font-size: 14px; margin: 0; }
+        .wyz_panel {
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            max-width: 960px;
+            margin: 0 auto 16px;
+        }
+        .wyz_panel h3 { margin: 0 0 6px; font-size: 17px; }
+        .wyz_panel p { font-size: 14px; color: #555; margin: 6px 0; }
+        .wyz_api {
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+            background: #f0f7ff;
+            color: #1d4ed8;
+            border-radius: 4px;
+            padding: 2px 8px;
+            word-break: break-all;
+        }
+        .wyz_status { font-size: 13px; margin: 10px 0 0; min-height: 18px; }
+        .wyz_status.wyz_ok { color: #16a34a; }
+        .wyz_status.wyz_loading { color: #d97706; }
+        .wyz_status.wyz_err { color: #dc2626; }
+        .wyz_goods {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 14px;
+            margin-top: 12px;
+        }
+        .wyz_card {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid #e5eaf3;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fafbff;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .wyz_card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+        .wyz_card_img {
+            width: 100%;
+            height: 150px;
+            object-fit: contain;
+            background: #fff;
+            padding: 8px;
+        }
+        .wyz_card_info { padding: 10px 12px; }
+        .wyz_card_title {
+            font-size: 13px;
+            color: #333;
+            margin: 0 0 6px;
+            height: 36px;
+            overflow: hidden;
+        }
+        .wyz_card_meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .wyz_card_price { color: #dc2626; font-weight: bold; font-size: 15px; margin: 0; }
+        .wyz_card_cat {
+            font-size: 11px;
+            color: #3b5bdb;
+            background: #eef3ff;
+            border-radius: 4px;
+            padding: 2px 6px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 王宇智，建立时间：2026-11-02 13:49，使用大模型：GLM-5.3，功能名称：fetch商品列表页 -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+
+    <div class="wyz_header">
+        <h2>王宇智的JavaScript · 商品列表（fetch 接口数据）</h2>
+        <p>点击任意商品卡片，跳转到 17-3-detail.html 查看详情。结果同时输出到控制台（F12 查看）</p>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>商品列表</h3>
+        <p>接口：<span class="wyz_api">https://dummyjson.com/products?limit=8</span>，默认商品列表</p>
+        <p class="wyz_status wyz_loading" id="wyz_status">加载中，请稍候……</p>
+        <div class="wyz_goods" id="wyz_goods_box"></div>
+    </div>
+
+    <script>
+        // 页面加载完成后自动请求商品列表
+        async function wyz_load_list() {
+            var wyz_status = document.getElementById("wyz_status");
+            try {
+                var wyz_res = await fetch("https://dummyjson.com/products?limit=8");
+                if (!wyz_res.ok) {
+                    throw new Error("HTTP 状态码 " + wyz_res.status);
+                }
+                var wyz_data = await wyz_res.json();
+                var wyz_html = "";
+                for (var wyz_i = 0; wyz_i < wyz_data.products.length; wyz_i++) {
+                    var wyz_p = wyz_data.products[wyz_i];
+                    // 通过 URL 参数把商品 id 传给详情页
+                    wyz_html += "<a class='wyz_card' href='17-3-detail.html?id=" + wyz_p.id + "'>" +
+                                "<img class='wyz_card_img' src='" + wyz_p.thumbnail + "' alt='商品图片'>" +
+                                "<div class='wyz_card_info'>" +
+                                "<p class='wyz_card_title'>" + wyz_p.title + "</p>" +
+                                "<div class='wyz_card_meta'>" +
+                                "<p class='wyz_card_price'>￥" + wyz_p.price + "</p>" +
+                                "<span class='wyz_card_cat'>" + wyz_p.category + "</span>" +
+                                "</div></div></a>";
+                }
+                document.getElementById("wyz_goods_box").innerHTML = wyz_html;
+                wyz_status.className = "wyz_status wyz_ok";
+                wyz_status.textContent = "加载成功，共 " + wyz_data.products.length + " 件商品，点击卡片查看详情";
+                console.log("[列表页] 成功加载 " + wyz_data.products.length + " 件商品");
+            } catch (wyz_err) {
+                wyz_status.className = "wyz_status wyz_err";
+                wyz_status.textContent = "加载失败：" + wyz_err.message + "（请检查网络后刷新重试）";
+                console.log("[列表页] 失败：" + wyz_err.message);
+            }
+        }
+        wyz_load_list();
+    </script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>远程接口测试工具 - 王宇智</title>
+    <style>
+        /* 所有类名以 wyz_ 开始 */
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 24px;
+            color: #2c3e50;
+        }
+        .wyz_back {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .wyz_back:hover { text-decoration: underline; }
+        .wyz_header { text-align: center; margin: 8px 0 20px; }
+        .wyz_header h2 { margin: 0 0 8px; }
+        .wyz_header p { color: #666; font-size: 14px; margin: 0; }
+        .wyz_panel {
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            max-width: 900px;
+            margin: 0 auto 16px;
+        }
+        .wyz_panel h3 { margin: 0 0 10px; font-size: 17px; }
+        .wyz_panel p { font-size: 14px; color: #555; margin: 6px 0; }
+        .wyz_note {
+            background: #fffbea;
+            border-left: 4px solid #f59e0b;
+            border-radius: 6px;
+            padding: 10px 16px;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.9;
+        }
+        .wyz_note code {
+            background: #fdf1cd;
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-family: Consolas, "Courier New", monospace;
+            color: #92400e;
+        }
+        .wyz_row { display: flex; gap: 10px; margin: 12px 0; flex-wrap: wrap; }
+        .wyz_select, .wyz_input {
+            border: 1px solid #dbe2ef;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 14px;
+            font-family: Consolas, "Courier New", monospace;
+            outline: none;
+        }
+        .wyz_select { width: 110px; }
+        .wyz_input { flex: 1; min-width: 300px; }
+        .wyz_select:focus, .wyz_input:focus { border-color: #3b82f6; }
+        .wyz_area {
+            width: 100%;
+            border: 1px solid #dbe2ef;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 13px;
+            font-family: Consolas, "Courier New", monospace;
+            min-height: 110px;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .wyz_area:focus { border-color: #3b82f6; }
+        .wyz_btn {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 18px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .wyz_btn:hover { background: #2563eb; }
+        .wyz_btn:disabled { background: #9db8e8; cursor: not-allowed; }
+        .wyz_quick {
+            background: #eef3ff;
+            color: #3b5bdb;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .wyz_quick:hover { background: #dce6ff; }
+        .wyz_status { font-size: 14px; margin: 12px 0 0; min-height: 20px; font-weight: bold; }
+        .wyz_status.wyz_ok { color: #16a34a; }
+        .wyz_status.wyz_loading { color: #d97706; }
+        .wyz_status.wyz_err { color: #dc2626; }
+        .wyz_code {
+            background: #1e293b;
+            color: #a5f3fc;
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            white-space: pre;
+            overflow: auto;
+            margin-top: 12px;
+            max-height: 360px;
+            min-height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 王宇智，建立时间：2026-11-02 14:20，使用大模型：GLM-5.3，功能名称：远程接口测试工具 -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+
+    <div class="wyz_header">
+        <h2>王宇智的JavaScript · 远程接口测试工具</h2>
+        <p>使用原生 fetch 测试远程接口，支持 GET / POST / PUT / PATCH / DELETE，显示返回数据与错误提示。结果同时输出到控制台（F12 查看）</p>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>一、fetch 请求要点</h3>
+        <div class="wyz_note">
+            ① <code>fetch(url, options)</code> 第二个参数配置请求：<code>method</code> 请求方法、<code>headers</code> 请求头、<code>body</code> 请求体<br>
+            ② 发送 JSON 数据需设置 <code>"Content-Type": "application/json"</code>，并用 <code>JSON.stringify()</code> 转换对象<br>
+            ③ GET / DELETE 请求通常不带 body；<code>response.status</code> 是 HTTP 状态码，<code>response.ok</code> 表示 200-299<br>
+            ④ 网络断开、域名错误等会在 <code>catch</code> 中捕获；HTTP 错误（如 404）需要自行判断 <code>ok</code> 后抛出
+        </div>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>二、快捷示例（点击填充下方表单，再点发送）</h3>
+        <div class="wyz_row">
+            <button class="wyz_quick" onclick="wyz_fill('GET_LIST')">GET 文章列表</button>
+            <button class="wyz_quick" onclick="wyz_fill('GET_ONE')">GET 单篇文章</button>
+            <button class="wyz_quick" onclick="wyz_fill('POST')">POST 新建文章</button>
+            <button class="wyz_quick" onclick="wyz_fill('PUT')">PUT 更新文章</button>
+            <button class="wyz_quick" onclick="wyz_fill('PATCH')">PATCH 修改标题</button>
+            <button class="wyz_quick" onclick="wyz_fill('DELETE')">DELETE 删除文章</button>
+            <button class="wyz_quick" onclick="wyz_fill('NOT_FOUND')">GET 不存在文章(404)</button>
+        </div>
+        <p>示例 POST 接口：<span class="wyz_api" style="background:#f0f7ff;color:#1d4ed8;border-radius:4px;padding:2px 8px;font-family:Consolas,monospace;font-size:12px;">https://jsonplaceholder.typicode.com/posts</span>（POST 会返回 201 和新建的内容）</p>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>三、请求配置</h3>
+        <div class="wyz_row">
+            <select class="wyz_select" id="wyz_method">
+                <option>GET</option>
+                <option>POST</option>
+                <option>PUT</option>
+                <option>PATCH</option>
+                <option>DELETE</option>
+            </select>
+            <input class="wyz_input" id="wyz_url" value="https://jsonplaceholder.typicode.com/posts/1" placeholder="输入接口地址">
+            <button class="wyz_btn" id="wyz_send_btn" onclick="wyz_send_request()">发送请求</button>
+        </div>
+        <textarea class="wyz_area" id="wyz_body" placeholder="请求体（JSON 格式，GET / DELETE 时可留空）"></textarea>
+        <p class="wyz_status" id="wyz_status">等待发送请求……</p>
+        <div class="wyz_code" id="wyz_response">（响应数据将显示在这里）</div>
+    </div>
+
+    <script>
+        // ========== 一、快捷示例配置 ==========
+        var wyz_base = "https://jsonplaceholder.typicode.com";
+        var wyz_presets = {
+            GET_LIST: { method: "GET", url: wyz_base + "/posts", body: "" },
+            GET_ONE: { method: "GET", url: wyz_base + "/posts/1", body: "" },
+            POST: {
+                method: "POST",
+                url: wyz_base + "/posts",
+                body: '{\n  "title": "王宇智的测试文章",\n  "body": "这是通过 fetch 发送的 POST 请求内容",\n  "userId": 1\n}'
+            },
+            PUT: {
+                method: "PUT",
+                url: wyz_base + "/posts/1",
+                body: '{\n  "id": 1,\n  "title": "王宇智更新后的标题",\n  "body": "PUT 是整体更新",\n  "userId": 1\n}'
+            },
+            PATCH: { method: "PATCH", url: wyz_base + "/posts/1", body: '{\n  "title": "王宇智只修改标题"\n}' },
+            DELETE: { method: "DELETE", url: wyz_base + "/posts/1", body: "" },
+            NOT_FOUND: { method: "GET", url: wyz_base + "/posts/9999", body: "" }
+        };
+
+        function wyz_fill(wyz_key) {
+            var wyz_p = wyz_presets[wyz_key];
+            document.getElementById("wyz_method").value = wyz_p.method;
+            document.getElementById("wyz_url").value = wyz_p.url;
+            document.getElementById("wyz_body").value = wyz_p.body;
+            console.log("[填充示例] " + wyz_p.method + " " + wyz_p.url);
+        }
+
+        // ========== 二、发送请求（核心） ==========
+        async function wyz_send_request() {
+            var wyz_btn = document.getElementById("wyz_send_btn");
+            var wyz_status = document.getElementById("wyz_status");
+            var wyz_code = document.getElementById("wyz_response");
+            var wyz_method = document.getElementById("wyz_method").value;
+            var wyz_url = document.getElementById("wyz_url").value.trim();
+            var wyz_body_text = document.getElementById("wyz_body").value.trim();
+
+            if (!wyz_url) {
+                wyz_status.className = "wyz_status wyz_err";
+                wyz_status.textContent = "错误提示：请先填写接口地址";
+                return;
+            }
+            // POST / PUT / PATCH 需要 JSON 请求体，先校验格式
+            var wyz_options = { method: wyz_method };
+            if (wyz_method !== "GET" && wyz_method !== "DELETE" && wyz_body_text) {
+                try {
+                    JSON.parse(wyz_body_text);
+                } catch (wyz_parse_err) {
+                    wyz_status.className = "wyz_status wyz_err";
+                    wyz_status.textContent = "错误提示：请求体不是合法的 JSON —— " + wyz_parse_err.message;
+                    console.log("[请求] 请求体 JSON 格式错误：" + wyz_parse_err.message);
+                    return;
+                }
+                wyz_options.headers = { "Content-Type": "application/json" };
+                wyz_options.body = wyz_body_text;
+            }
+
+            wyz_btn.disabled = true;
+            wyz_status.className = "wyz_status wyz_loading";
+            wyz_status.textContent = "请求中…… " + wyz_method + " " + wyz_url;
+            var wyz_start = Date.now();
+            try {
+                var wyz_res = await fetch(wyz_url, wyz_options);
+                var wyz_cost = Date.now() - wyz_start;
+                var wyz_data = await wyz_res.json();
+                if (!wyz_res.ok) {
+                    // HTTP 错误（404、500 等）：显示状态码和接口返回的错误信息
+                    throw new Error("HTTP " + wyz_res.status + " " + wyz_res.statusText + "，接口返回：" + JSON.stringify(wyz_data));
+                }
+                wyz_status.className = "wyz_status wyz_ok";
+                wyz_status.textContent = "请求成功：HTTP " + wyz_res.status + " " + wyz_res.statusText + "，耗时 " + wyz_cost + " ms";
+                wyz_code.textContent = JSON.stringify(wyz_data, null, 2);
+                console.log("[响应] HTTP " + wyz_res.status + "，耗时 " + wyz_cost + " ms");
+                console.log(wyz_data);
+            } catch (wyz_err) {
+                var wyz_cost2 = Date.now() - wyz_start;
+                wyz_status.className = "wyz_status wyz_err";
+                wyz_status.textContent = "请求失败（耗时 " + wyz_cost2 + " ms）：" + wyz_err.message;
+                wyz_code.textContent = "错误详情：\n" + wyz_err.message + "\n\n常见原因：\n1. 接口地址写错（404）\n2. 网络断开或域名无法访问\n3. 接口不允许该请求方法（CORS）";
+                console.log("[错误] " + wyz_err.message);
+            }
+            wyz_btn.disabled = false;
+        }
+    </script>
+</body>
+</html>

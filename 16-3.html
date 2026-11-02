@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCTV节目官网 · 新闻周刊 - 王宇智</title>
+    <link rel="stylesheet" href="font/font_5244705_jfikdi7y3ca/iconfont.css">
+    <style>
+        /* 所有类名以 wyz_ 开始 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #fff;
+            color: #333;
+        }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* ---------- 返回首页（练习要求） ---------- */
+        .wyz_back {
+            position: fixed;
+            left: 12px;
+            bottom: 12px;
+            z-index: 99;
+            background: rgba(0, 0, 0, 0.55);
+            color: #fff;
+            font-size: 12px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+        }
+        .wyz_back:hover { background: rgba(0, 0, 0, 0.75); }
+
+        /* ---------- 第一行：顶部黑色主导航 ---------- */
+        .wyz_topbar {
+            background: #1a1a1e;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 13px;
+            color: #d4d4d8;
+        }
+        .wyz_topbar_left { display: flex; align-items: center; flex: 1; min-width: 0; }
+        .wyz_topnav { display: flex; align-items: center; }
+        .wyz_topnav a {
+            padding: 0 11px;
+            line-height: 40px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            transition: color 0.2s;
+        }
+        .wyz_topnav a:hover { color: #fff; }
+        .wyz_topnav .wyz_cur { color: #f04142; }
+        .wyz_topnav .wyz_cur .iconfont { color: #f04142; margin-right: 3px; font-size: 14px; }
+        .wyz_live_cn { color: #e8833a; }
+        .wyz_arrow { font-size: 10px; margin-left: 2px; color: #8a8a92; }
+        .wyz_sep {
+            width: 1px;
+            height: 14px;
+            background: #3f3f46;
+            margin: 0 12px;
+        }
+        .wyz_aigc {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            padding: 0 10px;
+        }
+        .wyz_aigc_badge {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            color: #fff;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 3px;
+            letter-spacing: 0.5px;
+        }
+        .wyz_topbar_right { display: flex; align-items: center; gap: 18px; color: #d4d4d8; }
+        .wyz_topbar_right .iconfont { font-size: 17px; cursor: pointer; transition: color 0.2s; }
+        .wyz_topbar_right .iconfont:hover { color: #fff; }
+
+        /* ---------- 第二行：频道细分导航 ---------- */
+        .wyz_subbar {
+            background: #1a1a1e;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px 6px;
+            font-size: 12px;
+            color: #9d9da6;
+            overflow: hidden;
+        }
+        .wyz_subnav { display: flex; }
+        .wyz_subnav a { padding: 0 11px; white-space: nowrap; transition: color 0.2s; }
+        .wyz_subnav a:hover { color: #fff; }
+
+        /* ---------- 紫色渐变容器（含官网导航行 + 展示区） ---------- */
+        .wyz_hero_wrap {
+            position: relative;
+            background: linear-gradient(180deg, #2b1e5e 0%, #3b2a80 34%, #4a36a0 60%, #5b44bd 100%);
+            overflow: hidden;
+        }
+        /* 波浪形装饰光斑 */
+        .wyz_wave1, .wyz_wave2, .wyz_wave3 {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .wyz_wave1 {
+            width: 1300px; height: 500px;
+            background: rgba(255, 255, 255, 0.06);
+            top: 60px; left: -200px;
+            transform: rotate(-8deg);
+        }
+        .wyz_wave2 {
+            width: 1100px; height: 420px;
+            background: rgba(122, 92, 255, 0.25);
+            top: 140px; right: -300px;
+            transform: rotate(6deg);
+        }
+        .wyz_wave3 {
+            width: 900px; height: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            bottom: -120px; left: 10%;
+            transform: rotate(-4deg);
+        }
+
+        /* ---------- 第三行：节目官网导航 ---------- */
+        .wyz_sitebar {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            color: #e6e2f7;
+        }
+        .wyz_logo {
+            display: flex;
+            align-items: center;
+            margin-right: 22px;
+            font-weight: bold;
+            font-size: 21px;
+            color: #fff;
+            letter-spacing: 1px;
+            font-style: italic;
+        }
+        .wyz_logo .wyz_dot {
+            display: inline-block;
+            width: 8px; height: 8px;
+            background: #f04142;
+            border-radius: 50%;
+            margin: 6px 2px 0 1px;
+        }
+        .wyz_logo .wyz_logo_sub { font-size: 13px; font-style: normal; font-weight: normal; margin-left: 8px; color: #d8d2f0; }
+        .wyz_sitenav { display: flex; align-items: center; flex: 1; font-size: 14px; }
+        .wyz_sitenav > a { padding: 0 12px; line-height: 58px; white-space: nowrap; display: flex; align-items: center; transition: color 0.2s; }
+        .wyz_sitenav > a:hover { color: #fff; }
+        .wyz_site_right { display: flex; align-items: center; }
+
+        /* 搜索框 */
+        .wyz_search {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 18px;
+            height: 34px;
+            padding: 0 4px 0 14px;
+            width: 300px;
+        }
+        .wyz_search input {
+            border: none;
+            outline: none;
+            flex: 1;
+            font-size: 13px;
+            color: #333;
+            min-width: 0;
+        }
+        .wyz_search input::placeholder { color: #999; }
+        .wyz_hot {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+            margin: 0 8px;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        .wyz_hot .iconfont { color: #f04142; font-size: 13px; margin-right: 2px; }
+        .wyz_search_btn {
+            width: 46px; height: 28px;
+            border: none;
+            border-radius: 14px;
+            background: #2f7bff;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .wyz_search_btn:hover { background: #1e63e0; }
+        .wyz_search_btn .iconfont { font-size: 15px; }
+
+        /* ---------- 展示区：栏目头像 + 简介 + 分享 ---------- */
+        .wyz_showcase {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 26px 16px 64px;
+            color: #fff;
+        }
+        .wyz_avatar {
+            width: 96px; height: 96px;
+            margin: 0 auto 16px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 50% 38%, #4a3b22, #1c1408 72%);
+            border: 4px solid #0e0b04;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.85), 0 6px 18px rgba(0, 0, 0, 0.45);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #e9c258;
+        }
+        .wyz_avatar_icon { font-size: 30px; line-height: 1; }
+        .wyz_avatar_name {
+            font-size: 11px;
+            margin-top: 4px;
+            letter-spacing: 2px;
+            color: #f3d98b;
+            font-weight: bold;
+        }
+        .wyz_showcase h1 {
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 14px;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+        }
+        .wyz_intro {
+            max-width: 760px;
+            margin: 0 auto 22px;
+            font-size: 14px;
+            line-height: 1.9;
+            color: #ece8fb;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+        }
+        .wyz_share { display: flex; align-items: center; justify-content: center; gap: 14px; font-size: 13px; color: #d8d2f0; }
+        .wyz_share_icon {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
+        }
+        .wyz_share_icon:hover { transform: translateY(-3px); filter: brightness(1.15); }
+        .wyz_share_green  { background: #3cb54a; }
+        .wyz_share_red    { background: #f04142; }
+        .wyz_share_yellow { background: #f5a623; }
+        .wyz_share_blue   { background: #4aa3f0; }
+
+        /* ---------- 底部留白区（图中页面下方为白色内容区） ---------- */
+        .wyz_body_holder { height: 90px; background: #fff; }
+    </style>
+</head>
+<body>
+    <!-- 王宇智，建立时间：2026-10-29 14:10，使用大模型：GLM-5.3，功能名称：CCTV节目官网新闻周刊页面仿写 -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+
+    <!-- 第一行：顶部黑色主导航 -->
+    <div class="wyz_topbar">
+        <div class="wyz_topbar_left">
+            <nav class="wyz_topnav">
+                <a class="wyz_cur" href="#"><span class="iconfont icon-shouye_huaban1"></span>首页</a>
+                <a href="#">时政<span class="wyz_arrow">∨</span></a>
+                <a href="#">新闻</a>
+                <a href="#">评论</a>
+                <a href="#">视频</a>
+                <a href="#">财经</a>
+                <a href="#">体育</a>
+                <a href="#">教育</a>
+                <a class="wyz_live_cn" href="#">新闻直播·中国</a>
+                <a href="#">4K</a>
+                <span class="wyz_sep"></span>
+                <a href="#">CCTV直播<span class="wyz_arrow">∨</span></a>
+                <span class="wyz_sep"></span>
+                <a href="#">中<span class="wyz_arrow">∨</span></a>
+                <a class="wyz_aigc" href="#"><span class="wyz_aigc_badge">AIGC</span></a>
+            </nav>
+        </div>
+        <div class="wyz_topbar_right">
+            <span class="iconfont icon-sousuo_huaban1" title="搜索"></span>
+            <span class="iconfont icon-shoucang" title="收藏"></span>
+            <span class="iconfont icon-shenglve" title="更多"></span>
+        </div>
+    </div>
+
+    <!-- 第二行：频道细分导航 -->
+    <div class="wyz_subbar">
+        <nav class="wyz_subnav">
+            <a href="#">地方</a>
+            <a href="#">乡村振兴</a>
+            <a href="#">生态</a>
+            <a href="#">一带一路</a>
+            <a href="#">史博</a>
+            <a href="#">文化</a>
+            <a href="#">旅游</a>
+            <a href="#">科普</a>
+            <a href="#">健康</a>
+            <a href="#">乐动</a>
+            <a href="#">综艺</a>
+            <a href="#">艺术</a>
+            <a href="#">数智</a>
+            <a href="#">5G</a>
+            <a href="#">产业+</a>
+            <a href="#">央视好物</a>
+        </nav>
+    </div>
+
+    <!-- 紫色渐变区：官网导航 + 栏目展示 -->
+    <div class="wyz_hero_wrap">
+        <div class="wyz_wave1"></div>
+        <div class="wyz_wave2"></div>
+        <div class="wyz_wave3"></div>
+
+        <!-- 第三行：节目官网导航 -->
+        <div class="wyz_sitebar">
+            <a class="wyz_logo" href="#">CCTV<span class="wyz_dot"></span><span class="wyz_logo_sub">节目官网</span></a>
+            <nav class="wyz_sitenav">
+                <a href="#">直播<span class="wyz_arrow">∨</span></a>
+                <a href="#">节目单</a>
+                <a href="#">频道大全<span class="wyz_arrow">∨</span></a>
+                <a href="#">栏目大全<span class="wyz_arrow">∨</span></a>
+                <a href="#">片库</a>
+                <a href="#">热榜</a>
+                <a href="#">看点<span class="wyz_arrow">∨</span></a>
+                <a href="#">主持人</a>
+                <a href="#">全部<span class="wyz_arrow">∨</span></a>
+            </nav>
+            <div class="wyz_site_right">
+                <div class="wyz_search">
+                    <input type="text" placeholder="今日说法">
+                    <span class="wyz_hot"><span class="iconfont icon-dianzan"></span>热榜</span>
+                    <button class="wyz_search_btn" title="搜索"><span class="iconfont icon-sousuo_huaban1"></span></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 栏目展示区 -->
+        <div class="wyz_showcase">
+            <div class="wyz_avatar">
+                <span class="iconfont icon-shipin wyz_avatar_icon"></span>
+                <span class="wyz_avatar_name">新闻周刊</span>
+            </div>
+            <h1>新闻周刊</h1>
+            <p class="wyz_intro">我们追求的是希望作一本有理想、有责任感、有尊严、能记录历史的新闻杂志，而我们更期待的，是能在与您的沟通交流中获得启迪。</p>
+            <div class="wyz_share">
+                分享到：
+                <span class="wyz_share_icon wyz_share_green"><span class="iconfont icon-weixin"></span></span>
+                <span class="wyz_share_icon wyz_share_red"><span class="iconfont icon-dianzan"></span></span>
+                <span class="wyz_share_icon wyz_share_yellow"><span class="iconfont icon-shoucang"></span></span>
+                <span class="wyz_share_icon wyz_share_blue"><span class="iconfont icon-pinglun"></span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页面下方白色内容区占位 -->
+    <div class="wyz_body_holder"></div>
+</body>
+</html>

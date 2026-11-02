@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON 数据格式演示 - 王宇智</title>
+    <style>
+        /* 所有类名以 wyz_ 开始 */
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 24px;
+            color: #2c3e50;
+        }
+        .wyz_back {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .wyz_back:hover { text-decoration: underline; }
+        .wyz_header { text-align: center; margin: 8px 0 20px; }
+        .wyz_header h2 { margin: 0 0 8px; }
+        .wyz_header p { color: #666; font-size: 14px; margin: 0; }
+        .wyz_panel {
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            max-width: 860px;
+            margin: 0 auto 16px;
+        }
+        .wyz_panel h3 { margin: 0 0 12px; font-size: 17px; }
+        .wyz_panel p { font-size: 14px; color: #555; margin: 6px 0; }
+        .wyz_rules {
+            background: #f0f7ff;
+            border-left: 4px solid #3b82f6;
+            border-radius: 6px;
+            padding: 10px 16px;
+            font-size: 14px;
+            color: #444;
+            line-height: 1.9;
+        }
+        .wyz_rules code {
+            background: #e3ecfb;
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-family: Consolas, "Courier New", monospace;
+            color: #1d4ed8;
+        }
+        .wyz_btn {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 18px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .wyz_btn:hover { background: #2563eb; }
+        .wyz_btn.wyz_green { background: #16a34a; }
+        .wyz_btn.wyz_green:hover { background: #15803d; }
+        .wyz_code {
+            background: #1e293b;
+            color: #a5f3fc;
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            white-space: pre;
+            overflow-x: auto;
+            margin-top: 12px;
+            min-height: 20px;
+        }
+        .wyz_table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+        .wyz_table th, .wyz_table td {
+            border: 1px solid #dbe2ef;
+            padding: 8px 12px;
+            text-align: center;
+        }
+        .wyz_table th { background: #eef3ff; color: #3b5bdb; }
+        .wyz_table td { font-family: Consolas, "Courier New", monospace; }
+    </style>
+</head>
+<body>
+    <!-- 王宇智，建立时间：2026-11-02 13:32，使用大模型：GLM-5.3，功能名称：JSON数据格式演示 -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+
+    <div class="wyz_header">
+        <h2>王宇智的JavaScript · JSON 数据格式</h2>
+        <p>JSON 语法规则、JSON.stringify() 序列化、JSON.parse() 解析。所有结果同时输出到控制台（F12 查看）</p>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>一、JSON 语法规则</h3>
+        <div class="wyz_rules">
+            ① 键名必须用<strong>双引号</strong>包裹：{"name": "王宇智"}<br>
+            ② 值的类型只能是：<code>string</code>（双引号）、<code>number</code>、<code>boolean</code>、<code>null</code>、<code>array</code>、<code>object</code><br>
+            ③ JSON 是纯文本字符串，与语言无关，常用于数据传输和存储<br>
+            ④ 与 JS 对象字面量的区别：JSON 不允许函数、undefined、注释和末尾多余逗号
+        </div>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>二、JSON.stringify()：把 JS 对象转成 JSON 字符串</h3>
+        <p>点击按钮，将 JS 对象（含数组、布尔值）序列化为 JSON 字符串（第三个参数 2 表示缩进美化）</p>
+        <button class="wyz_btn" onclick="wyz_to_string()">序列化 wyz_student 对象</button>
+        <div class="wyz_code" id="wyz_stringify_output">（点击按钮后显示）</div>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>三、JSON.parse()：把 JSON 字符串解析成 JS 对象</h3>
+        <p>点击按钮，解析一段学生数组 JSON 文本，并用 for 循环渲染成表格</p>
+        <button class="wyz_btn wyz_green" onclick="wyz_to_parse()">解析学生 JSON 数组</button>
+        <div id="wyz_parse_box"></div>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>四、解析 → 修改 → 再序列化（综合演示）</h3>
+        <p>给上表每位学生加 5 分（不超过 100），再序列化回 JSON 字符串</p>
+        <button class="wyz_btn" onclick="wyz_add_score()">全员加 5 分并重新序列化</button>
+        <div class="wyz_code" id="wyz_modify_output">（点击按钮后显示）</div>
+    </div>
+
+    <script>
+        // ========== 一、演示数据 ==========
+        var wyz_student = {
+            wyz_name: "王宇智",
+            wyz_age: 19,
+            wyz_hobbies: ["网页设计", "篮球", "音乐"],
+            wyz_active: true,
+            wyz_note: null
+        };
+
+        var wyz_json_text = '[{"wyz_name":"张三","wyz_age":18,"wyz_score":92},' +
+                            '{"wyz_name":"李四","wyz_age":19,"wyz_score":85},' +
+                            '{"wyz_name":"王五","wyz_age":18,"wyz_score":97}]';
+        var wyz_parsed = null;
+
+        // ========== 二、JSON.stringify() ==========
+        function wyz_to_string() {
+            var wyz_json_str = JSON.stringify(wyz_student, null, 2);
+            document.getElementById("wyz_stringify_output").textContent = wyz_json_str;
+            console.log("[stringify] JS对象 → JSON字符串：\n" + wyz_json_str);
+        }
+
+        // ========== 三、JSON.parse() ==========
+        function wyz_to_parse() {
+            wyz_parsed = JSON.parse(wyz_json_text);
+            var wyz_html = "<table class='wyz_table'><tr><th>姓名</th><th>年龄</th><th>成绩</th></tr>";
+            for (var wyz_i = 0; wyz_i < wyz_parsed.length; wyz_i++) {
+                wyz_html += "<tr><td>" + wyz_parsed[wyz_i].wyz_name + "</td><td>" +
+                            wyz_parsed[wyz_i].wyz_age + "</td><td>" +
+                            wyz_parsed[wyz_i].wyz_score + "</td></tr>";
+            }
+            wyz_html += "</table>";
+            document.getElementById("wyz_parse_box").innerHTML = wyz_html;
+            console.log("[parse] 解析出 " + wyz_parsed.length + " 位学生，第一条：" + wyz_parsed[0].wyz_name);
+        }
+
+        // ========== 四、解析 → 修改 → 再序列化 ==========
+        function wyz_add_score() {
+            if (wyz_parsed === null) {
+                document.getElementById("wyz_modify_output").textContent = "请先点击上方按钮解析学生 JSON 数组";
+                return;
+            }
+            for (var wyz_j = 0; wyz_j < wyz_parsed.length; wyz_j++) {
+                wyz_parsed[wyz_j].wyz_score = Math.min(wyz_parsed[wyz_j].wyz_score + 5, 100);
+            }
+            var wyz_new_json = JSON.stringify(wyz_parsed, null, 2);
+            document.getElementById("wyz_modify_output").textContent = wyz_new_json;
+            console.log("[综合] 加分后重新序列化：\n" + wyz_new_json);
+        }
+    </script>
+</body>
+</html>

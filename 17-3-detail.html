@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品详情 - 王宇智</title>
+    <style>
+        /* 所有类名以 wyz_ 开始 */
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 24px;
+            color: #2c3e50;
+        }
+        .wyz_back {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .wyz_back:hover { text-decoration: underline; }
+        .wyz_header { text-align: center; margin: 8px 0 20px; }
+        .wyz_header h2 { margin: 0 0 8px; }
+        .wyz_header p { color: #666; font-size: 14px; margin: 0; }
+        .wyz_panel {
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            max-width: 860px;
+            margin: 0 auto 16px;
+        }
+        .wyz_status { font-size: 14px; margin: 10px 0 0; min-height: 18px; }
+        .wyz_status.wyz_loading { color: #d97706; }
+        .wyz_status.wyz_err { color: #dc2626; }
+        .wyz_detail { display: flex; gap: 24px; flex-wrap: wrap; }
+        .wyz_detail_img {
+            width: 300px;
+            height: 300px;
+            object-fit: contain;
+            background: #fafbff;
+            border: 1px solid #e5eaf3;
+            border-radius: 10px;
+            padding: 12px;
+        }
+        .wyz_detail_info { flex: 1; min-width: 260px; }
+        .wyz_detail_title { font-size: 20px; margin: 0 0 10px; }
+        .wyz_detail_price { color: #dc2626; font-weight: bold; font-size: 24px; margin: 0 0 12px; }
+        .wyz_tag {
+            display: inline-block;
+            font-size: 12px;
+            color: #3b5bdb;
+            background: #eef3ff;
+            border-radius: 4px;
+            padding: 3px 8px;
+            margin: 0 6px 6px 0;
+        }
+        .wyz_desc {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.8;
+            border-top: 1px dashed #dbe2ef;
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+        .wyz_btn {
+            display: inline-block;
+            background: #3b82f6;
+            color: #fff;
+            text-decoration: none;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 18px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 14px;
+        }
+        .wyz_btn:hover { background: #2563eb; }
+    </style>
+</head>
+<body>
+    <!-- 王宇智，建立时间：2026-11-02 13:49，使用大模型：GLM-5.3，功能名称：fetch商品详情页 -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+    <a class="wyz_back" href="17-3.html">← 返回商品列表</a>
+
+    <div class="wyz_header">
+        <h2>王宇智的JavaScript · 商品详情（fetch 接口数据）</h2>
+        <p>从 URL 读取商品 id，请求 https://dummyjson.com/products/{id} 获取单个商品。结果同时输出到控制台（F12 查看）</p>
+    </div>
+
+    <div class="wyz_panel">
+        <p class="wyz_status wyz_loading" id="wyz_status">加载中，请稍候……</p>
+        <div class="wyz_detail" id="wyz_detail_box"></div>
+        <a class="wyz_btn" href="17-3.html">返回商品列表</a>
+    </div>
+
+    <script>
+        // 从当前页面地址中取出 id 参数，例如 17-3-detail.html?id=3
+        var wyz_id = new URLSearchParams(location.search).get("id");
+
+        async function wyz_load_detail() {
+            var wyz_status = document.getElementById("wyz_status");
+            if (!wyz_id) {
+                wyz_status.className = "wyz_status wyz_err";
+                wyz_status.textContent = "未指定商品 id，请从商品列表页点击卡片进入";
+                return;
+            }
+            try {
+                var wyz_res = await fetch("https://dummyjson.com/products/" + wyz_id);
+                if (!wyz_res.ok) {
+                    throw new Error("HTTP 状态码 " + wyz_res.status + "（商品不存在）");
+                }
+                var wyz_p = await wyz_res.json();
+                document.title = wyz_p.title + " - 王宇智";
+                document.getElementById("wyz_detail_box").innerHTML =
+                    "<img class='wyz_detail_img' src='" + wyz_p.thumbnail + "' alt='商品图片'>" +
+                    "<div class='wyz_detail_info'>" +
+                    "<h3 class='wyz_detail_title'>" + wyz_p.title + "</h3>" +
+                    "<p class='wyz_detail_price'>￥" + wyz_p.price + "</p>" +
+                    "<span class='wyz_tag'>品牌：" + wyz_p.brand + "</span>" +
+                    "<span class='wyz_tag'>分类：" + wyz_p.category + "</span>" +
+                    "<span class='wyz_tag'>评分：" + wyz_p.rating + "</span>" +
+                    "<span class='wyz_tag'>库存：" + wyz_p.stock + "</span>" +
+                    "<p class='wyz_desc'>" + wyz_p.description + "</p>" +
+                    "</div>";
+                wyz_status.className = "wyz_status";
+                wyz_status.textContent = "商品 id：" + wyz_id + "，加载成功";
+                console.log("[详情页] 商品 id=" + wyz_id + "：" + wyz_p.title + "，￥" + wyz_p.price);
+            } catch (wyz_err) {
+                wyz_status.className = "wyz_status wyz_err";
+                wyz_status.textContent = "加载失败：" + wyz_err.message + "（请检查网络或 id 是否正确）";
+                console.log("[详情页] 失败：" + wyz_err.message);
+            }
+        }
+        wyz_load_detail();
+    </script>
+</body>
+</html>

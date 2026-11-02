@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 两种定时器演示 - 王宇智</title>
+    <style>
+        /* 所有类名以 wyz_ 开始 */
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 24px;
+            color: #2c3e50;
+        }
+        .wyz_back {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .wyz_back:hover { text-decoration: underline; }
+        .wyz_header { text-align: center; margin: 8px 0 20px; }
+        .wyz_header h2 { margin: 0 0 8px; }
+        .wyz_header p { color: #666; font-size: 14px; margin: 0; }
+        .wyz_panel {
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            max-width: 860px;
+            margin: 0 auto 16px;
+        }
+        .wyz_panel h3 { margin: 0 0 10px; font-size: 17px; }
+        .wyz_panel p { font-size: 14px; color: #555; margin: 6px 0; }
+        .wyz_note {
+            background: #fffbea;
+            border-left: 4px solid #f59e0b;
+            border-radius: 6px;
+            padding: 10px 16px;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.9;
+        }
+        .wyz_note code {
+            background: #fdf1cd;
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-family: Consolas, "Courier New", monospace;
+            color: #92400e;
+        }
+        .wyz_btn {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 18px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-right: 8px;
+        }
+        .wyz_btn:hover { background: #2563eb; }
+        .wyz_btn:disabled { background: #9db8e8; cursor: not-allowed; }
+        .wyz_btn.wyz_red { background: #dc2626; }
+        .wyz_btn.wyz_red:hover { background: #b91c1c; }
+        .wyz_btn.wyz_green { background: #16a34a; }
+        .wyz_btn.wyz_green:hover { background: #15803d; }
+        .wyz_status {
+            font-size: 14px;
+            margin: 12px 0 0;
+            min-height: 20px;
+            font-family: Consolas, "Courier New", monospace;
+        }
+        .wyz_status.wyz_waiting { color: #d97706; }
+        .wyz_status.wyz_done { color: #16a34a; }
+        .wyz_status.wyz_cancel { color: #dc2626; }
+        .wyz_clock {
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 46px;
+            font-weight: bold;
+            color: #1e293b;
+            letter-spacing: 3px;
+            text-align: center;
+            background: #f0f4ff;
+            border-radius: 10px;
+            padding: 18px 0;
+            margin: 12px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- 王宇智，建立时间：2026-11-02 14:28，使用大模型：GLM-5.3，功能名称：JavaScript两种定时器演示 -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+
+    <div class="wyz_header">
+        <h2>王宇智的JavaScript · 两种定时器</h2>
+        <p>setTimeout（延时一次执行）与 setInterval（周期重复执行）。所有结果同时输出到控制台（F12 查看）</p>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>一、定时器要点</h3>
+        <div class="wyz_note">
+            ① <code>setTimeout(函数, 毫秒)</code>：延时指定毫秒后执行<strong>一次</strong>，返回定时器编号<br>
+            ② <code>clearTimeout(编号)</code>：取消尚未执行的延时定时器<br>
+            ③ <code>setInterval(函数, 毫秒)</code>：每隔指定毫秒<strong>重复</strong>执行，返回定时器编号<br>
+            ④ <code>clearInterval(编号)</code>：停止周期定时器；编号从 1 开始递增，必须保存才能清除
+        </div>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>二、setTimeout / clearTimeout：延时执行（可取消）</h3>
+        <p>点击按钮设定 3 秒延时；执行前可随时取消，到时后自动显示问候语</p>
+        <button class="wyz_btn" id="wyz_delay_btn" onclick="wyz_start_delay()">3 秒后显示问候</button>
+        <button class="wyz_btn wyz_red" id="wyz_cancel_btn" onclick="wyz_cancel_delay()" disabled>取消执行 (clearTimeout)</button>
+        <p class="wyz_status" id="wyz_delay_status">尚未设定定时器</p>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>三、setInterval / clearInterval：秒表计时</h3>
+        <p>每隔 100 毫秒刷新一次读数（精确到 0.1 秒），演示周期定时器</p>
+        <div class="wyz_clock" id="wyz_clock">00:00.0</div>
+        <button class="wyz_btn wyz_green" id="wyz_watch_start_btn" onclick="wyz_watch_start()">开始计时</button>
+        <button class="wyz_btn wyz_red" id="wyz_watch_stop_btn" onclick="wyz_watch_stop()" disabled>暂停 (clearInterval)</button>
+        <button class="wyz_btn" onclick="wyz_watch_reset()">清零</button>
+        <p class="wyz_status" id="wyz_watch_status">定时器未运行</p>
+    </div>
+
+    <script>
+        // ========== 一、setTimeout：延时执行 ==========
+        var wyz_delay_timer = null;
+
+        function wyz_start_delay() {
+            if (wyz_delay_timer !== null) {
+                return; // 已有定时器在等待，避免重复设定
+            }
+            wyz_delay_timer = setTimeout(function () {
+                document.getElementById("wyz_delay_status").className = "wyz_status wyz_done";
+                document.getElementById("wyz_delay_status").textContent = "定时器已执行！你好，王宇智！（setTimeout 到时自动触发）";
+                console.log("[setTimeout] 3 秒延时到，定时器（编号 " + wyz_delay_timer + "）已执行");
+                wyz_delay_timer = null;
+                document.getElementById("wyz_cancel_btn").disabled = true;
+                document.getElementById("wyz_delay_btn").disabled = false;
+            }, 3000);
+            document.getElementById("wyz_delay_status").className = "wyz_status wyz_waiting";
+            document.getElementById("wyz_delay_status").textContent = "已设定延时 3000 毫秒，定时器编号 " + wyz_delay_timer + "，3 秒后执行……";
+            console.log("[setTimeout] 已设定延时定时器，编号 " + wyz_delay_timer);
+            document.getElementById("wyz_delay_btn").disabled = true;
+            document.getElementById("wyz_cancel_btn").disabled = false;
+        }
+
+        function wyz_cancel_delay() {
+            if (wyz_delay_timer === null) {
+                return;
+            }
+            clearTimeout(wyz_delay_timer);
+            console.log("[clearTimeout] 已取消定时器（编号 " + wyz_delay_timer + "），问候语不会显示");
+            wyz_delay_timer = null;
+            document.getElementById("wyz_delay_status").className = "wyz_status wyz_cancel";
+            document.getElementById("wyz_delay_status").textContent = "已取消（clearTimeout），定时器不会执行";
+            document.getElementById("wyz_cancel_btn").disabled = true;
+            document.getElementById("wyz_delay_btn").disabled = false;
+        }
+
+        // ========== 二、setInterval：秒表 ==========
+        var wyz_watch_timer = null;
+        var wyz_tenths = 0; // 十分之一秒计数
+
+        function wyz_clock_text() {
+            var wyz_min = Math.floor(wyz_tenths / 600);
+            var wyz_sec = Math.floor(wyz_tenths / 10) % 60;
+            var wyz_d = wyz_tenths % 10;
+            var wyz_min_text = wyz_min < 10 ? "0" + wyz_min : "" + wyz_min;
+            var wyz_sec_text = wyz_sec < 10 ? "0" + wyz_sec : "" + wyz_sec;
+            return wyz_min_text + ":" + wyz_sec_text + "." + wyz_d;
+        }
+
+        function wyz_watch_start() {
+            if (wyz_watch_timer !== null) {
+                return; // 防止重复启动
+            }
+            wyz_watch_timer = setInterval(function () {
+                wyz_tenths = wyz_tenths + 1;
+                document.getElementById("wyz_clock").textContent = wyz_clock_text();
+            }, 100);
+            document.getElementById("wyz_watch_status").className = "wyz_status wyz_waiting";
+            document.getElementById("wyz_watch_status").textContent = "计时中……周期定时器编号 " + wyz_watch_timer + "（每 100 毫秒执行一次）";
+            console.log("[setInterval] 已启动周期定时器，编号 " + wyz_watch_timer);
+            document.getElementById("wyz_watch_start_btn").disabled = true;
+            document.getElementById("wyz_watch_stop_btn").disabled = false;
+        }
+
+        function wyz_watch_stop() {
+            if (wyz_watch_timer === null) {
+                return;
+            }
+            clearInterval(wyz_watch_timer);
+            console.log("[clearInterval] 已暂停定时器（编号 " + wyz_watch_timer + "），读数 " + wyz_clock_text());
+            wyz_watch_timer = null;
+            document.getElementById("wyz_watch_status").className = "wyz_status wyz_done";
+            document.getElementById("wyz_watch_status").textContent = "已暂停（clearInterval），读数 " + wyz_clock_text() + "，可继续或清零";
+            document.getElementById("wyz_watch_start_btn").disabled = false;
+            document.getElementById("wyz_watch_stop_btn").disabled = true;
+        }
+
+        function wyz_watch_reset() {
+            if (wyz_watch_timer !== null) {
+                clearInterval(wyz_watch_timer);
+                wyz_watch_timer = null;
+                document.getElementById("wyz_watch_start_btn").disabled = false;
+                document.getElementById("wyz_watch_stop_btn").disabled = true;
+            }
+            wyz_tenths = 0;
+            document.getElementById("wyz_clock").textContent = wyz_clock_text();
+            document.getElementById("wyz_watch_status").className = "wyz_status";
+            document.getElementById("wyz_watch_status").textContent = "已清零，定时器未运行";
+            console.log("[秒表] 已清零");
+        }
+    </script>
+</body>
+</html>

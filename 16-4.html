@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐手机 · 栏目新闻切换 - 王宇智</title>
+    <link rel="stylesheet" href="font/font_5244705_jfikdi7y3ca/iconfont.css">
+    <style>
+        /* 所有类名以 wyz_ 开始 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f2f5f9;
+            padding: 30px 16px;
+        }
+        a { text-decoration: none; }
+
+        /* ---------- 返回首页（练习要求） ---------- */
+        .wyz_back {
+            display: inline-block;
+            color: #2f7bd0;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+        .wyz_back:hover { text-decoration: underline; }
+
+        /* ---------- 栏目盒子 ---------- */
+        .wyz_box {
+            width: 442px;
+            background: #fff;
+            border: 1px solid #9dc3e6;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        }
+
+        /* 头部：左侧标题 + 右侧四个切换标签 */
+        .wyz_head {
+            display: flex;
+            align-items: stretch;
+            border-bottom: 2px solid #2f7bd0;
+        }
+        .wyz_title {
+            display: flex;
+            align-items: center;
+            padding: 0 14px 0 12px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            letter-spacing: 1px;
+        }
+        .wyz_title .iconfont {
+            font-size: 18px;
+            color: #2f7bd0;
+            margin-right: 6px;
+        }
+        .wyz_tabs {
+            display: flex;
+            margin-left: auto;
+        }
+        .wyz_tab {
+            width: 56px;
+            text-align: center;
+            font-size: 13px;
+            color: #555;
+            background: #fff;
+            padding: 9px 0;
+            cursor: pointer;
+            border-left: 1px solid #e3ecf5;
+            transition: all 0.15s;
+            user-select: none;
+        }
+        .wyz_tab:hover { color: #2f7bd0; }
+        .wyz_tab_last { border-right: 1px solid #e3ecf5; }
+        .wyz_tab_active {
+            background: #1e66c8;
+            color: #fff !important;
+            font-weight: bold;
+        }
+
+        /* ---------- 新闻列表 ---------- */
+        .wyz_list { padding: 8px 10px 10px; }
+        .wyz_item {
+            display: flex;
+            align-items: center;
+            padding: 7px 4px;
+            font-size: 13px;
+        }
+        .wyz_item + .wyz_item { border-top: 1px dotted #e8eef5; }
+        .wyz_dot {
+            width: 5px; height: 5px;
+            background: #2f7bd0;
+            margin-right: 8px;
+            flex: none;
+        }
+        .wyz_link {
+            flex: 1;
+            color: #1a66c2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: color 0.15s;
+        }
+        .wyz_link:hover, .wyz_item_red .wyz_link { color: #cc0000; }
+        .wyz_link:hover { text-decoration: underline; }
+        .wyz_date {
+            flex: none;
+            color: #999;
+            font-size: 12px;
+            margin-left: 12px;
+        }
+
+        /* 底部：更多 + 分享小图标 */
+        .wyz_foot {
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #dbe7f3;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #888;
+        }
+        .wyz_foot .iconfont { font-size: 14px; margin-left: 8px; cursor: pointer; }
+        .wyz_foot .iconfont:hover { color: #2f7bd0; }
+        .wyz_more { margin-left: auto; color: #2f7bd0; }
+        .wyz_more:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <!-- 王宇智，建立时间：2026-10-29 14:35，使用大模型：GLM-5.3，功能名称：音乐手机栏目新闻四标签切换页面 -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+
+    <div class="wyz_box">
+        <!-- 头部：标题 + 行情/导购/新品/评测 切换标签 -->
+        <div class="wyz_head">
+            <div class="wyz_title"><span class="iconfont icon-yinliao"></span>音乐手机</div>
+            <div class="wyz_tabs" id="wyz_tabs">
+                <span class="wyz_tab wyz_tab_active" data-wyz-i="0">行情</span>
+                <span class="wyz_tab" data-wyz-i="1">导购</span>
+                <span class="wyz_tab" data-wyz-i="2">新品</span>
+                <span class="wyz_tab wyz_tab_last" data-wyz-i="3">评测</span>
+            </div>
+        </div>
+
+        <!-- 新闻列表（由 JS 渲染） -->
+        <div class="wyz_list" id="wyz_list"></div>
+
+        <!-- 底部：分享图标 + 更多 -->
+        <div class="wyz_foot">
+            <span class="iconfont icon-weixin" title="分享到微信"></span>
+            <span class="iconfont icon-pinglun" title="评论"></span>
+            <span class="iconfont icon-shoucang" title="收藏"></span>
+            <a class="wyz_more" href="#">更多&gt;&gt;</a>
+        </div>
+    </div>
+
+    <script>
+        // ====== 四个标签对应的新闻数据 ======
+        var wyz_data = [
+            [ // 行情
+                ['音乐强劲 苹果iPhone 5价格稳定', '12/19'],
+                ['高性能双四核音乐机 魅族MX3低价热卖', '12/19'],
+                ['音品质最出色 vivo X3促销2199', '12/12'],
+                ['时尚音乐手机 vivo Xplay报价7298元', '11/27'],
+                ['好音乐好拍照 OPPO Find5今日报价2580元', '08/27'],
+                ['1.5GHz四核1080p OPPO Find 5降价热卖', '07/30'],
+                ['彩色呼吸带双核机 索尼M35h促销2299', '06/08'],
+                ['1.7GHz四核1080p vivo Xplay热卖中', '06/07']
+            ],
+            [ // 导购
+                ['优秀音效漂亮外观 市售音乐手机盘点', '09/13'],
+                ['不要虐待耳朵 8款独特音效的音乐机推荐', '09/06'],
+                ['最低只要799 8款高性能音乐手机推荐', '07/22'],
+                ['长假主导后高考时代 关注孩子的智能手机全攻略', '06/13'],
+                ['降价不限时 端午后值得关注降价四核机推荐', '06/13'],
+                ['高考之后尽情狂欢！学生超强手机推荐', '06/13'],
+                ['上半年看这里 最热1080P四核旗舰手机', '06/13'],
+                ['最厚不过7.99毫米 热门超强强机大搜罗', '06/06']
+            ],
+            [ // 新品
+                ['无限接近完美！ vivo Xplay3S现场体验', '12/19'],
+                ['入门音乐机 诺基亚Lumia 525现身工信部', '11/05'],
+                ['传诺基亚下月将推首款WP音乐手机Glee', '09/29'],
+                ['软硬兼施 vivo XStudio Hi-Fi音乐圈详解', '08/23'],
+                ['没有中国 谷歌All Access音乐服务登陆欧洲', '08/09'],
+                ['Hi-Fi录音棚 vivo X3和Xtudio音乐系统', '08/07'],
+                ['Hi-Fi不够vivo又玩录音棚 X3音乐处理方案曝光', '08/06', true],
+                ['小伙伴都惊呆了 薄至6mm以下 vivo X3露面', '07/31']
+            ],
+            [ // 评测
+                ['音乐历久弥新 TD版魅族MX3评测', '12/19'],
+                ['极致影音完美音质 步步高vivo Xplay移动版图赏', '07/24'],
+                ['都是大屏何不同？三星S4/Mega静态评测', '06/20'],
+                ['超四核智能旗舰 HTC Desire 608t评测', '06/20'],
+                ['完美融合微博 魅族MX2 Flyme 2.2.5体验', '06/18'],
+                ['1080p屏Hi-Fi旗舰 vivo Xplay娱乐体验', '06/13'],
+                ['5.7英寸高清巨屏 酷派9070+XO影音体验', '06/06'],
+                ['悬浮窗口播放 vivo Xplay视频功能体验', '06/06']
+            ]
+        ];
+
+        var wyz_listEl = document.getElementById('wyz_list');
+        var wyz_tabEls = document.querySelectorAll('.wyz_tab');
+
+        // ====== 渲染某一标签下的新闻列表 ======
+        function wyz_render(wyz_i) {
+            var wyz_html = '';
+            var wyz_items = wyz_data[wyz_i];
+            for (var wyz_k = 0; wyz_k < wyz_items.length; wyz_k++) {
+                var wyz_it = wyz_items[wyz_k];
+                var wyz_cls = wyz_it[2] ? ' wyz_item_red' : '';
+                wyz_html +=
+                    '<div class="wyz_item' + wyz_cls + '">' +
+                        '<span class="wyz_dot"></span>' +
+                        '<a class="wyz_link" href="#">' + wyz_it[0] + '</a>' +
+                        '<span class="wyz_date">(' + wyz_it[1] + ')</span>' +
+                    '</div>';
+            }
+            wyz_listEl.innerHTML = wyz_html;
+        }
+
+        // ====== 标签点击切换 ======
+        for (var wyz_i = 0; wyz_i < wyz_tabEls.length; wyz_i++) {
+            wyz_tabEls[wyz_i].addEventListener('click', function () {
+                for (var wyz_j = 0; wyz_j < wyz_tabEls.length; wyz_j++) {
+                    wyz_tabEls[wyz_j].className = 'wyz_tab' + (wyz_tabEls[wyz_j] === this ? ' wyz_tab_active' : '') +
+                        (wyz_j === wyz_tabEls.length - 1 ? ' wyz_tab_last' : '');
+                }
+                wyz_render(parseInt(this.getAttribute('data-wyz-i'), 10));
+            });
+        }
+
+        wyz_render(0);   // 默认显示"行情"
+    </script>
+</body>
+</html>
