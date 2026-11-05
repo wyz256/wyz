@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECharts 双图：悲惨世界人物关系 + 全国人口旭日图 - 王宇智</title>
+    <style>
+        /* 所有类名以 wyz_ 开始 */
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 24px;
+            color: #2c3e50;
+        }
+        .wyz_back {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .wyz_back:hover { text-decoration: underline; }
+        .wyz_header { text-align: center; margin: 8px 0 20px; }
+        .wyz_header h2 { margin: 0 0 8px; }
+        .wyz_header p { color: #666; font-size: 14px; margin: 0; }
+        .wyz_panel {
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            max-width: 1240px;
+            margin: 0 auto 16px;
+        }
+        .wyz_panel h3 { margin: 0 0 12px; font-size: 17px; }
+        .wyz_charts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .wyz_chart_card {
+            flex: 1 1 460px;
+            min-width: 460px;
+            border: 1px solid #e7edf5;
+            border-radius: 10px;
+            padding: 14px 16px 6px;
+        }
+        .wyz_chart_card > h3 { font-size: 15px; margin: 0 0 10px; color: #1e293b; }
+        .wyz_chart { width: 100%; height: 460px; }
+        .wyz_toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 6px;
+            align-items: center;
+        }
+        .wyz_btn {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 7px 16px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .wyz_btn:hover { background: #2563eb; }
+        .wyz_btn:disabled { background: #c7d2e6; cursor: default; }
+        .wyz_btn.wyz_green { background: #16a34a; }
+        .wyz_btn.wyz_green:hover { background: #15803d; }
+        .wyz_hint { font-size: 12px; color: #6b7280; margin: 6px 2px 10px; line-height: 1.6; }
+        .wyz_tips {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+        .wyz_tip {
+            background: #f8faff;
+            border: 1px solid #e3ebfa;
+            border-left: 4px solid #3b82f6;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        .wyz_tip strong { color: #1d4ed8; }
+        .wyz_tip code {
+            background: #e7efff;
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-family: Consolas, "Courier New", monospace;
+            color: #1e40af;
+        }
+        @media (max-width: 640px) {
+            body { padding: 14px; }
+            .wyz_panel { padding: 14px; }
+            .wyz_chart_card { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 王宇智，建立时间：2026-11-05 14:05，使用大模型：GLM-5.3，功能名称：ECharts 双图（悲惨世界人物关系环形图 + 地图柱状变形动画） -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+
+    <div class="wyz_header">
+        <h2>王宇智的 JavaScript · ECharts 双图实战</h2>
+        <p>① 悲惨世界人物关系图（环形布局）　② 全国人口旭日图（标签旋转）</p>
+    </div>
+
+    <div class="wyz_panel">
+        <div class="wyz_charts">
+            <div class="wyz_chart_card">
+                <h3>① 悲惨世界人物关系图（环形布局 circular）</h3>
+                <div id="wyz_les" class="wyz_chart"></div>
+                <p class="wyz_hint">graph 类型 + <code>layout:'circular'</code> 将 77 个人物环形排布，曲线表示人物关联；滚轮可缩放、拖拽可平移，悬停高亮相邻关系。</p>
+            </div>
+            <div class="wyz_chart_card">
+                <h3>② 全国人口 · 旭日图（标签旋转）</h3>
+                <div class="wyz_toolbar">
+                    <button class="wyz_btn" id="wyz_btn_radial" type="button">径向 radial</button>
+                    <button class="wyz_btn" id="wyz_btn_tangential" type="button">切向 tangential</button>
+                    <button class="wyz_btn wyz_green" id="wyz_btn_horizontal" type="button">水平 0</button>
+                </div>
+                <div id="wyz_sun" class="wyz_chart"></div>
+                <p class="wyz_hint">以「全国 → 大区 → 省份」三层展示人口；点击扇区可下钻、点击圆心返回。切换按钮改变标签旋转方式（<code>label.rotate</code>）。</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>本页用到的 ECharts 知识点</h3>
+        <div class="wyz_tips">
+            <div class="wyz_tip"><strong>本地离线引入</strong><br>用 <code>&lt;script src="cdn/echarts.min.js"&gt;</code> 引入；示例数据包装成 <code>window.wyz_*</code> 变量，规避 <code>file://</code> 下 fetch 的 CORS 限制。</div>
+            <div class="wyz_tip"><strong>graph 关系图</strong><br><code>series.type='graph'</code> + <code>layout:'circular'</code> 环形布局；<code>data/links/categories</code> 描述节点、边与分组，<code>lineStyle.color='source'</code> 让边继承源点颜色。</div>
+            <div class="wyz_tip"><strong>sunburst 旭日图</strong><br><code>series.type='sunburst'</code>，<code>data</code> 为带 <code>children</code> 的嵌套层级结构，默认点击扇区下钻、点击圆心返回上层。</div>
+            <div class="wyz_tip"><strong>标签旋转 rotate</strong><br>旭日图 <code>label.rotate</code> 可设 <code>'radial'</code>（由内向外）、<code>'tangential'</code>（沿弧线）或数值角度，让环形扇区文字更易读。</div>
+            <div class="wyz_tip"><strong>setOption 数据驱动</strong><br>图表全部由 option 描述；切换图表类型时用 <code>setOption(opt, true)</code>（notMerge）彻底替换配置。</div>
+            <div class="wyz_tip"><strong>响应式</strong><br>监听 <code>window.resize</code> 调用 <code>chart.resize()</code>，保证容器尺寸变化时图表自适应重绘。</div>
+        </div>
+    </div>
+
+    <!-- 本地 CDN 依赖（已下载至 cdn 目录） -->
+    <script src="cdn/echarts.min.js"></script>
+    <script src="cdn/les-miserables.js"></script>
+    <script>
+        (function () {
+            // ========== 一、图表初始化 ==========
+            var wyz_chart_les = echarts.init(document.getElementById("wyz_les"));
+            var wyz_chart_sun = echarts.init(document.getElementById("wyz_sun"));
+
+            // ========== 二、图① 悲惨世界人物关系（环形布局） ==========
+            var wyz_les = window.wyz_lesMiserables;
+            var wyz_les_option = {
+                tooltip: {},
+                legend: [{
+                    data: wyz_les.categories.map(function (wyz_c) { return wyz_c.name; }),
+                    bottom: 6,
+                    textStyle: { color: "#475569" }
+                }],
+                series: [{
+                    name: "悲惨世界人物",
+                    type: "graph",
+                    layout: "circular",
+                    data: wyz_les.nodes.map(function (wyz_n) {
+                        return {
+                            id: wyz_n.id || wyz_n.name,
+                            name: wyz_n.name || wyz_n.id,
+                            value: wyz_n.value,
+                            category: wyz_n.category,
+                            symbolSize: wyz_n.symbolSize || (8 + Math.sqrt(wyz_n.value || 1) * 3)
+                        };
+                    }),
+                    links: wyz_les.links,
+                    categories: wyz_les.categories,
+                    roam: true,
+                    label: { show: true, position: "right", fontSize: 10, color: "#334155" },
+                    lineStyle: { color: "source", curveness: 0.25, opacity: 0.55 },
+                    emphasis: { focus: "adjacency" },
+                    scaleLimit: { min: 0.4, max: 4 }
+                }]
+            };
+            wyz_chart_les.setOption(wyz_les_option);
+
+            // ========== 三、图② 全国人口旭日图（标签旋转） ==========
+            var wyz_pop_tree = [{
+                name: "全国",
+                children: [
+                    { name: "华北", children: [{ name: "北京", value: 2189 }, { name: "天津", value: 1387 }, { name: "河北", value: 7461 }, { name: "山西", value: 3492 }, { name: "内蒙古", value: 2405 }] },
+                    { name: "东北", children: [{ name: "辽宁", value: 4259 }, { name: "吉林", value: 2407 }, { name: "黑龙江", value: 3185 }] },
+                    { name: "华东", children: [{ name: "上海", value: 2487 }, { name: "江苏", value: 8475 }, { name: "浙江", value: 6457 }, { name: "安徽", value: 6103 }, { name: "福建", value: 4154 }, { name: "江西", value: 4519 }, { name: "山东", value: 10153 }] },
+                    { name: "华中", children: [{ name: "河南", value: 9937 }, { name: "湖北", value: 5775 }, { name: "湖南", value: 6644 }] },
+                    { name: "华南", children: [{ name: "广东", value: 12601 }, { name: "广西", value: 5013 }, { name: "海南", value: 1008 }] },
+                    { name: "西南", children: [{ name: "重庆", value: 3205 }, { name: "四川", value: 8367 }, { name: "贵州", value: 3856 }, { name: "云南", value: 4721 }, { name: "西藏", value: 365 }] },
+                    { name: "西北", children: [{ name: "陕西", value: 3953 }, { name: "甘肃", value: 2502 }, { name: "青海", value: 592 }, { name: "宁夏", value: 720 }, { name: "新疆", value: 2585 }] }
+                ]
+            }];
+
+            function wyz_sun_option(wyz_rotate) {
+                return {
+                    tooltip: {
+                        trigger: "item",
+                        formatter: function (wyz_p) {
+                            return wyz_p.name + "<br/>人口：" + (wyz_p.value || 0) + " 万";
+                        }
+                    },
+                    series: [{
+                        type: "sunburst",
+                        data: wyz_pop_tree,
+                        radius: [0, "95%"],
+                        center: ["50%", "52%"],
+                        sort: null,
+                        nodeClick: "rootToNode",
+                        emphasis: { focus: "ancestor" },
+                        itemStyle: { borderColor: "#fff", borderWidth: 1 },
+                        label: { rotate: wyz_rotate, minAngle: 6, color: "#fff", fontSize: 11 },
+                        levels: [
+                            {},
+                            { r0: 0, r: "16%", label: { rotate: 0, fontSize: 14, fontWeight: "bold", color: "#fff" }, itemStyle: { color: "#1e3a8a" } },
+                            { r0: "16%", r: "56%", label: { rotate: wyz_rotate, fontSize: 12 }, itemStyle: { color: "#2563eb" } },
+                            { r0: "56%", r: "92%", label: { rotate: wyz_rotate, fontSize: 10, color: "#1e293b" }, itemStyle: { color: "#7dd3fc" } }
+                        ]
+                    }]
+                };
+            }
+
+            var wyz_rotate = "radial";
+            function wyz_render_sun() {
+                wyz_chart_sun.setOption(wyz_sun_option(wyz_rotate), true);
+                document.getElementById("wyz_btn_radial").disabled = (wyz_rotate === "radial");
+                document.getElementById("wyz_btn_tangential").disabled = (wyz_rotate === "tangential");
+                document.getElementById("wyz_btn_horizontal").disabled = (wyz_rotate === 0 || wyz_rotate === "horizontal");
+            }
+            document.getElementById("wyz_btn_radial").addEventListener("click", function () { wyz_rotate = "radial"; wyz_render_sun(); });
+            document.getElementById("wyz_btn_tangential").addEventListener("click", function () { wyz_rotate = "tangential"; wyz_render_sun(); });
+            document.getElementById("wyz_btn_horizontal").addEventListener("click", function () { wyz_rotate = 0; wyz_render_sun(); });
+
+            wyz_render_sun();
+
+            // ========== 四、响应式 ==========
+            window.addEventListener("resize", function () {
+                wyz_chart_les.resize();
+                wyz_chart_map.resize();
+            });
+
+            console.log("[18-4] ECharts 双图已加载：人物关系 " + wyz_les.nodes.length + " 节点，地图柱状变形 " + wyz_provinces.length + " 省份，作者：王宇智");
+        })();
+    </script>
+</body>
+</html>

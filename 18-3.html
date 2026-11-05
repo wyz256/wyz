@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库智能客服系统架构图（SVG） - 王宇智</title>
+    <style>
+        /* 所有类名以 wyz_ 开始 */
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 24px;
+            color: #2c3e50;
+        }
+        .wyz_back {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .wyz_back:hover { text-decoration: underline; }
+        .wyz_header { text-align: center; margin: 8px 0 20px; }
+        .wyz_header h2 { margin: 0 0 8px; }
+        .wyz_header p { color: #666; font-size: 14px; margin: 0; }
+        .wyz_panel {
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            max-width: 1240px;
+            margin: 0 auto 16px;
+        }
+        .wyz_panel h3 { margin: 0 0 12px; font-size: 17px; }
+        .wyz_toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            color: #475569;
+        }
+        .wyz_btn {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .wyz_btn:hover { background: #2563eb; }
+        .wyz_btn.wyz_ghost { background: #64748b; }
+        .wyz_btn.wyz_ghost:hover { background: #475569; }
+        .wyz_btn.wyz_green { background: #16a34a; }
+        .wyz_btn.wyz_green:hover { background: #15803d; }
+        .wyz_zoom_text { margin-left: auto; }
+        .wyz_zoom_text b { color: #1d4ed8; font-family: Consolas, "Courier New", monospace; }
+        .wyz_svg_scroll {
+            overflow-x: auto;
+            border-radius: 10px;
+            background: #0a1020;
+            box-shadow: inset 0 0 0 1px #1e2b4a;
+        }
+        .wyz_svg_scroll svg { display: block; margin: 0 auto; font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+        .wyz_hint { font-size: 13px; color: #6b7280; margin: 10px 0 8px; line-height: 1.7; }
+        .wyz_statusbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 26px;
+            background: #f0f5ff;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #475569;
+        }
+        .wyz_statusbar b { color: #1d4ed8; font-family: Consolas, "Courier New", monospace; }
+
+        /* ---------- SVG 内元素样式 ---------- */
+        .wyz_link {
+            fill: none;
+            stroke-width: 1.4;
+            stroke-opacity: 0.55;
+            stroke-dasharray: 7 7;
+            animation: wyz_dash 1.1s linear infinite;
+        }
+        @keyframes wyz_dash { to { stroke-dashoffset: -28; } }
+        .wyz_svg.wyz_paused .wyz_link { animation-play-state: paused; }
+        .wyz_link.wyz_c0 { stroke: #38bdf8; }
+        .wyz_link.wyz_c1 { stroke: #a78bfa; }
+        .wyz_link.wyz_c2 { stroke: #34d399; }
+        .wyz_link.wyz_c3 { stroke: #fbbf24; }
+        .wyz_link.wyz_c4 { stroke: #f472b6; }
+        .wyz_link.wyz_c5 { stroke: #22d3ee; }
+        .wyz_link.wyz_active { stroke-width: 2.4; stroke-opacity: 1; }
+        .wyz_link.wyz_dim { stroke-opacity: 0.08; }
+        .wyz_link_label { display: none; font-size: 11px; fill: #dceaff; font-family: Consolas, monospace; }
+        .wyz_svg.wyz_show_labels .wyz_link_label { display: block; }
+
+        .wyz_card { fill-opacity: 0.14; stroke-width: 1; }
+        .wyz_node { cursor: pointer; }
+        .wyz_node.wyz_active .wyz_card { fill-opacity: 0.34; stroke-width: 2; }
+        .wyz_node.wyz_active .wyz_t1 { fill: #ffffff; }
+        .wyz_node.wyz_dim { opacity: 0.5; }
+        .wyz_t1 { fill: #eef5ff; font-size: 15px; font-weight: bold; }
+        .wyz_t2 { fill: #9db3d6; font-size: 11px; }
+        .wyz_band_name { fill: #ffffff; font-size: 15px; font-weight: bold; }
+        .wyz_band_en { fill: #8ea6cc; font-size: 10px; font-family: Consolas, monospace; }
+        .wyz_band_note { fill: rgba(165,190,230,0.7); font-size: 11px; text-anchor: end; }
+        .wyz_title { fill: #eaf2ff; font-size: 21px; font-weight: bold; }
+        .wyz_subtitle { fill: #7f97c2; font-size: 11px; font-family: Consolas, monospace; }
+        .wyz_author { fill: #9db3d6; font-size: 12px; text-anchor: end; }
+        .wyz_legend_text { fill: #a9bddc; font-size: 11px; }
+        .wyz_footer_text { fill: #7fe3b8; font-size: 13px; font-weight: bold; text-anchor: middle; }
+
+        .wyz_detail {
+            background: #f8faff;
+            border: 1px solid #e3ebfa;
+            border-left: 4px solid #3b82f6;
+            border-radius: 8px;
+            padding: 14px 18px;
+            min-height: 96px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        .wyz_detail_empty { color: #7b879b; margin: 14px 0; }
+        .wyz_detail_head { margin-bottom: 8px; }
+        .wyz_detail_head strong { font-size: 17px; color: #1e293b; }
+        .wyz_badge {
+            display: inline-block;
+            color: #fff;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 12px;
+            margin-left: 10px;
+            vertical-align: 2px;
+        }
+        .wyz_detail_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 6px 20px;
+        }
+        .wyz_detail_grid p { margin: 2px 0; }
+        .wyz_detail_grid span { color: #1d4ed8; font-weight: bold; }
+        .wyz_tips {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+        .wyz_tip {
+            background: #f8faff;
+            border: 1px solid #e3ebfa;
+            border-left: 4px solid #3b82f6;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        .wyz_tip strong { color: #1d4ed8; }
+        .wyz_tip code {
+            background: #e7efff;
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-family: Consolas, "Courier New", monospace;
+            color: #1e40af;
+        }
+        .wyz_note {
+            background: #fffbea;
+            border-left: 4px solid #f59e0b;
+            border-radius: 6px;
+            padding: 10px 16px;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.9;
+        }
+        .wyz_note code {
+            background: #fdf1cd;
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-family: Consolas, "Courier New", monospace;
+            color: #92400e;
+        }
+        @media (max-width: 640px) {
+            body { padding: 14px; }
+            .wyz_panel { padding: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 王宇智，建立时间：2026-11-05 13:50，使用大模型：GLM-5.3，功能名称：SVG知识库智能客服系统架构图 -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+
+    <div class="wyz_header">
+        <h2>王宇智的 JavaScript · 知识库智能客服系统架构图</h2>
+        <p>检索增强生成（RAG）× 科研评测闭环 · 全部图形为 SVG 矢量元素，由 JavaScript 动态生成</p>
+    </div>
+
+    <div class="wyz_panel">
+        <div class="wyz_toolbar">
+            <button class="wyz_btn" id="wyz_pause" type="button">暂停流动</button>
+            <button class="wyz_btn wyz_ghost" id="wyz_label_btn" type="button">显示链路标签</button>
+            <button class="wyz_btn wyz_ghost" id="wyz_zoom_out" type="button">缩小</button>
+            <button class="wyz_btn wyz_ghost" id="wyz_zoom_in" type="button">放大</button>
+            <button class="wyz_btn wyz_ghost" id="wyz_reset" type="button">重置视图</button>
+            <button class="wyz_btn wyz_green" id="wyz_export_svg" type="button">导出 SVG</button>
+            <button class="wyz_btn wyz_green" id="wyz_export_png" type="button">导出 PNG</button>
+            <span class="wyz_zoom_text">缩放：<b id="wyz_zoom_value">100%</b></span>
+        </div>
+
+        <div class="wyz_svg_scroll">
+            <svg id="wyz_svg" class="wyz_svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" preserveAspectRatio="xMidYMin meet"></svg>
+        </div>
+
+        <p class="wyz_hint">交互：<strong>单击节点</strong>查看该模块的科研要点、技术栈与关联链路（非相关链路自动淡出）；<strong>悬停</strong>高亮链路；可暂停数据流、显示协议标签、缩放或把架构图导出为 SVG / PNG。</p>
+
+        <div class="wyz_statusbar">
+            <span>系统节点：<b id="wyz_node_count">0</b></span>
+            <span>调用链路：<b id="wyz_link_count">0</b></span>
+            <span>数据流：<b id="wyz_state_value">运行中</b></span>
+            <span>当前选中：<b id="wyz_selected_value">无</b></span>
+        </div>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>一、节点详情</h3>
+        <div class="wyz_detail" id="wyz_detail">
+            <p class="wyz_detail_empty">点击架构图中的任意节点，查看该模块的科研要点、技术栈与关联链路。</p>
+        </div>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>二、本页用到的 SVG 知识点</h3>
+        <div class="wyz_tips">
+            <div class="wyz_tip"><strong>矢量与响应式</strong><br>用 <code>&lt;svg viewBox&gt;</code> 定义 1200×900 逻辑坐标系，<code>preserveAspectRatio</code> 配合 CSS 宽度实现自适应缩放。</div>
+            <div class="wyz_tip"><strong>数据驱动绘制</strong><br>用 <code>createElementNS</code> 在 JS 中按节点 / 链路数据批量创建 <code>rect</code>、<code>path</code>、<code>text</code>，比手写静态 SVG 更易维护。</div>
+            <div class="wyz_tip"><strong>贝塞尔与箭头</strong><br>链路用三次贝塞尔 <code>path</code>，<code>&lt;marker&gt;</code> 定义按层着色的箭头，<code>marker-end</code> 自动指向终点。</div>
+            <div class="wyz_tip"><strong>流动动画</strong><br><code>stroke-dasharray</code> + <code>stroke-dashoffset</code> 关键帧让虚线持续滚动，表现请求 / 数据自顶向下流动。</div>
+            <div class="wyz_tip"><strong>交互联动</strong><br>SVG 是 DOM，直接给 <code>&lt;g&gt;</code> 绑定 <code>click</code> / <code>mouseenter</code>，用 <code>classList</code> 切换高亮，无需手动命中检测。</div>
+            <div class="wyz_tip"><strong>导出</strong><br><code>XMLSerializer</code> 序列化 SVG 下载；再用 <code>Image</code> + <code>&lt;canvas&gt;</code> 栅格化为 PNG，二者均为纯前端实现。</div>
+        </div>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>三、科研方向说明（RAG 智能客服）</h3>
+        <div class="wyz_note">
+            <strong>① 知识库构建（Knowledge Construction）</strong>：多源文档解析（PDF/网页/OCR）→ 语义切片（Chunking）→ 向量化 + 知识图谱三元组抽取 → 质量校验与去重治理。<br>
+            <strong>② 检索增强生成（RAG Core）</strong>：查询改写（Query Rewriting）→ 混合检索（稠密向量 + 稀疏 BM25）→ 重排（Cross-Encoder Reranker）→ 证据溯源（Citation）→ LLM 生成，是回答质量的核心链路。<br>
+            <strong>③ 科研评测闭环（Research Flywheel）</strong>：自动评测（相关性 / 忠实度 / 完整性）↔ 人工标注 → Bad-case 错误归因 → 幻觉检测与可解释性 → 领域自适应与持续学习，结果回流优化知识库与模型，形成飞轮。<br>
+            <strong>④ 基础支撑</strong>：LLM / Embedding 模型服务、GPU 推理算力、向量索引（ANN）、全链路监控与合规审计，为科研实验提供可复现、可观测的工程底座。
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var wyz_W = 1200;
+            var wyz_H = 900;
+            var wyz_content_x = 132;
+            var wyz_content_w = 1044;
+            var wyz_NS = "http://www.w3.org/2000/svg";
+            var wyz_svg = document.getElementById("wyz_svg");
+            var wyz_selected = null;
+            var wyz_hover = null;
+            var wyz_show_labels = false;
+            var wyz_user_scale = 1;
+            var wyz_base_zoom = 1;
+            var wyz_zoom = 1;
+
+            // ========== 一、六个架构层 ==========
+            var wyz_layers = [
+                { wyz_name: "终端与接入层", wyz_en: "ACCESS", wyz_note: "多端统一入口", wyz_color: "#38bdf8", wyz_y: 48, wyz_h: 96, wyz_count: 4, wyz_width: 220, wyz_rows: [68] },
+                { wyz_name: "客服应用场景层", wyz_en: "SCENARIO", wyz_note: "业务化问答", wyz_color: "#a78bfa", wyz_y: 160, wyz_h: 96, wyz_count: 4, wyz_width: 290, wyz_rows: [180] },
+                { wyz_name: "核心 RAG 引擎层", wyz_en: "RAG ENGINE", wyz_note: "检索增强生成", wyz_color: "#34d399", wyz_y: 272, wyz_h: 196, wyz_count: 5, wyz_width: 180, wyz_rows: [330, 404] },
+                { wyz_name: "知识库层", wyz_en: "KNOWLEDGE", wyz_note: "构建 · 存储 · 治理", wyz_color: "#fbbf24", wyz_y: 484, wyz_h: 96, wyz_count: 5, wyz_width: 180, wyz_rows: [506] },
+                { wyz_name: "科研评测飞轮", wyz_en: "RESEARCH", wyz_note: "评测 · 归因 · 自适应", wyz_color: "#f472b6", wyz_y: 596, wyz_h: 96, wyz_count: 5, wyz_width: 180, wyz_rows: [618] },
+                { wyz_name: "基础支撑层", wyz_en: "INFRA", wyz_note: "模型 · 算力 · 治理", wyz_color: "#22d3ee", wyz_y: 708, wyz_h: 96, wyz_count: 5, wyz_width: 180, wyz_rows: [730] }
+            ];
+
+            // ========== 二、系统节点数据 ==========
+            var wyz_node_data = [
+                { wyz_id: "web", wyz_layer: 0, wyz_row: 0, wyz_col: 0, wyz_name: "Web 控制台", wyz_sub: "问答界面", wyz_desc: "面向坐席与用户的浏览器工作台，提供对话、知识检索与文档管理界面。", wyz_tech: "Vue3 / SSR" },
+                { wyz_id: "api", wyz_layer: 0, wyz_row: 0, wyz_col: 1, wyz_name: "开放 API", wyz_sub: "REST / SDK", wyz_desc: "对外提供问答与知识检索接口，支持企业系统集成与第三方调用。", wyz_tech: "OpenAPI / SDK" },
+                { wyz_id: "im", wyz_layer: 0, wyz_row: 0, wyz_col: 2, wyz_name: "企业微信 / IM", wyz_sub: "多渠道接入", wyz_desc: "对接企业微信、钉钉等 IM 渠道，统一收发消息与富文本卡片。", wyz_tech: "IM 机器人" },
+                { wyz_id: "mobile", wyz_layer: 0, wyz_row: 0, wyz_col: 3, wyz_name: "移动端", wyz_sub: "App / H5", wyz_desc: "iOS / Android 与移动 H5 轻量问答入口，支持推送与离线缓存。", wyz_tech: "iOS / Android" },
+
+                { wyz_id: "presale", wyz_layer: 1, wyz_row: 0, wyz_col: 0, wyz_name: "售前咨询", wyz_sub: "商品 / 活动", wyz_desc: "回答商品参数、活动规则与推荐问题，承接营销转化。", wyz_tech: "对话机器人" },
+                { wyz_id: "aftersale", wyz_layer: 1, wyz_row: 0, wyz_col: 1, wyz_name: "售后助手", wyz_sub: "退换 / 物流", wyz_desc: "处理退换货、物流与保修咨询，联动工单与订单系统。", wyz_tech: "FAQ + RAG" },
+                { wyz_id: "internal", wyz_layer: 1, wyz_row: 0, wyz_col: 2, wyz_name: "内部知识问答", wyz_sub: "员工助手", wyz_desc: "面向企业员工的制度、流程与规范问答，降低培训成本。", wyz_tech: "Enterprise RAG" },
+                { wyz_id: "ticket", wyz_layer: 1, wyz_row: 0, wyz_col: 3, wyz_name: "工单辅助", wyz_sub: "智能填单", wyz_desc: "根据对话自动归纳工单要素并预填，提升坐席效率。", wyz_tech: "NER + 模板" },
+
+                { wyz_id: "rewrite", wyz_layer: 2, wyz_row: 0, wyz_col: 0, wyz_name: "查询理解 · 改写", wyz_sub: "意图 / 扩写", wyz_desc: "对用户问句做意图识别、纠错与查询扩展，提升召回质量（Query Rewriting）。", wyz_tech: "LLM + NER" },
+                { wyz_id: "hybrid", wyz_layer: 2, wyz_row: 0, wyz_col: 1, wyz_name: "混合检索", wyz_sub: "向量 + BM25", wyz_desc: "稠密向量检索与稀疏 BM25 融合（Hybrid Search），兼顾语义与关键词。", wyz_tech: "ANN + BM25" },
+                { wyz_id: "rerank", wyz_layer: 2, wyz_row: 0, wyz_col: 2, wyz_name: "重排 Reranker", wyz_sub: "Cross-Encoder", wyz_desc: "用 Cross-Encoder 对候选文档重排序，提升 Top-k 精度（Re-ranking）。", wyz_tech: "Cross-Encoder" },
+                { wyz_id: "cite", wyz_layer: 2, wyz_row: 0, wyz_col: 3, wyz_name: "引用溯源", wyz_sub: "证据定位", wyz_desc: "生成答案时定位并标注证据来源，支持引用溯源与可信度（Citation）。", wyz_tech: "Span Extract" },
+                { wyz_id: "prompt", wyz_layer: 2, wyz_row: 0, wyz_col: 4, wyz_name: "Prompt 编排", wyz_sub: "模板 / 策略", wyz_desc: "检索结果组织、指令模板与推理策略编排（Prompt Engineering）。", wyz_tech: "模板引擎" },
+                { wyz_id: "llm", wyz_layer: 2, wyz_row: 1, wyz_col: 0, wyz_name: "LLM 推理", wyz_sub: "生成回答", wyz_desc: "大语言模型基于检索证据生成自然、准确的回答（Generation）。", wyz_tech: "LLM" },
+                { wyz_id: "kgqa", wyz_layer: 2, wyz_row: 1, wyz_col: 1, wyz_name: "知识图谱问答", wyz_sub: "KG + LLM", wyz_desc: "结构化知识图谱与 LLM 结合，回答多跳关系型问题。", wyz_tech: "GraphRAG" },
+                { wyz_id: "memory", wyz_layer: 2, wyz_row: 1, wyz_col: 2, wyz_name: "多轮记忆", wyz_sub: "对话状态", wyz_desc: "维护多轮对话状态与用户上下文，支持追问与指代消解。", wyz_tech: "对话管理" },
+                { wyz_id: "guard", wyz_layer: 2, wyz_row: 1, wyz_col: 3, wyz_name: "安全护栏", wyz_sub: "敏感 / 拒答", wyz_desc: "敏感词、合规与拒答护栏，保障回答安全可控。", wyz_tech: "审核模型" },
+                { wyz_id: "verify", wyz_layer: 2, wyz_row: 1, wyz_col: 4, wyz_name: "答案校验", wyz_sub: "事实一致性", wyz_desc: "基于事实一致性校验生成结果，降低幻觉（Faithfulness）。", wyz_tech: "NLI / 自洽" },
+
+                { wyz_id: "parse", wyz_layer: 3, wyz_row: 0, wyz_col: 0, wyz_name: "文档解析", wyz_sub: "OCR / PDF", wyz_desc: "解析 PDF/Word/网页/OCR，抽取纯文本与表格（Document Parsing）。", wyz_tech: "OCR + 布局" },
+                { wyz_id: "chunk", wyz_layer: 3, wyz_row: 0, wyz_col: 1, wyz_name: "文本切片", wyz_sub: "语义分块", wyz_desc: "按语义或版面进行文本切片，控制上下文长度（Chunking）。", wyz_tech: "语义切分" },
+                { wyz_id: "vectordb", wyz_layer: 3, wyz_row: 0, wyz_col: 2, wyz_name: "向量库", wyz_sub: "HNSW / IVF", wyz_desc: "Embedding 向量持久化与近邻检索（Vector Store）。", wyz_tech: "Milvus / FAISS" },
+                { wyz_id: "kgdb", wyz_layer: 3, wyz_row: 0, wyz_col: 3, wyz_name: "知识图谱库", wyz_sub: "Neo4j / 图", wyz_desc: "实体关系三元组抽取与图存储，支持多跳推理（KG Store）。", wyz_tech: "Neo4j" },
+                { wyz_id: "gov", wyz_layer: 3, wyz_row: 0, wyz_col: 4, wyz_name: "知识治理", wyz_sub: "去重 / 校验", wyz_desc: "知识去重、质量校验、版本与权限治理（Governance）。", wyz_tech: "质量流水线" },
+
+                { wyz_id: "benchmark", wyz_layer: 4, wyz_row: 0, wyz_col: 0, wyz_name: "自动评测", wyz_sub: "Benchmark", wyz_desc: "自动评测回答的相关性、忠实度与完整性（Auto-Eval）。", wyz_tech: "LLM-as-Judge" },
+                { wyz_id: "human", wyz_layer: 4, wyz_row: 0, wyz_col: 1, wyz_name: "人工标注", wyz_sub: "标注平台", wyz_desc: "人工标注平台收集偏好与错误样本（Annotation）。", wyz_tech: "标注系统" },
+                { wyz_id: "badcase", wyz_layer: 4, wyz_row: 0, wyz_col: 2, wyz_name: "Bad-case 归因", wyz_sub: "错误分析", wyz_desc: "对失败案例做错误归因，定位知识或检索缺陷。", wyz_tech: "归因分析" },
+                { wyz_id: "halluc", wyz_layer: 4, wyz_row: 0, wyz_col: 3, wyz_name: "幻觉检测", wyz_sub: "可解释性", wyz_desc: "检测事实性幻觉，提供可解释性分析与证据对比。", wyz_tech: "事实校验" },
+                { wyz_id: "adapt", wyz_layer: 4, wyz_row: 0, wyz_col: 4, wyz_name: "领域自适应", wyz_sub: "持续学习", wyz_desc: "基于反馈的领域自适应与持续学习，更新模型与知识（Continual Learning）。", wyz_tech: "微调 / LoRA" },
+
+                { wyz_id: "models", wyz_layer: 5, wyz_row: 0, wyz_col: 0, wyz_name: "LLM / Embedding", wyz_sub: "模型服务", wyz_desc: "LLM 与 Embedding 模型服务化部署与推理（Model Serving）。", wyz_tech: "vLLM / TGI" },
+                { wyz_id: "gpu", wyz_layer: 5, wyz_row: 0, wyz_col: 1, wyz_name: "GPU 算力", wyz_sub: "推理集群", wyz_desc: "GPU 推理集群，支撑大规模并发与模型微调。", wyz_tech: "K8s + GPU" },
+                { wyz_id: "indexsvc", wyz_layer: 5, wyz_row: 0, wyz_col: 2, wyz_name: "向量索引服务", wyz_sub: "检索后端", wyz_desc: "向量索引与检索后端服务（ANN Index）。", wyz_tech: "Index Service" },
+                { wyz_id: "monitor", wyz_layer: 5, wyz_row: 0, wyz_col: 3, wyz_name: "监控告警", wyz_sub: "可观测", wyz_desc: "全链路延迟、质量与成本监控告警（Observability）。", wyz_tech: "Prometheus" },
+                { wyz_id: "security", wyz_layer: 5, wyz_row: 0, wyz_col: 4, wyz_name: "安全合规审计", wyz_sub: "权限 / 日志", wyz_desc: "权限管控、审计日志与内容合规审查。", wyz_tech: "审计中心" }
+            ];
+
+            // ========== 三、元素创建工具 ==========
+            function wyz_el(wyz_tag, wyz_attrs) {
+                var wyz_e = document.createElementNS(wyz_NS, wyz_tag);
+                for (var wyz_k in wyz_attrs) {
+                    if (wyz_attrs.hasOwnProperty(wyz_k)) {
+                        wyz_e.setAttribute(wyz_k, wyz_attrs[wyz_k]);
+                    }
+                }
+                return wyz_e;
+            }
+
+            // ========== 四、计算节点几何 ==========
+            var wyz_nodes = [];
+            var wyz_node_map = {};
+            for (var wyz_i = 0; wyz_i < wyz_node_data.length; wyz_i++) {
+                var wyz_d = wyz_node_data[wyz_i];
+                var wyz_layer = wyz_layers[wyz_d.wyz_layer];
+                var wyz_gap = (wyz_content_w - wyz_layer.wyz_count * wyz_layer.wyz_width) / (wyz_layer.wyz_count - 1);
+                var wyz_nw = wyz_layer.wyz_width;
+                var wyz_nh = 56;
+                var wyz_nx = wyz_content_x + wyz_d.wyz_col * (wyz_nw + wyz_gap);
+                var wyz_ny = wyz_layer.wyz_rows[wyz_d.wyz_row];
+                var wyz_node = {
+                    wyz_id: wyz_d.wyz_id, wyz_layer: wyz_d.wyz_layer,
+                    wyz_name: wyz_d.wyz_name, wyz_sub: wyz_d.wyz_sub,
+                    wyz_desc: wyz_d.wyz_desc, wyz_tech: wyz_d.wyz_tech,
+                    wyz_x: wyz_nx, wyz_y: wyz_ny, wyz_w: wyz_nw, wyz_h: wyz_nh,
+                    wyz_cx: wyz_nx + wyz_nw / 2, wyz_cy: wyz_ny + wyz_nh / 2
+                };
+                wyz_nodes.push(wyz_node);
+                wyz_node_map[wyz_node.wyz_id] = wyz_node;
+            }
+
+            // ========== 五、链路数据 ==========
+            var wyz_links = [];
+            function wyz_add_link(wyz_from, wyz_to, wyz_label, wyz_dashed) {
+                var wyz_a = wyz_node_map[wyz_from];
+                var wyz_b = wyz_node_map[wyz_to];
+                if (!wyz_a || !wyz_b) { return; }
+                var wyz_y1 = wyz_a.wyz_y + wyz_a.wyz_h;
+                var wyz_y2 = wyz_b.wyz_y;
+                var wyz_mid = (wyz_y1 + wyz_y2) / 2;
+                wyz_links.push({
+                    wyz_from: wyz_from, wyz_to: wyz_to, wyz_label: wyz_label || "",
+                    wyz_dashed: !!wyz_dashed,
+                    wyz_layer: wyz_a.wyz_layer,
+                    wyz_p0: { wyz_x: wyz_a.wyz_cx, wyz_y: wyz_y1 },
+                    wyz_p1: { wyz_x: wyz_a.wyz_cx, wyz_y: wyz_mid },
+                    wyz_p2: { wyz_x: wyz_b.wyz_cx, wyz_y: wyz_mid },
+                    wyz_p3: { wyz_x: wyz_b.wyz_cx, wyz_y: wyz_y2 }
+                });
+            }
+            // 终端 → 场景
+            wyz_add_link("web", "presale", "HTTPS");
+            wyz_add_link("api", "internal", "HTTPS");
+            wyz_add_link("im", "aftersale", "HTTPS");
+            wyz_add_link("mobile", "ticket", "HTTPS");
+            // 场景 → 引擎
+            wyz_add_link("presale", "rewrite", "RPC");
+            wyz_add_link("aftersale", "hybrid", "RPC");
+            wyz_add_link("internal", "kgqa", "RPC");
+            wyz_add_link("ticket", "llm", "RPC");
+            // RAG 主链
+            wyz_add_link("rewrite", "hybrid", "改写");
+            wyz_add_link("hybrid", "rerank", "检索");
+            wyz_add_link("rerank", "prompt", "重排");
+            wyz_add_link("prompt", "llm", "组装");
+            wyz_add_link("kgqa", "llm", "图谱");
+            wyz_add_link("memory", "llm", "记忆");
+            wyz_add_link("llm", "cite", "溯源");
+            wyz_add_link("llm", "verify", "校验");
+            wyz_add_link("llm", "guard", "护栏");
+            // 知识构建链
+            wyz_add_link("parse", "chunk", "解析");
+            wyz_add_link("chunk", "vectordb", "向量化");
+            wyz_add_link("chunk", "kgdb", "抽取");
+            wyz_add_link("gov", "vectordb", "治理");
+            // 引擎 → 知识库
+            wyz_add_link("hybrid", "vectordb", "ANN");
+            wyz_add_link("kgqa", "kgdb", "Cypher");
+            wyz_add_link("cite", "parse", "溯源");
+            wyz_add_link("verify", "gov", "回流");
+            // 科研评测飞轮
+            wyz_add_link("verify", "benchmark", "评测");
+            wyz_add_link("verify", "halluc", "幻觉");
+            wyz_add_link("benchmark", "human", "标注");
+            wyz_add_link("human", "badcase", "归因");
+            wyz_add_link("badcase", "adapt", "适配");
+            wyz_add_link("halluc", "benchmark", "检测");
+            // 知识库 / 引擎 → 基础支撑（虚线：科研与工程依赖）
+            wyz_add_link("vectordb", "indexsvc", "索引", true);
+            wyz_add_link("kgdb", "models", "图推理", true);
+            wyz_add_link("models", "gpu", "算力", true);
+            wyz_add_link("llm", "models", "调用", true);
+            wyz_add_link("llm", "gpu", "算力", true);
+            wyz_add_link("guard", "security", "审计", true);
+            wyz_add_link("adapt", "models", "更新", true);
+
+            // ========== 六、绘制：背景、标题、层带、节点、链路 ==========
+            function wyz_path_d(wyz_p0, wyz_p1, wyz_p2, wyz_p3) {
+                return "M" + wyz_p0.wyz_x + "," + wyz_p0.wyz_y +
+                       " C" + wyz_p1.wyz_x + "," + wyz_p1.wyz_y +
+                       " " + wyz_p2.wyz_x + "," + wyz_p2.wyz_y +
+                       " " + wyz_p3.wyz_x + "," + wyz_p3.wyz_y;
+            }
+            function wyz_bezier_point(wyz_link, wyz_p) {
+                var wyz_u = 1 - wyz_p;
+                var wyz_a = wyz_u * wyz_u * wyz_u;
+                var wyz_b = 3 * wyz_u * wyz_u * wyz_p;
+                var wyz_c = 3 * wyz_u * wyz_p * wyz_p;
+                var wyz_d = wyz_p * wyz_p * wyz_p;
+                return {
+                    wyz_x: wyz_a * wyz_link.wyz_p0.wyz_x + wyz_b * wyz_link.wyz_p1.wyz_x + wyz_c * wyz_link.wyz_p2.wyz_x + wyz_d * wyz_link.wyz_p3.wyz_x,
+                    wyz_y: wyz_a * wyz_link.wyz_p0.wyz_y + wyz_b * wyz_link.wyz_p1.wyz_y + wyz_c * wyz_link.wyz_p2.wyz_y + wyz_d * wyz_link.wyz_p3.wyz_y
+                };
+            }
+
+            // 6 个按层着色的箭头 marker
+            var wyz_defs = wyz_el("defs", {});
+            for (var wyz_mi = 0; wyz_mi < wyz_layers.length; wyz_mi++) {
+                var wyz_marker = wyz_el("marker", {
+                    id: "wyz_arrow_" + wyz_mi,
+                    viewBox: "0 0 10 10", refX: "8", refY: "5",
+                    markerWidth: "7", markerHeight: "7", orient: "auto-start-end"
+                });
+                wyz_marker.appendChild(wyz_el("path", {
+                    d: "M0,0 L10,5 L0,10 z", fill: wyz_layers[wyz_mi].wyz_color
+                }));
+                wyz_defs.appendChild(wyz_marker);
+            }
+            wyz_svg.appendChild(wyz_defs);
+
+            // 背景
+            wyz_svg.appendChild(wyz_el("rect", { x: 0, y: 0, width: wyz_W, height: wyz_H, fill: "#0a1020" }));
+            var wyz_grid = wyz_el("g", { stroke: "rgba(120,165,240,0.05)", "stroke-width": "1" });
+            for (var wyz_gx = 0; wyz_gx <= wyz_W; wyz_gx += 40) {
+                wyz_grid.appendChild(wyz_el("line", { x1: wyz_gx, y1: 0, x2: wyz_gx, y2: wyz_H }));
+            }
+            for (var wyz_gy = 0; wyz_gy <= wyz_H; wyz_gy += 40) {
+                wyz_grid.appendChild(wyz_el("line", { x1: 0, y1: wyz_gy, x2: wyz_W, y2: wyz_gy }));
+            }
+            wyz_svg.appendChild(wyz_grid);
+
+            // 标题
+            wyz_svg.appendChild(wyz_el("text", { x: 24, y: 25, class: "wyz_title" })).textContent = "知识库智能客服系统 · 系统架构图";
+            wyz_svg.appendChild(wyz_el("text", { x: 300, y: 26, class: "wyz_subtitle" })).textContent = "KNOWLEDGE-BASED INTELLIGENT CUSTOMER SERVICE  /  RAG  /  SVG";
+            wyz_svg.appendChild(wyz_el("text", { x: wyz_W - 24, y: 25, class: "wyz_author" })).textContent = "王宇智 · 科研方向";
+
+            // 层带
+            for (var wyz_li = 0; wyz_li < wyz_layers.length; wyz_li++) {
+                var wyz_layer = wyz_layers[wyz_li];
+                wyz_svg.appendChild(wyz_el("rect", {
+                    x: 16, y: wyz_layer.wyz_y, width: wyz_W - 32, height: wyz_layer.wyz_h, rx: 14,
+                    fill: wyz_layer.wyz_color, "fill-opacity": "0.10",
+                    stroke: wyz_layer.wyz_color, "stroke-opacity": "0.30"
+                }));
+                wyz_svg.appendChild(wyz_el("rect", {
+                    x: 24, y: wyz_layer.wyz_y + 10, width: 96, height: wyz_layer.wyz_h - 20, rx: 10,
+                    fill: wyz_layer.wyz_color, "fill-opacity": "0.16",
+                    stroke: wyz_layer.wyz_color, "stroke-opacity": "0.42"
+                }));
+                var wyz_name_txt = wyz_el("text", { x: 72, y: wyz_layer.wyz_y + wyz_layer.wyz_h / 2 - 10, "text-anchor": "middle", class: "wyz_band_name" });
+                wyz_name_txt.textContent = wyz_layer.wyz_name;
+                wyz_svg.appendChild(wyz_name_txt);
+                var wyz_en_txt = wyz_el("text", { x: 72, y: wyz_layer.wyz_y + wyz_layer.wyz_h / 2 + 10, "text-anchor": "middle", class: "wyz_band_en" });
+                wyz_en_txt.textContent = wyz_layer.wyz_en;
+                wyz_svg.appendChild(wyz_en_txt);
+                var wyz_note_txt = wyz_el("text", { x: wyz_W - 32, y: wyz_layer.wyz_y + 14, class: "wyz_band_note" });
+                wyz_note_txt.textContent = wyz_layer.wyz_note;
+                wyz_svg.appendChild(wyz_note_txt);
+            }
+
+            // 链路分组
+            var wyz_g_links = wyz_el("g", {});
+            var wyz_g_labels = wyz_el("g", {});
+            wyz_svg.appendChild(wyz_g_links);
+            for (var wyz_lk = 0; wyz_lk < wyz_links.length; wyz_lk++) {
+                var wyz_link = wyz_links[wyz_lk];
+                var wyz_path = wyz_el("path", {
+                    d: wyz_path_d(wyz_link.wyz_p0, wyz_link.wyz_p1, wyz_link.wyz_p2, wyz_link.wyz_p3),
+                    class: "wyz_link wyz_c" + wyz_link.wyz_layer,
+                    "marker-end": "url(#wyz_arrow_" + wyz_link.wyz_layer + ")"
+                });
+                if (wyz_link.wyz_dashed) {
+                    wyz_path.setAttribute("stroke-dasharray", "4 5");
+                }
+                wyz_g_links.appendChild(wyz_path);
+                wyz_link.wyz_el = wyz_path;
+
+                if (wyz_link.wyz_label) {
+                    var wyz_pt = wyz_bezier_point(wyz_link, 0.5);
+                    var wyz_lbl = wyz_el("rect", {
+                        x: wyz_pt.wyz_x - 22, y: wyz_pt.wyz_y - 9, width: 44, height: 18, rx: 5,
+                        fill: "rgba(8,15,32,0.92)", stroke: wyz_link.wyz_el.getAttribute("stroke"), "stroke-opacity": "0.5"
+                    });
+                    wyz_g_labels.appendChild(wyz_lbl);
+                    var wyz_lbl_t = wyz_el("text", {
+                        x: wyz_pt.wyz_x, y: wyz_pt.wyz_y, "text-anchor": "middle", class: "wyz_link_label"
+                    });
+                    wyz_lbl_t.textContent = wyz_link.wyz_label;
+                    wyz_g_labels.appendChild(wyz_lbl_t);
+                }
+            }
+            wyz_svg.appendChild(wyz_g_labels);
+
+            // 节点分组
+            var wyz_g_nodes = wyz_el("g", {});
+            wyz_svg.appendChild(wyz_g_nodes);
+            for (var wyz_ni = 0; wyz_ni < wyz_nodes.length; wyz_ni++) {
+                var wyz_node = wyz_nodes[wyz_ni];
+                var wyz_layer = wyz_layers[wyz_node.wyz_layer];
+                var wyz_g = wyz_el("g", { class: "wyz_node" });
+                wyz_g.appendChild(wyz_el("rect", {
+                    x: wyz_node.wyz_x, y: wyz_node.wyz_y, width: wyz_node.wyz_w, height: wyz_node.wyz_h, rx: 9,
+                    class: "wyz_card", fill: wyz_layer.wyz_color,
+                    stroke: wyz_layer.wyz_color, "stroke-opacity": "0.55"
+                }));
+                wyz_g.appendChild(wyz_el("rect", {
+                    x: wyz_node.wyz_x + 1, y: wyz_node.wyz_y + 9, width: 3, height: wyz_node.wyz_h - 18, rx: 2, fill: wyz_layer.wyz_color
+                }));
+                var wyz_t1 = wyz_el("text", { x: wyz_node.wyz_x + 27, y: wyz_node.wyz_y + 22, class: "wyz_t1" });
+                wyz_t1.textContent = wyz_node.wyz_name;
+                wyz_g.appendChild(wyz_t1);
+                var wyz_t2 = wyz_el("text", { x: wyz_node.wyz_x + 27, y: wyz_node.wyz_y + 40, class: "wyz_t2" });
+                wyz_t2.textContent = wyz_node.wyz_sub;
+                wyz_g.appendChild(wyz_t2);
+                (function (wyz_id) {
+                    wyz_g.addEventListener("mouseenter", function () { wyz_hover = wyz_id; wyz_apply_highlight(); });
+                    wyz_g.addEventListener("mouseleave", function () { wyz_hover = null; wyz_apply_highlight(); });
+                    wyz_g.addEventListener("click", function () { wyz_selected = wyz_id; wyz_render_detail(wyz_id); wyz_apply_highlight(); });
+                })(wyz_node.wyz_id);
+                wyz_g_nodes.appendChild(wyz_g);
+                wyz_node.wyz_g = wyz_g;
+            }
+
+            // 图例
+            var wyz_legend = wyz_el("g", {});
+            for (var wyz_leg = 0; wyz_leg < wyz_layers.length; wyz_leg++) {
+                var wyz_lx = wyz_content_x + wyz_leg * 132;
+                wyz_legend.appendChild(wyz_el("circle", { cx: wyz_lx, cy: 850, r: 4.5, fill: wyz_layers[wyz_leg].wyz_color }));
+                var wyz_leg_txt = wyz_el("text", { x: wyz_lx + 10, y: 854, class: "wyz_legend_text" });
+                wyz_leg_txt.textContent = wyz_layers[wyz_leg].wyz_name;
+                wyz_legend.appendChild(wyz_leg_txt);
+            }
+            var wyz_leg_note = wyz_el("text", { x: wyz_content_x + 660, y: 854, class: "wyz_legend_text" });
+            wyz_leg_note.textContent = "实线：调用链路　虚线：科研 / 工程依赖　流动虚线：请求 / 数据";
+            wyz_legend.appendChild(wyz_leg_note);
+            wyz_svg.appendChild(wyz_legend);
+
+            // ========== 七、高亮联动 ==========
+            function wyz_apply_highlight() {
+                for (var wyz_i = 0; wyz_i < wyz_links.length; wyz_i++) {
+                    var wyz_l = wyz_links[wyz_i];
+                    var wyz_rel = wyz_selected && (wyz_l.wyz_from === wyz_selected || wyz_l.wyz_to === wyz_selected);
+                    var wyz_dim = wyz_selected && !wyz_rel;
+                    wyz_l.wyz_el.classList.toggle("wyz_active", !!wyz_rel);
+                    wyz_l.wyz_el.classList.toggle("wyz_dim", !!wyz_dim);
+                }
+                for (var wyz_j = 0; wyz_j < wyz_nodes.length; wyz_j++) {
+                    var wyz_nd = wyz_nodes[wyz_j];
+                    var wyz_act = wyz_nd.wyz_id === wyz_selected || wyz_nd.wyz_id === wyz_hover;
+                    wyz_nd.wyz_g.classList.toggle("wyz_active", wyz_act);
+                    wyz_nd.wyz_g.classList.toggle("wyz_dim", !!wyz_selected && !wyz_act && wyz_nd.wyz_id !== wyz_selected);
+                }
+            }
+
+            // ========== 八、节点详情面板 ==========
+            function wyz_render_detail(wyz_id) {
+                var wyz_box = document.getElementById("wyz_detail");
+                var wyz_selected_value = document.getElementById("wyz_selected_value");
+                if (!wyz_id || !wyz_node_map[wyz_id]) {
+                    wyz_box.innerHTML = "<p class='wyz_detail_empty'>点击架构图中的任意节点，查看该模块的科研要点、技术栈与关联链路。</p>";
+                    wyz_selected_value.textContent = "无";
+                    return;
+                }
+                var wyz_node = wyz_node_map[wyz_id];
+                var wyz_layer = wyz_layers[wyz_node.wyz_layer];
+                var wyz_count = 0;
+                for (var wyz_i = 0; wyz_i < wyz_links.length; wyz_i++) {
+                    if (wyz_links[wyz_i].wyz_from === wyz_id || wyz_links[wyz_i].wyz_to === wyz_id) { wyz_count++; }
+                }
+                wyz_box.innerHTML =
+                    "<div class='wyz_detail_head'><strong>" + wyz_node.wyz_name + "</strong>" +
+                    "<span class='wyz_badge' style='background:" + wyz_layer.wyz_color + ";'>" + wyz_layer.wyz_name + "</span></div>" +
+                    "<div class='wyz_detail_grid'>" +
+                    "<p><span>科研要点：</span>" + wyz_node.wyz_desc + "</p>" +
+                    "<p><span>技术栈：</span>" + wyz_node.wyz_tech + "</p>" +
+                    "<p><span>定位：</span>" + wyz_node.wyz_sub + "</p>" +
+                    "<p><span>关联链路：</span>" + wyz_count + " 条（图中已高亮）</p>" +
+                    "</div>";
+                wyz_selected_value.textContent = wyz_node.wyz_name;
+            }
+
+            // ========== 九、画布尺寸与缩放 ==========
+            function wyz_resize() {
+                var wyz_scroll = wyz_svg.parentNode;
+                var wyz_avail = Math.max(320, wyz_scroll.clientWidth);
+                wyz_base_zoom = Math.max(0.62, Math.min(1.15, wyz_avail / wyz_W));
+                wyz_zoom = wyz_base_zoom * wyz_user_scale;
+                wyz_svg.style.width = Math.round(wyz_W * wyz_zoom) + "px";
+                wyz_svg.style.height = Math.round(wyz_H * wyz_zoom) + "px";
+                document.getElementById("wyz_zoom_value").textContent = Math.round(wyz_zoom * 100) + "%";
+            }
+
+            // ========== 十、工具栏 ==========
+            document.getElementById("wyz_pause").addEventListener("click", function () {
+                var wyz_paused = wyz_svg.classList.toggle("wyz_paused");
+                this.textContent = wyz_paused ? "继续流动" : "暂停流动";
+                document.getElementById("wyz_state_value").textContent = wyz_paused ? "已暂停" : "运行中";
+            });
+            document.getElementById("wyz_label_btn").addEventListener("click", function () {
+                wyz_show_labels = wyz_svg.classList.toggle("wyz_show_labels");
+                this.textContent = wyz_show_labels ? "隐藏链路标签" : "显示链路标签";
+            });
+            document.getElementById("wyz_zoom_in").addEventListener("click", function () {
+                wyz_user_scale = Math.min(1.9, wyz_user_scale + 0.15);
+                wyz_resize();
+            });
+            document.getElementById("wyz_zoom_out").addEventListener("click", function () {
+                wyz_user_scale = Math.max(0.7, wyz_user_scale - 0.15);
+                wyz_resize();
+            });
+            document.getElementById("wyz_reset").addEventListener("click", function () {
+                wyz_user_scale = 1;
+                wyz_selected = null;
+                wyz_hover = null;
+                wyz_render_detail(null);
+                wyz_apply_highlight();
+                wyz_resize();
+            });
+            document.getElementById("wyz_export_svg").addEventListener("click", function () {
+                var wyz_data = new XMLSerializer().serializeToString(wyz_svg);
+                var wyz_blob = new Blob([wyz_data], { type: "image/svg+xml;charset=utf-8" });
+                var wyz_url = URL.createObjectURL(wyz_blob);
+                var wyz_a = document.createElement("a");
+                wyz_a.href = wyz_url;
+                wyz_a.download = "知识库智能客服系统架构图.svg";
+                document.body.appendChild(wyz_a);
+                wyz_a.click();
+                document.body.removeChild(wyz_a);
+                URL.revokeObjectURL(wyz_url);
+            });
+            document.getElementById("wyz_export_png").addEventListener("click", function () {
+                var wyz_data = new XMLSerializer().serializeToString(wyz_svg);
+                var wyz_blob = new Blob([wyz_data], { type: "image/svg+xml;charset=utf-8" });
+                var wyz_url = URL.createObjectURL(wyz_blob);
+                var wyz_img = new Image();
+                wyz_img.onload = function () {
+                    var wyz_canvas = document.createElement("canvas");
+                    wyz_canvas.width = wyz_W;
+                    wyz_canvas.height = wyz_H;
+                    var wyz_ctx = wyz_canvas.getContext("2d");
+                    wyz_ctx.fillStyle = "#0a1020";
+                    wyz_ctx.fillRect(0, 0, wyz_W, wyz_H);
+                    wyz_ctx.drawImage(wyz_img, 0, 0, wyz_W, wyz_H);
+                    var wyz_png = wyz_canvas.toDataURL("image/png");
+                    var wyz_a = document.createElement("a");
+                    wyz_a.href = wyz_png;
+                    wyz_a.download = "知识库智能客服系统架构图.png";
+                    document.body.appendChild(wyz_a);
+                    wyz_a.click();
+                    document.body.removeChild(wyz_a);
+                    URL.revokeObjectURL(wyz_url);
+                };
+                wyz_img.src = wyz_url;
+            });
+            window.addEventListener("resize", wyz_resize);
+
+            document.getElementById("wyz_node_count").textContent = wyz_nodes.length;
+            document.getElementById("wyz_link_count").textContent = wyz_links.length;
+
+            wyz_resize();
+            console.log("[18-3] 知识库智能客服系统架构图：" + wyz_nodes.length + " 个节点 / " + wyz_links.length + " 条链路，作者：王宇智");
+        })();
+    </script>
+</body>
+</html>

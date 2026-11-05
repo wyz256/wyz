@@ -237,3 +237,43 @@
 **执行内容**: 推送 d8fb432（16-3/16-4 与 17 系列）及本条提示词记录到 GitHub（github 远程）。
 
 ---
+
+## 2026-11-05 | 模型: GLM-5.3
+
+**提示词**: 完成18-1.html和18-2.html，第一个显示canvas动画，包括文字王宇智，第二个显示基于canvas的全站系统的系统架构图（电商系统）。
+
+**执行内容**: 新增 18-1.html（Canvas 文字动画：渐变发光文字「王宇智」、星空、轨道、点击烟花粒子、播放控制）与 18-2.html（纯 Canvas 绘制的电商全站分层架构图：五层节点、贝塞尔链路、数据流粒子、节点点击详情、导出 PNG），并更新 index.html 作品卡片。
+
+---
+
+## 2026-11-05 | 模型: GLM-5.3
+
+**提示词**: 完成18-3.html，其中包括基于知识库智能客服的系统的系统架构图，图的格式为svg，科研方向。
+
+**执行内容**: 新增 18-3.html，用纯 SVG（数据驱动 + JavaScript 动态生成）绘制「基于知识库智能客服系统」科研架构图：六层（终端接入 / 客服场景 / 核心 RAG 引擎 / 知识库 / 科研评测飞轮 / 基础支撑）共 37 个节点、贝塞尔链路、CSS 虚线流动动画、节点点击详情、SVG/PNG 导出，并更新 index.html 作品卡片。
+
+---
+
+## 2026-11-05 | 模型: GLM-5.3
+
+**提示词**: 实现18-4.html，其中包括echarts的两个图：悲惨世界人物关系图(环形布局)和地图柱状图变形动画，cdn文件下载到cdn目录下。示例代码网址：https://echarts.apache.org/examples/zh/index.html#chart-type-line
+
+**执行内容**: 新增 18-4.html，使用本地 `cdn/echarts.min.js` 等文件绘制两个 ECharts 图：① 悲惨世界人物关系图（graph 类型 + circular 环形布局，加载 `cdn/les-miserables.js`）；② 地图柱状图变形动画（registerMap('china', china.js) 配合 `universalTransition` 在 bar 与 map 之间 morph）。下载 echarts.min.js、les-miserables.js、china.js 至 cdn 目录，并更新 index.html 作品卡片。
+
+---
+
+## 2026-11-05 | 模型: GLM-5.3
+
+**提示词**: 地图切换柱状图动画变的直观好看
+
+**执行内容**: 优化 18-4.html 的地图 ↔ 柱状图变形动画：新增省份名缩写标签、柱状数值标签与圆角、4 色视觉映射、更顺滑的 `cubicInOut` 缓动与更长的 `universalTransition` 过渡时长，并将默认视图改为地图。
+
+---
+
+## 2026-11-05 | 模型: GLM-5.3
+
+**提示词**: 不要地图，重新做旭日图标签旋转
+
+**执行内容**: 将 18-4.html 第二张图由地图/柱状变形改为 sunburst 旭日图（全国→大区→省份三层人口数据，点击下钻）；提供「径向 radial / 切向 tangential / 水平 0」三个按钮切换 `label.rotate`；移除 china.js 引用与地图注册，更新标题、副标题、卡片与知识点说明。
+
+---

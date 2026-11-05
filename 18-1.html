@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas 文字动画（王宇智） - 高级网页设计</title>
+    <style>
+        /* 所有类名以 wyz_ 开始 */
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 24px;
+            color: #2c3e50;
+        }
+        .wyz_back {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .wyz_back:hover { text-decoration: underline; }
+        .wyz_header { text-align: center; margin: 8px 0 20px; }
+        .wyz_header h2 { margin: 0 0 8px; }
+        .wyz_header p { color: #666; font-size: 14px; margin: 0; }
+        .wyz_panel {
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            max-width: 960px;
+            margin: 0 auto 16px;
+        }
+        .wyz_panel h3 { margin: 0 0 12px; font-size: 17px; }
+        .wyz_toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px 18px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            color: #444;
+        }
+        .wyz_btn {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 18px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .wyz_btn:hover { background: #2563eb; }
+        .wyz_btn.wyz_ghost { background: #64748b; }
+        .wyz_btn.wyz_ghost:hover { background: #475569; }
+        .wyz_toolbar label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+        .wyz_toolbar input[type="range"] { width: 110px; }
+        .wyz_speed_box { display: inline-flex; align-items: center; gap: 8px; }
+        .wyz_speed_value {
+            display: inline-block;
+            min-width: 40px;
+            font-family: Consolas, "Courier New", monospace;
+            color: #1d4ed8;
+            font-weight: bold;
+        }
+        .wyz_stage_box {
+            border-radius: 10px;
+            overflow: hidden;
+            background: #0b1224;
+            box-shadow: inset 0 0 0 1px #1e2b4a;
+        }
+        .wyz_stage_box canvas { display: block; width: 100%; cursor: crosshair; }
+        .wyz_hint { font-size: 13px; color: #6b7280; margin: 10px 0 8px; }
+        .wyz_statusbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 26px;
+            background: #f0f5ff;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #475569;
+        }
+        .wyz_statusbar b { color: #1d4ed8; font-family: Consolas, "Courier New", monospace; }
+        .wyz_tips {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+        .wyz_tip {
+            background: #f8faff;
+            border: 1px solid #e3ebfa;
+            border-left: 4px solid #3b82f6;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        .wyz_tip strong { color: #1d4ed8; }
+        .wyz_tip code {
+            background: #e7efff;
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-family: Consolas, "Courier New", monospace;
+            color: #1e40af;
+        }
+        .wyz_note {
+            background: #fffbea;
+            border-left: 4px solid #f59e0b;
+            border-radius: 6px;
+            padding: 10px 16px;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.9;
+        }
+        .wyz_note code {
+            background: #fdf1cd;
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-family: Consolas, "Courier New", monospace;
+            color: #92400e;
+        }
+        @media (max-width: 640px) {
+            body { padding: 14px; }
+            .wyz_panel { padding: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 王宇智，建立时间：2026-11-05 13:33，使用大模型：GLM-5.3，功能名称：Canvas文字动画（王宇智） -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+
+    <div class="wyz_header">
+        <h2>王宇智的 JavaScript · Canvas 文字动画</h2>
+        <p>渐变发光文字「王宇智」 + 星空 + 旋转轨道 + 粒子烟花，全部由 Canvas 2D 逐帧绘制</p>
+    </div>
+
+    <div class="wyz_panel">
+        <div class="wyz_toolbar">
+            <button class="wyz_btn" id="wyz_toggle" type="button">暂停动画</button>
+            <button class="wyz_btn wyz_ghost" id="wyz_reset" type="button">重置</button>
+            <span class="wyz_speed_box">
+                速度
+                <input type="range" id="wyz_speed" min="0.2" max="2.5" step="0.1" value="1">
+                <span class="wyz_speed_value" id="wyz_speed_value">1.0×</span>
+            </span>
+            <label><input type="checkbox" id="wyz_chk_stars" checked> 星空</label>
+            <label><input type="checkbox" id="wyz_chk_rings" checked> 光环轨道</label>
+            <label><input type="checkbox" id="wyz_chk_sparks" checked> 火花粒子</label>
+        </div>
+
+        <div class="wyz_stage_box">
+            <canvas id="wyz_stage">当前浏览器不支持 Canvas，请更换现代浏览器查看动画。</canvas>
+        </div>
+
+        <p class="wyz_hint">交互：在画布上<strong>单击</strong>可绽放烟花，<strong>移动鼠标</strong>会留下光点尾迹；可暂停、调速或单独关闭某个效果。</p>
+
+        <div class="wyz_statusbar">
+            <span>状态：<b id="wyz_state_value">运行中</b></span>
+            <span>帧率：<b id="wyz_fps_value">0</b> FPS</span>
+            <span>动画时间：<b id="wyz_time_value">0.0</b> s</span>
+            <span>粒子数量：<b id="wyz_particle_value">0</b></span>
+        </div>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>一、本页用到的 Canvas 2D 知识点</h3>
+        <div class="wyz_tips">
+            <div class="wyz_tip"><strong>画布与上下文</strong><br><code>canvas.getContext("2d")</code> 取得画笔；用 <code>devicePixelRatio</code> 放大位图、<code>setTransform</code> 还原 CSS 坐标，避免高清屏模糊。</div>
+            <div class="wyz_tip"><strong>文字绘制</strong><br><code>font</code> / <code>textAlign</code> / <code>fillText</code> / <code>strokeText</code> 绘制文字，<code>createLinearGradient</code> 做流光渐变，<code>shadowBlur</code> + <code>shadowColor</code> 做发光。</div>
+            <div class="wyz_tip"><strong>坐标系变换</strong><br><code>save()</code> / <code>restore()</code> 保护画笔状态，<code>translate</code> 平移到中心、<code>scale</code> 实现文字呼吸缩放与倒影翻转。</div>
+            <div class="wyz_tip"><strong>路径与图形</strong><br><code>ellipse()</code> 画旋转椭圆轨道，<code>arc()</code> 画星点与光球，<code>createRadialGradient</code> 画背景光晕。</div>
+            <div class="wyz_tip"><strong>透明度与叠加</strong><br><code>globalAlpha</code> 控制星星明暗与倒影透明度，配合 <code>sin()</code> 函数实现周期性呼吸效果。</div>
+            <div class="wyz_tip"><strong>动画循环</strong><br><code>requestAnimationFrame</code> 逐帧重绘；用两帧时间差 <code>dt</code> 更新位置，保证不同刷新率下速度一致。</div>
+        </div>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>二、动画实现思路</h3>
+        <div class="wyz_note">
+            ① 每帧先 <code>clearRect</code> 清空，再依次绘制 <strong>背景渐变 → 网格 → 星点 → 椭圆轨道 → 文字 → 倒影 → 火花粒子</strong>，绘制顺序决定遮挡关系<br>
+            ② 所有运动都由动画时间 <code>t</code> 驱动：<code>sin(t)</code> 控制呼吸与浮动，<code>t * speed</code> 控制轨道旋转，粒子用 <code>dt</code> 累加位置与重力<br>
+            ③ 暂停时只停止 <code>t</code> 与粒子更新，循环仍在运行，因此画面保持可见且控件随时可恢复<br>
+            ④ 火花数组随时间移除过期粒子，避免数组无限增长造成卡顿
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var wyz_canvas = document.getElementById("wyz_stage");
+            var wyz_ctx = wyz_canvas.getContext("2d");
+            var wyz_w = 0;
+            var wyz_h = 0;
+            var wyz_t = 0;
+            var wyz_last = 0;
+            var wyz_running = true;
+            var wyz_speed = 1;
+            var wyz_show_stars = true;
+            var wyz_show_rings = true;
+            var wyz_show_sparks = true;
+            var wyz_stars = [];
+            var wyz_sparks = [];
+            var wyz_fps = 0;
+            var wyz_fps_frames = 0;
+            var wyz_fps_start = 0;
+            var wyz_hud_time = 0;
+
+            var wyz_state_value = document.getElementById("wyz_state_value");
+            var wyz_fps_value = document.getElementById("wyz_fps_value");
+            var wyz_time_value = document.getElementById("wyz_time_value");
+            var wyz_particle_value = document.getElementById("wyz_particle_value");
+
+            // ========== 一、自适应尺寸（高清屏按 devicePixelRatio 放大位图） ==========
+            function wyz_resize() {
+                var wyz_box = wyz_canvas.parentNode;
+                var wyz_css_w = Math.max(300, wyz_box.clientWidth);
+                var wyz_css_h = Math.round(Math.min(460, Math.max(320, wyz_css_w * 0.48)));
+                var wyz_dpr = Math.min(window.devicePixelRatio || 1, 2);
+                wyz_w = wyz_css_w;
+                wyz_h = wyz_css_h;
+                wyz_canvas.width = Math.round(wyz_css_w * wyz_dpr);
+                wyz_canvas.height = Math.round(wyz_css_h * wyz_dpr);
+                wyz_canvas.style.height = wyz_css_h + "px";
+                wyz_ctx.setTransform(wyz_dpr, 0, 0, wyz_dpr, 0, 0);
+                wyz_build_stars();
+            }
+
+            // ========== 二、星空数据 ==========
+            function wyz_build_stars() {
+                wyz_stars = [];
+                var wyz_count = Math.round(wyz_w * wyz_h / 5200);
+                for (var wyz_i = 0; wyz_i < wyz_count; wyz_i++) {
+                    wyz_stars.push({
+                        wyz_x: Math.random() * wyz_w,
+                        wyz_y: Math.random() * wyz_h,
+                        wyz_r: 0.5 + Math.random() * 1.5,
+                        wyz_v: 4 + Math.random() * 14,
+                        wyz_phase: Math.random() * Math.PI * 2,
+                        wyz_hue: 190 + Math.random() * 70
+                    });
+                }
+            }
+
+            // ========== 三、粒子（点击烟花 / 鼠标尾迹） ==========
+            function wyz_add_spark(wyz_x, wyz_y, wyz_amount, wyz_power) {
+                for (var wyz_i = 0; wyz_i < wyz_amount; wyz_i++) {
+                    var wyz_angle = Math.random() * Math.PI * 2;
+                    var wyz_v = wyz_power * (0.25 + Math.random() * 0.9);
+                    var wyz_life = 0.7 + Math.random() * 1.1;
+                    wyz_sparks.push({
+                        wyz_x: wyz_x,
+                        wyz_y: wyz_y,
+                        wyz_vx: Math.cos(wyz_angle) * wyz_v,
+                        wyz_vy: Math.sin(wyz_angle) * wyz_v - wyz_power * 0.2,
+                        wyz_r: 1 + Math.random() * 2.4,
+                        wyz_hue: Math.floor(Math.random() * 360),
+                        wyz_life: wyz_life,
+                        wyz_max: wyz_life
+                    });
+                }
+                if (wyz_sparks.length > 500) {
+                    wyz_sparks.splice(0, wyz_sparks.length - 500);
+                }
+            }
+
+            function wyz_update_sparks(wyz_dt) {
+                for (var wyz_i = wyz_sparks.length - 1; wyz_i >= 0; wyz_i--) {
+                    var wyz_s = wyz_sparks[wyz_i];
+                    wyz_s.wyz_x += wyz_s.wyz_vx * wyz_dt;
+                    wyz_s.wyz_y += wyz_s.wyz_vy * wyz_dt;
+                    wyz_s.wyz_vy += 70 * wyz_dt;
+                    wyz_s.wyz_vx *= 0.99;
+                    wyz_s.wyz_life -= wyz_dt;
+                    if (wyz_s.wyz_life <= 0) {
+                        wyz_sparks.splice(wyz_i, 1);
+                    }
+                }
+            }
+
+            // ========== 四、背景：线性渐变 + 光晕 + 移动网格 ==========
+            function wyz_draw_background() {
+                var wyz_cx = wyz_w / 2;
+                var wyz_cy = wyz_h / 2;
+                var wyz_bg = wyz_ctx.createLinearGradient(0, 0, wyz_w, wyz_h);
+                wyz_bg.addColorStop(0, "#0a1024");
+                wyz_bg.addColorStop(0.55, "#101c3d");
+                wyz_bg.addColorStop(1, "#1b1140");
+                wyz_ctx.fillStyle = wyz_bg;
+                wyz_ctx.fillRect(0, 0, wyz_w, wyz_h);
+
+                var wyz_glow = wyz_ctx.createRadialGradient(wyz_cx, wyz_cy, 10, wyz_cx, wyz_cy, wyz_w * 0.62);
+                wyz_glow.addColorStop(0, "rgba(72,132,255,0.30)");
+                wyz_glow.addColorStop(0.55, "rgba(90,60,190,0.12)");
+                wyz_glow.addColorStop(1, "rgba(10,16,36,0)");
+                wyz_ctx.fillStyle = wyz_glow;
+                wyz_ctx.fillRect(0, 0, wyz_w, wyz_h);
+
+                wyz_ctx.strokeStyle = "rgba(130,180,255,0.075)";
+                wyz_ctx.lineWidth = 1;
+                var wyz_step = 46;
+                var wyz_offset = (wyz_t * 12) % wyz_step;
+                wyz_ctx.beginPath();
+                for (var wyz_x = -wyz_step + wyz_offset; wyz_x < wyz_w + wyz_step; wyz_x += wyz_step) {
+                    wyz_ctx.moveTo(wyz_x, 0);
+                    wyz_ctx.lineTo(wyz_x, wyz_h);
+                }
+                for (var wyz_y = -wyz_step + wyz_offset; wyz_y < wyz_h + wyz_step; wyz_y += wyz_step) {
+                    wyz_ctx.moveTo(0, wyz_y);
+                    wyz_ctx.lineTo(wyz_w, wyz_y);
+                }
+                wyz_ctx.stroke();
+            }
+
+            // ========== 五、星点 ==========
+            function wyz_draw_stars(wyz_dt) {
+                if (!wyz_show_stars) { return; }
+                for (var wyz_i = 0; wyz_i < wyz_stars.length; wyz_i++) {
+                    var wyz_s = wyz_stars[wyz_i];
+                    var wyz_alpha = 0.25 + 0.55 * (0.5 + 0.5 * Math.sin(wyz_t * 2 + wyz_s.wyz_phase));
+                    wyz_ctx.globalAlpha = wyz_alpha;
+                    wyz_ctx.fillStyle = "hsl(" + wyz_s.wyz_hue + ", 90%, 82%)";
+                    wyz_ctx.beginPath();
+                    wyz_ctx.arc(wyz_s.wyz_x, wyz_s.wyz_y, wyz_s.wyz_r, 0, Math.PI * 2);
+                    wyz_ctx.fill();
+                    if (wyz_running) {
+                        wyz_s.wyz_y += wyz_s.wyz_v * wyz_dt;
+                        if (wyz_s.wyz_y > wyz_h + 4) { wyz_s.wyz_y = -4; }
+                    }
+                }
+                wyz_ctx.globalAlpha = 1;
+            }
+
+            // ========== 六、三条旋转的椭圆光环 ==========
+            function wyz_draw_rings() {
+                if (!wyz_show_rings) { return; }
+                var wyz_cx = wyz_w / 2;
+                var wyz_cy = wyz_h / 2 - 4;
+                var wyz_base = Math.min(wyz_w * 0.36, 330);
+                var wyz_rings = [
+                    { wyz_rx: wyz_base, wyz_ry: wyz_base * 0.36, wyz_rot: 0.22 + wyz_t * 0.12, wyz_hue: 200 },
+                    { wyz_rx: wyz_base * 0.86, wyz_ry: wyz_base * 0.30, wyz_rot: -0.55 - wyz_t * 0.16, wyz_hue: 280 },
+                    { wyz_rx: wyz_base * 1.14, wyz_ry: wyz_base * 0.42, wyz_rot: 1.05 + wyz_t * 0.09, wyz_hue: 165 }
+                ];
+                for (var wyz_i = 0; wyz_i < wyz_rings.length; wyz_i++) {
+                    var wyz_ring = wyz_rings[wyz_i];
+                    wyz_ctx.save();
+                    wyz_ctx.translate(wyz_cx, wyz_cy);
+                    wyz_ctx.rotate(wyz_ring.wyz_rot);
+                    wyz_ctx.strokeStyle = "hsla(" + wyz_ring.wyz_hue + ", 90%, 72%, 0.30)";
+                    wyz_ctx.lineWidth = 1.4;
+                    wyz_ctx.beginPath();
+                    wyz_ctx.ellipse(0, 0, wyz_ring.wyz_rx, wyz_ring.wyz_ry, 0, 0, Math.PI * 2);
+                    wyz_ctx.stroke();
+
+                    var wyz_angle = wyz_t * (0.9 + wyz_i * 0.35) + wyz_i * 2.2;
+                    var wyz_px = Math.cos(wyz_angle) * wyz_ring.wyz_rx;
+                    var wyz_py = Math.sin(wyz_angle) * wyz_ring.wyz_ry;
+                    wyz_ctx.shadowColor = "hsl(" + wyz_ring.wyz_hue + ", 95%, 70%)";
+                    wyz_ctx.shadowBlur = 18;
+                    wyz_ctx.fillStyle = "#ffffff";
+                    wyz_ctx.beginPath();
+                    wyz_ctx.arc(wyz_px, wyz_py, 4.2, 0, Math.PI * 2);
+                    wyz_ctx.fill();
+                    wyz_ctx.restore();
+                }
+            }
+
+            // ========== 七、主角：渐变发光的「王宇智」 + 倒影 ==========
+            function wyz_draw_text() {
+                var wyz_cx = wyz_w / 2;
+                var wyz_size = Math.min(112, Math.max(48, wyz_w * 0.155));
+                var wyz_cy = wyz_h / 2 - 4 + Math.sin(wyz_t * 1.6) * 7;
+                var wyz_scale = 1 + Math.sin(wyz_t * 2.2) * 0.045;
+                var wyz_font = "bold " + wyz_size + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
+
+                wyz_ctx.save();
+                wyz_ctx.translate(wyz_cx, wyz_cy);
+                wyz_ctx.scale(wyz_scale, wyz_scale);
+                wyz_ctx.font = wyz_font;
+                wyz_ctx.textAlign = "center";
+                wyz_ctx.textBaseline = "middle";
+
+                var wyz_hue = (wyz_t * 38) % 360;
+                var wyz_grad = wyz_ctx.createLinearGradient(-wyz_size * 1.7, 0, wyz_size * 1.7, 0);
+                wyz_grad.addColorStop(0, "hsl(" + wyz_hue + ", 95%, 72%)");
+                wyz_grad.addColorStop(0.35, "hsl(" + ((wyz_hue + 55) % 360) + ", 95%, 80%)");
+                wyz_grad.addColorStop(0.65, "hsl(" + ((wyz_hue + 140) % 360) + ", 95%, 76%)");
+                wyz_grad.addColorStop(1, "hsl(" + ((wyz_hue + 220) % 360) + ", 95%, 72%)");
+
+                wyz_ctx.shadowColor = "rgba(96,165,255,0.9)";
+                wyz_ctx.shadowBlur = 26 + Math.sin(wyz_t * 2.4) * 10;
+                wyz_ctx.fillStyle = wyz_grad;
+                wyz_ctx.fillText("王宇智", 0, 0);
+                wyz_ctx.shadowBlur = 0;
+                wyz_ctx.lineWidth = 1;
+                wyz_ctx.strokeStyle = "rgba(255,255,255,0.65)";
+                wyz_ctx.strokeText("王宇智", 0, 0);
+                wyz_ctx.restore();
+
+                // 倒影：垂直翻转并压扁，降低透明度
+                wyz_ctx.save();
+                wyz_ctx.translate(wyz_cx, wyz_cy + wyz_size * 1.02);
+                wyz_ctx.scale(1, -0.38);
+                wyz_ctx.globalAlpha = 0.20;
+                wyz_ctx.font = wyz_font;
+                wyz_ctx.textAlign = "center";
+                wyz_ctx.textBaseline = "middle";
+                wyz_ctx.fillStyle = wyz_grad;
+                wyz_ctx.fillText("王宇智", 0, 0);
+                wyz_ctx.restore();
+
+                // 副标题与画布角标
+                wyz_ctx.textAlign = "center";
+                wyz_ctx.textBaseline = "middle";
+                wyz_ctx.fillStyle = "rgba(190,215,255,0.82)";
+                wyz_ctx.font = '14px Consolas, "Microsoft YaHei", monospace';
+                wyz_ctx.fillText("CANVAS 2D  ·  王宇智  ·  高级网页设计", wyz_cx, wyz_h - 30);
+                wyz_ctx.font = '11px Consolas, monospace';
+                wyz_ctx.fillStyle = "rgba(150,185,245,0.65)";
+                wyz_ctx.fillText("CANVAS ANIMATION", wyz_cx, 26);
+
+                wyz_ctx.strokeStyle = "rgba(130,180,255,0.35)";
+                wyz_ctx.lineWidth = 1;
+                var wyz_corner = 16;
+                var wyz_len = 22;
+                wyz_ctx.beginPath();
+                wyz_ctx.moveTo(wyz_corner, wyz_corner + wyz_len);
+                wyz_ctx.lineTo(wyz_corner, wyz_corner);
+                wyz_ctx.lineTo(wyz_corner + wyz_len, wyz_corner);
+                wyz_ctx.moveTo(wyz_w - wyz_corner - wyz_len, wyz_corner);
+                wyz_ctx.lineTo(wyz_w - wyz_corner, wyz_corner);
+                wyz_ctx.lineTo(wyz_w - wyz_corner, wyz_corner + wyz_len);
+                wyz_ctx.moveTo(wyz_corner, wyz_h - wyz_corner - wyz_len);
+                wyz_ctx.lineTo(wyz_corner, wyz_h - wyz_corner);
+                wyz_ctx.lineTo(wyz_corner + wyz_len, wyz_h - wyz_corner);
+                wyz_ctx.moveTo(wyz_w - wyz_corner - wyz_len, wyz_h - wyz_corner);
+                wyz_ctx.lineTo(wyz_w - wyz_corner, wyz_h - wyz_corner);
+                wyz_ctx.lineTo(wyz_w - wyz_corner, wyz_h - wyz_corner - wyz_len);
+                wyz_ctx.stroke();
+            }
+
+            // ========== 八、火花粒子绘制 ==========
+            function wyz_draw_sparks() {
+                if (!wyz_show_sparks) { return; }
+                for (var wyz_i = 0; wyz_i < wyz_sparks.length; wyz_i++) {
+                    var wyz_s = wyz_sparks[wyz_i];
+                    var wyz_alpha = Math.max(0, wyz_s.wyz_life / wyz_s.wyz_max);
+                    wyz_ctx.globalAlpha = wyz_alpha;
+                    wyz_ctx.fillStyle = "hsl(" + wyz_s.wyz_hue + ", 95%, 70%)";
+                    wyz_ctx.shadowColor = "hsl(" + wyz_s.wyz_hue + ", 95%, 65%)";
+                    wyz_ctx.shadowBlur = 12;
+                    wyz_ctx.beginPath();
+                    wyz_ctx.arc(wyz_s.wyz_x, wyz_s.wyz_y, wyz_s.wyz_r, 0, Math.PI * 2);
+                    wyz_ctx.fill();
+                }
+                wyz_ctx.globalAlpha = 1;
+                wyz_ctx.shadowBlur = 0;
+            }
+
+            // ========== 九、主循环：requestAnimationFrame + 时间增量 dt ==========
+            function wyz_loop(wyz_now) {
+                if (!wyz_last) { wyz_last = wyz_now; wyz_fps_start = wyz_now; }
+                var wyz_dt = Math.min((wyz_now - wyz_last) / 1000, 0.05);
+                wyz_last = wyz_now;
+                if (wyz_running) {
+                    wyz_t += wyz_dt * wyz_speed;
+                    wyz_update_sparks(wyz_dt * wyz_speed);
+                }
+
+                wyz_draw_background();
+                wyz_draw_stars(wyz_dt * wyz_speed);
+                wyz_draw_rings();
+                wyz_draw_text();
+                wyz_draw_sparks();
+
+                wyz_fps_frames++;
+                if (wyz_now - wyz_fps_start >= 500) {
+                    wyz_fps = Math.round(wyz_fps_frames * 1000 / (wyz_now - wyz_fps_start));
+                    wyz_fps_frames = 0;
+                    wyz_fps_start = wyz_now;
+                    wyz_fps_value.textContent = wyz_fps;
+                    wyz_time_value.textContent = wyz_t.toFixed(1);
+                    wyz_particle_value.textContent = wyz_sparks.length;
+                }
+                requestAnimationFrame(wyz_loop);
+            }
+
+            // ========== 十、控件交互 ==========
+            document.getElementById("wyz_toggle").addEventListener("click", function () {
+                wyz_running = !wyz_running;
+                this.textContent = wyz_running ? "暂停动画" : "继续播放";
+                wyz_state_value.textContent = wyz_running ? "运行中" : "已暂停";
+            });
+            document.getElementById("wyz_reset").addEventListener("click", function () {
+                wyz_t = 0;
+                wyz_sparks = [];
+                wyz_build_stars();
+            });
+            document.getElementById("wyz_speed").addEventListener("input", function () {
+                wyz_speed = parseFloat(this.value);
+                document.getElementById("wyz_speed_value").textContent = wyz_speed.toFixed(1) + "×";
+            });
+            document.getElementById("wyz_chk_stars").addEventListener("change", function () { wyz_show_stars = this.checked; });
+            document.getElementById("wyz_chk_rings").addEventListener("change", function () { wyz_show_rings = this.checked; });
+            document.getElementById("wyz_chk_sparks").addEventListener("change", function () { wyz_show_sparks = this.checked; });
+
+            function wyz_pointer_pos(wyz_ev) {
+                var wyz_rect = wyz_canvas.getBoundingClientRect();
+                return { wyz_x: wyz_ev.clientX - wyz_rect.left, wyz_y: wyz_ev.clientY - wyz_rect.top };
+            }
+            wyz_canvas.addEventListener("pointerdown", function (wyz_ev) {
+                var wyz_pos = wyz_pointer_pos(wyz_ev);
+                wyz_add_spark(wyz_pos.wyz_x, wyz_pos.wyz_y, 64, 180);
+            });
+            wyz_canvas.addEventListener("pointermove", function (wyz_ev) {
+                var wyz_pos = wyz_pointer_pos(wyz_ev);
+                if (Math.random() > 0.45) {
+                    wyz_add_spark(wyz_pos.wyz_x, wyz_pos.wyz_y, 1, 26);
+                }
+            });
+            window.addEventListener("resize", wyz_resize);
+
+            wyz_resize();
+            requestAnimationFrame(wyz_loop);
+            console.log("[18-1] Canvas 文字动画已启动，作者：王宇智");
+        })();
+    </script>
+</body>
+</html>
