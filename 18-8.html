@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据可视化大屏 · 全国运营概览 - 王宇智</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: radial-gradient(circle at 50% 0%, #0d2a4a, #06101f 70%);
+            color: #cfe3ff;
+            min-height: 100vh;
+            padding: 0 0 20px;
+        }
+        .wyz_back {
+            position: fixed; top: 12px; left: 16px; z-index: 20;
+            color: #7fd1ff; text-decoration: none; font-size: 13px;
+        }
+        .wyz_back:hover { text-decoration: underline; }
+        .wyz_header { text-align: center; padding: 18px 0 10px; }
+        .wyz_header h1 {
+            margin: 0; font-size: 26px; letter-spacing: 2px; color: #9fe0ff;
+            text-shadow: 0 0 12px rgba(64, 158, 255, .6);
+        }
+        .wyz_header .wyz_sub { font-size: 13px; color: #6f9fd6; margin-top: 6px; }
+        .wyz_screen { display: flex; gap: 14px; padding: 0 16px; align-items: stretch; }
+        .wyz_col { flex: 1; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+        .wyz_col.wyz_mid { flex: 1.5; }
+        .wyz_panel {
+            background: linear-gradient(180deg, rgba(20, 46, 80, .55), rgba(8, 20, 38, .55));
+            border: 1px solid rgba(64, 158, 255, .28);
+            border-radius: 8px; padding: 10px 12px 12px;
+            box-shadow: 0 0 18px rgba(0, 80, 180, .15) inset;
+            display: flex; flex-direction: column;
+        }
+        .wyz_panel h3 {
+            margin: 0 0 8px; font-size: 14px; color: #bfe6ff;
+            padding-left: 10px; border-left: 3px solid #38bdf8; line-height: 1;
+        }
+        .wyz_chart { width: 100%; }
+        .wyz_map { height: 360px; }
+        .wyz_h240 { height: 232px; }
+        .wyz_h220 { height: 212px; }
+        .wyz_foot { text-align: center; color: #5f86bd; font-size: 12px; margin-top: 14px; }
+        @media (max-width: 1100px) {
+            .wyz_screen { flex-direction: column; }
+            .wyz_col.wyz_mid { flex: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 王宇智，建立时间：2026-11-05，使用大模型：GLM-5.3，功能名称：三列数据可视化大屏（中间上为地理信息图） -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+
+    <div class="wyz_header">
+        <h1>全国运营数据可视化大屏</h1>
+        <div class="wyz_sub">三列布局 · 中间上方为地理信息图（全国销售分布）· <span id="wyz_clock"></span></div>
+    </div>
+
+    <div class="wyz_screen">
+        <!-- 左列 -->
+        <div class="wyz_col">
+            <div class="wyz_panel"><h3>近 12 月销售额趋势</h3><div id="wyz_trend" class="wyz_chart wyz_h240"></div></div>
+            <div class="wyz_panel"><h3>各渠道销售额（万元）</h3><div id="wyz_channel" class="wyz_chart wyz_h220"></div></div>
+            <div class="wyz_panel"><h3>年度目标完成率</h3><div id="wyz_gauge" class="wyz_chart wyz_h220"></div></div>
+        </div>
+        <!-- 中间列（上方为地理信息图） -->
+        <div class="wyz_col wyz_mid">
+            <div class="wyz_panel"><h3>地理信息图 · 全国销售分布</h3><div id="wyz_map" class="wyz_chart wyz_map"></div></div>
+            <div class="wyz_panel"><h3>品类销售占比</h3><div id="wyz_pie" class="wyz_chart wyz_h240"></div></div>
+        </div>
+        <!-- 右列 -->
+        <div class="wyz_col">
+            <div class="wyz_panel"><h3>运营能力雷达</h3><div id="wyz_radar" class="wyz_chart wyz_h240"></div></div>
+            <div class="wyz_panel"><h3>城市销售额 TOP10</h3><div id="wyz_top" class="wyz_chart wyz_h220"></div></div>
+            <div class="wyz_panel"><h3>实时访问流量</h3><div id="wyz_flow" class="wyz_chart wyz_h220"></div></div>
+        </div>
+    </div>
+
+    <div class="wyz_foot">数据大屏演示 · 王宇智 · 基于 ECharts（本地 cdn/echarts.min.js + cdn/china.js）</div>
+
+    <!-- 本地 CDN 依赖（echarts4 与 china.js 同源 4.9.0，避免版本不兼容） -->
+    <script src="cdn/echarts4.min.js"></script>
+    <script src="cdn/china.js"></script>
+    <script>
+        (function () {
+            if (typeof echarts === "undefined") {
+                console.error("[18-8] ECharts 未加载，请检查 cdn/echarts.min.js");
+                return;
+            }
+
+            // cdn/china.js 提供的是 GeoJSON（window.wyz_chinaMap），需手动注册为地图
+            if (window.wyz_chinaMap) {
+                echarts.registerMap("china", window.wyz_chinaMap);
+            } else {
+                console.error("[18-8] 未找到 window.wyz_chinaMap，请检查 cdn/china.js");
+            }
+
+            var wyz_charts = [];
+            function wyz_init(wyz_id, wyz_opt) {
+                var wyz_el = document.getElementById(wyz_id);
+                if (!wyz_el) { return; }
+                var wyz_c = echarts.init(wyz_el);
+                wyz_c.setOption(wyz_opt);
+                wyz_charts.push(wyz_c);
+                return wyz_c;
+            }
+
+            var wyz_axis = {
+                axisLine: { lineStyle: { color: "#3a5a82" } },
+                axisLabel: { color: "#9fc3ee" },
+                splitLine: { lineStyle: { color: "rgba(58,90,130,.25)" } }
+            };
+
+            // ① 趋势折线（面积）
+            wyz_init("wyz_trend", {
+                tooltip: { trigger: "axis" },
+                grid: { left: 44, right: 16, top: 18, bottom: 26 },
+                xAxis: { type: "category", boundaryGap: false, data: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"], axisLine: wyz_axis.axisLine, axisLabel: wyz_axis.axisLabel },
+                yAxis: { type: "value", axisLine: wyz_axis.axisLine, axisLabel: wyz_axis.axisLabel, splitLine: wyz_axis.splitLine },
+                series: [{
+                    type: "line", smooth: true, symbol: "circle", symbolSize: 6,
+                    data: [120, 132, 101, 134, 190, 230, 210, 180, 160, 240, 280, 250],
+                    itemStyle: { color: "#38bdf8" },
+                    lineStyle: { width: 2, color: "#38bdf8" },
+                    areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: "rgba(56,189,248,.45)" }, { offset: 1, color: "rgba(56,189,248,0)" }]) }
+                }]
+            });
+
+            // ② 渠道柱状（渐变）
+            wyz_init("wyz_channel", {
+                tooltip: { trigger: "axis" },
+                grid: { left: 44, right: 16, top: 18, bottom: 26 },
+                xAxis: { type: "category", data: ["线上","门店","代理","海外","会员"], axisLine: wyz_axis.axisLine, axisLabel: wyz_axis.axisLabel },
+                yAxis: { type: "value", axisLine: wyz_axis.axisLine, axisLabel: wyz_axis.axisLabel, splitLine: wyz_axis.splitLine },
+                series: [{
+                    type: "bar", barWidth: "46%",
+                    data: [320, 180, 140, 90, 210],
+                    itemStyle: { borderRadius: [4, 4, 0, 0], color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: "#22d3ee" }, { offset: 1, color: "#1e40af" }]) }
+                }]
+            });
+
+            // ③ 完成率仪表盘
+            wyz_init("wyz_gauge", {
+                series: [{
+                    type: "gauge", startAngle: 210, endAngle: -30, min: 0, max: 100,
+                    progress: { show: true, width: 12, itemStyle: { color: "#38bdf8" } },
+                    axisLine: { lineStyle: { width: 12, color: [[1, "rgba(58,90,130,.4)"]] } },
+                    axisTick: { show: false }, splitLine: { length: 10, lineStyle: { color: "#3a5a82" } },
+                    axisLabel: { color: "#9fc3ee", distance: 14 }, pointer: { itemStyle: { color: "#38bdf8" } },
+                    detail: { valueAnimation: true, formatter: "{value}%", color: "#9fe0ff", fontSize: 26, offsetCenter: [0, "40%"] },
+                    title: { show: false },
+                    data: [{ value: 82, name: "完成率" }]
+                }]
+            });
+
+            // ④ 地理信息图：中国地图 + 城市散点 + 飞线
+            var wyz_city = [
+                { name: "北京", value: [116.4, 39.9, 380] },
+                { name: "上海", value: [121.47, 31.23, 350] },
+                { name: "广州", value: [113.26, 23.13, 300] },
+                { name: "深圳", value: [114.07, 22.62, 290] },
+                { name: "成都", value: [104.06, 30.67, 200] },
+                { name: "武汉", value: [114.3, 30.6, 180] },
+                { name: "西安", value: [108.95, 34.27, 160] },
+                { name: "杭州", value: [120.15, 30.27, 240] },
+                { name: "南京", value: [118.78, 32.04, 170] },
+                { name: "重庆", value: [106.55, 29.56, 190] },
+                { name: "沈阳", value: [123.43, 41.8, 130] },
+                { name: "乌鲁木齐", value: [87.62, 43.82, 90] }
+            ];
+            var wyz_geo = {
+                "北京": [116.4, 39.9], "上海": [121.47, 31.23], "广州": [113.26, 23.13],
+                "成都": [104.06, 30.67], "西安": [108.95, 34.27], "深圳": [114.07, 22.62],
+                "武汉": [114.3, 30.6], "杭州": [120.15, 30.27], "南京": [118.78, 32.04],
+                "重庆": [106.55, 29.56], "沈阳": [123.43, 41.8], "乌鲁木齐": [87.62, 43.82]
+            };
+            function wyz_line(wyz_a, wyz_b) { return { coords: [wyz_geo[wyz_a], wyz_geo[wyz_b]] }; }
+            var wyz_lines = [
+                wyz_line("北京", "上海"), wyz_line("北京", "广州"), wyz_line("北京", "成都"),
+                wyz_line("北京", "西安"), wyz_line("北京", "乌鲁木齐"), wyz_line("北京", "沈阳"),
+                wyz_line("上海", "深圳"), wyz_line("上海", "杭州"), wyz_line("上海", "南京"),
+                wyz_line("广州", "武汉"), wyz_line("广州", "重庆")
+            ];
+            wyz_init("wyz_map", {
+                tooltip: { trigger: "item", formatter: function (wyz_p) { return wyz_p.name + (wyz_p.value && wyz_p.value[2] ? "<br/>销售额: " + wyz_p.value[2] + " 万" : ""); } },
+                visualMap: {
+                    min: 80, max: 400, left: 16, bottom: 16, calculable: true, dimension: 2, seriesIndex: 0,
+                    text: ["高", "低"], inRange: { color: ["#0e4d8a", "#22d3ee", "#fde047"] }, textStyle: { color: "#cfe3ff" }
+                },
+                geo: {
+                    map: "china", roam: true,
+                    layoutCenter: ["50%", "52%"], layoutSize: "95%",
+                    label: { show: false },
+                    itemStyle: { areaColor: "#0b2746", borderColor: "#2a6cb0" },
+                    emphasis: { itemStyle: { areaColor: "#16406e" }, label: { show: false } }
+                },
+                series: [
+                    { name: "销售额", type: "effectScatter", coordinateSystem: "geo", rippleEffect: { scale: 3, brushType: "stroke" }, symbolSize: function (wyz_v) { return Math.max(6, wyz_v[2] / 22); }, data: wyz_city },
+                    { name: "流向", type: "lines", coordinateSystem: "geo", effect: { show: true, period: 5, trailLength: 0.3, symbol: "arrow", symbolSize: 5, color: "#ffd700" }, lineStyle: { color: "#ffd700", width: 1, opacity: 0.5, curveness: 0.3 }, data: wyz_lines }
+                ]
+            });
+
+            // ⑤ 品类占比环图
+            wyz_init("wyz_pie", {
+                tooltip: { trigger: "item", formatter: "{b}: {d}%" },
+                legend: { bottom: 0, textStyle: { color: "#9fc3ee" } },
+                color: ["#38bdf8", "#22d3ee", "#f59e0b", "#ef4444", "#8b5cf6", "#10b981"],
+                series: [{
+                    type: "pie", radius: ["42%", "66%"], center: ["50%", "44%"],
+                    label: { color: "#cfe3ff" }, labelLine: { lineStyle: { color: "#3a5a82" } },
+                    data: [
+                        { name: "手机", value: 35 }, { name: "电脑", value: 25 }, { name: "配件", value: 15 },
+                        { name: "家电", value: 12 }, { name: "服饰", value: 8 }, { name: "其他", value: 5 }
+                    ]
+                }]
+            });
+
+            // ⑥ 运营能力雷达
+            wyz_init("wyz_radar", {
+                tooltip: {},
+                radar: {
+                    indicator: [
+                        { name: "销售", max: 100 }, { name: "服务", max: 100 }, { name: "技术", max: 100 },
+                        { name: "物流", max: 100 }, { name: "品牌", max: 100 }, { name: "增长", max: 100 }
+                    ],
+                    axisName: { color: "#9fc3ee" },
+                    splitLine: { lineStyle: { color: "rgba(58,90,130,.4)" } },
+                    splitArea: { areaStyle: { color: ["rgba(20,46,80,.3)", "rgba(8,20,38,.3)"] } },
+                    axisLine: { lineStyle: { color: "rgba(58,90,130,.4)" } }
+                },
+                series: [{
+                    type: "radar",
+                    data: [{ value: [88, 76, 92, 70, 84, 90], name: "本季度", areaStyle: { color: "rgba(56,189,248,.3)" }, lineStyle: { color: "#38bdf8" }, itemStyle: { color: "#38bdf8" } }]
+                }]
+            });
+
+            // ⑦ 城市 TOP10 横向条
+            var wyz_topCity = ["乌鲁木齐", "沈阳", "重庆", "南京", "西安", "武汉", "成都", "杭州", "深圳", "上海", "广州", "北京"];
+            var wyz_topVal = [90, 130, 190, 170, 160, 180, 200, 240, 290, 350, 300, 380];
+            wyz_init("wyz_top", {
+                tooltip: { trigger: "axis" },
+                grid: { left: 64, right: 30, top: 10, bottom: 18 },
+                xAxis: { type: "value", axisLine: wyz_axis.axisLine, axisLabel: wyz_axis.axisLabel, splitLine: wyz_axis.splitLine },
+                yAxis: { type: "category", data: wyz_topCity, axisLine: wyz_axis.axisLine, axisLabel: wyz_axis.axisLabel },
+                series: [{
+                    type: "bar", data: wyz_topVal, barWidth: "58%",
+                    itemStyle: { borderRadius: [0, 4, 4, 0], color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: "#1e40af" }, { offset: 1, color: "#22d3ee" }]) }
+                }]
+            });
+
+            // ⑧ 实时访问流量（面积）
+            var wyz_hours = [], wyz_flow = [];
+            for (var wyz_i = 0; wyz_i < 24; wyz_i++) {
+                wyz_hours.push(wyz_i + ":00");
+                wyz_flow.push(Math.round(200 + Math.sin(wyz_i / 3) * 80 + Math.random() * 60));
+            }
+            wyz_init("wyz_flow", {
+                tooltip: { trigger: "axis" },
+                grid: { left: 44, right: 16, top: 16, bottom: 24 },
+                xAxis: { type: "category", boundaryGap: false, data: wyz_hours, axisLine: wyz_axis.axisLine, axisLabel: { color: "#9fc3ee", interval: 3 } },
+                yAxis: { type: "value", axisLine: wyz_axis.axisLine, axisLabel: wyz_axis.axisLabel, splitLine: wyz_axis.splitLine },
+                series: [{ type: "line", smooth: true, showSymbol: false, data: wyz_flow, itemStyle: { color: "#38bdf8" }, areaStyle: { color: "rgba(56,189,248,.25)" } }]
+            });
+
+            // 时钟
+            function wyz_tick() {
+                var wyz_d = new Date();
+                var wyz_el = document.getElementById("wyz_clock");
+                if (wyz_el) { wyz_el.textContent = wyz_d.toLocaleString("zh-CN"); }
+            }
+            wyz_tick();
+            setInterval(wyz_tick, 1000);
+
+            window.addEventListener("resize", function () {
+                wyz_charts.forEach(function (wyz_c) { wyz_c.resize(); });
+            });
+            console.log("[18-8] 数据大屏（8 图）已渲染。作者：王宇智");
+        })();
+    </script>
+</body>
+</html>

@@ -277,3 +277,35 @@
 **执行内容**: 将 18-4.html 第二张图由地图/柱状变形改为 sunburst 旭日图（全国→大区→省份三层人口数据，点击下钻）；提供「径向 radial / 切向 tangential / 水平 0」三个按钮切换 `label.rotate`；移除 china.js 引用与地图注册，更新标题、副标题、卡片与知识点说明。
 
 ---
+
+## 2026-11-05 | 模型: GLM-5.3
+
+**提示词**: 实现18-6.html，实现基于mermaid的智能客服系统的流程图和er图，cdn文件下载到cdn目录下。
+
+**执行内容**: 新增 18-6.html，使用本地 `cdn/mermaid.min.js` 渲染两个 Mermaid 图：① 智能客服系统流程图（flowchart，含意图识别/RAG 检索/答案生成/人工转接）；② 实体关系 ER 图（erDiagram，User/Session/Document/QA/Agent 等）。下载 mermaid 库至 cdn 目录，并更新 index.html 作品卡片。
+
+---
+
+## 2026-11-05 | 模型: GLM-5.3
+
+**提示词**: 实现18-7.html，实现基于three.js的两个图表，cdn文件下载到cdn目录下。
+
+**执行内容**: 新增 18-7.html，使用本地 `cdn/three.min.js`（及可选 `cdn/OrbitControls.js`）渲染两个 Three.js 三维图：① 3D 柱状图（12 个月销售额，BoxGeometry + 自动/拖拽旋转）；② 3D 环形图（品类占比，CylinderGeometry 扇形切片）。下载 three.js 相关库至 cdn 目录，并更新 index.html 作品卡片（45 / Three.js）。
+
+---
+
+## 2026-11-05 | 模型: GLM-5.3
+
+**提示词**: 加点文字，好让人理解图，比如说月份和数值
+
+**执行内容**: 为 18-7.html 两个 Three.js 图补充可读文字标签：新增 `wyz_make_label`（Sprite + CanvasTexture，始终面向相机）函数；柱状图每个柱顶标注「N月 + 销售额(万)」，环形图每个扇区标注「品类名 + 占比%」。
+
+---
+
+## 2026-11-05 | 模型: GLM-5.3
+
+**提示词**: 实现18-8.hml，实现基于three.js或echarts的数据大屏，大屏要求：三列，中间上面是某种地理信息的图，cdn文件下载到cdn目录下。
+
+**执行内容**: 新增 18-8.html（文件名按常见写法补全为 .html），基于本地 `cdn/echarts.min.js` + `cdn/china.js` 实现三列数据可视化大屏：左列（趋势折线/渠道柱状/完成率仪表）、中列上方（中国地图地理信息图，effectScatter 城市散点 + lines 飞线）、中列下方（品类占比环图）、右列（运营雷达/TOP10 城市/实时流量）。复用 cdn 现有 echarts 与 china.js（已存在）。更新 index.html 卡片（46 / ECharts）。
+
+---

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mermaid 智能客服系统 · 流程图与 ER 图 - 王宇智</title>
+    <style>
+        /* 所有类名以 wyz_ 开始 */
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 24px;
+            color: #2c3e50;
+        }
+        .wyz_back {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .wyz_back:hover { text-decoration: underline; }
+        .wyz_header { text-align: center; margin: 8px 0 20px; }
+        .wyz_header h2 { margin: 0 0 8px; }
+        .wyz_header p { color: #666; font-size: 14px; margin: 0; }
+        .wyz_panel {
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            max-width: 1280px;
+            margin: 0 auto 16px;
+        }
+        .wyz_panel h3 { margin: 0 0 12px; font-size: 17px; }
+        .wyz_charts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .wyz_card {
+            flex: 1 1 480px;
+            min-width: 480px;
+            border: 1px solid #e7edf5;
+            border-radius: 10px;
+            padding: 14px 16px 10px;
+        }
+        .wyz_card > h3 { font-size: 15px; margin: 0 0 10px; color: #1e293b; }
+        .wyz_card .mermaid {
+            background: #fbfdff;
+            border: 1px solid #eef3fb;
+            border-radius: 8px;
+            padding: 10px;
+            overflow: auto;
+        }
+        .wyz_card .mermaid svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+        .wyz_hint { font-size: 12px; color: #6b7280; margin: 8px 2px 4px; line-height: 1.6; }
+        .wyz_tips {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+        .wyz_tip {
+            background: #f8faff;
+            border: 1px solid #e3ebfa;
+            border-left: 4px solid #3b82f6;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        .wyz_tip strong { color: #1d4ed8; }
+        .wyz_tip code {
+            background: #e7efff;
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-family: Consolas, "Courier New", monospace;
+            color: #1e40af;
+        }
+        @media (max-width: 640px) {
+            body { padding: 14px; }
+            .wyz_panel { padding: 14px; }
+            .wyz_card { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 王宇智，建立时间：2026-11-05 15:00，使用大模型：GLM-5.3，功能名称：Mermaid 智能客服系统流程图与 ER 图 -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+
+    <div class="wyz_header">
+        <h2>王宇智的 JavaScript · Mermaid 图表实战</h2>
+        <p>① 智能客服系统流程图（flowchart）　② 智能客服系统实体关系 ER 图（erDiagram）</p>
+    </div>
+
+    <div class="wyz_panel">
+        <div class="wyz_charts">
+            <div class="wyz_card">
+                <h3>① 智能客服系统流程图</h3>
+<pre class="mermaid">
+flowchart TD
+    U["用户"] --> Q["用户提问&lt;br/&gt;多渠道接入 Web/APP/微信"]
+    Q --> I["意图识别与语义理解&lt;br/&gt;NLU / 槽位填充"]
+    I --> D{"是否需要&lt;br/&gt;检索知识库"}
+    D -->|"是"| K["知识库检索 RAG&lt;br/&gt;向量召回 + 关键词"]
+    K --> C["知识切片与重排&lt;br/&gt;引用溯源"]
+    C --> G["答案生成 LLM&lt;br/&gt;结合上下文"]
+    D -->|"否(闲聊/FAQ)"| G
+    G --> A["答案审核与合规校验"]
+    A -->|"不确定/敏感/复杂"| H["人工坐席转接"]
+    A -->|"通过"| O["回复用户"]
+    H --> O
+    O --> F["会话日志与用户反馈"]
+    F --> E["评价分析&lt;br/&gt;模型与知识库持续优化"]
+    E --> K
+
+    style U fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+    style K fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    style G fill:#fef9c3,stroke:#ca8a04,color:#0f172a
+    style H fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    style O fill:#ede9fe,stroke:#7c3aed,color:#0f172a
+</pre>
+                <p class="wyz_hint">从用户提问、意图识别，到 RAG 检索、答案生成与审核，异常时转人工，最终以反馈驱动知识库与模型持续优化。</p>
+            </div>
+            <div class="wyz_card">
+                <h3>② 智能客服系统 ER 图</h3>
+<pre class="mermaid">
+erDiagram
+    USER ||--o{ SESSION : "发起"
+    USER ||--o{ FEEDBACK : "提交"
+    SESSION ||--o{ MESSAGE : "包含"
+    MESSAGE }o--|| QA : "命中"
+    DOCUMENT ||--o{ CHUNK : "切分为"
+    CHUNK }o--|| EMBEDDING : "生成"
+    QA }o--|| DOCUMENT : "引用"
+    AGENT ||--o{ SESSION : "处理"
+
+    USER {
+        string user_id PK
+        string name
+        string phone
+        datetime reg_time
+    }
+    SESSION {
+        string session_id PK
+        datetime start_time
+        string channel
+    }
+    MESSAGE {
+        string msg_id PK
+        string content
+        string role
+        datetime send_time
+    }
+    QA {
+        string qa_id PK
+        string question
+        string answer
+        float score
+    }
+    DOCUMENT {
+        string doc_id PK
+        string title
+        string source
+    }
+    CHUNK {
+        string chunk_id PK
+        text content
+    }
+    EMBEDDING {
+        string emb_id PK
+        vector value
+        string chunk_id FK
+    }
+    AGENT {
+        string agent_id PK
+        string name
+        string skill
+    }
+    FEEDBACK {
+        string fb_id PK
+        int rating
+        string comment
+    }
+</pre>
+                <p class="wyz_hint">实体：用户 / 会话 / 消息 / 问答对 / 文档 / 切片 / 向量 / 坐席 / 反馈；关系含一对多、引用与外键约束。</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>本页用到的 Mermaid 知识点</h3>
+        <div class="wyz_tips">
+            <div class="wyz_tip"><strong>本地引入</strong><br>用 <code>&lt;script src="cdn/mermaid.min.js"&gt;</code> 引入，再调用 <code>mermaid.initialize({startOnLoad:true})</code> 初始化。</div>
+            <div class="wyz_tip"><strong>流程图 flowchart</strong><br><code>flowchart TD</code> 自上而下；<code>[]</code> 矩形、<code>{}</code> 判断、<code>--&gt;|标签|</code> 带标签边，<code>style</code> 给节点着色。</div>
+            <div class="wyz_tip"><strong>ER 图 erDiagram</strong><br>用 <code>||--o{</code> 等基数表示一对多关系；实体属性块内用 <code>PK</code> / <code>FK</code> 标记主键外键。</div>
+            <div class="wyz_tip"><strong>文本即图</strong><br>图由领域特定语言(DSL)描述，写在 <code>class="mermaid"</code> 的元素内，便于版本管理与协作。</div>
+            <div class="wyz_tip"><strong>自动渲染</strong><br><code>startOnLoad:true</code> 时 Mermaid 在页面加载后自动把每个 <code>.mermaid</code> 元素转换为 SVG。</div>
+            <div class="wyz_tip"><strong>主题与样式</strong><br>可设 <code>theme:'default'/'dark'</code>，并用 <code>securityLevel:'loose'</code> 允许富文本标签（如 <code>&lt;br/&gt;</code>）。</div>
+        </div>
+    </div>
+
+    <!-- 本地 CDN 依赖（已下载至 cdn 目录） -->
+    <script src="cdn/mermaid.min.js"></script>
+    <script>
+        (function () {
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: "default",
+                securityLevel: "loose",
+                flowchart: { curve: "basis", htmlLabels: true },
+                er: { layoutDirection: "TB" }
+            });
+            console.log("[18-6] Mermaid 已初始化，流程图与 ER 图将自动渲染。作者：王宇智");
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js 3D 图表 · 柱状图与环形图 - 王宇智</title>
+    <style>
+        /* 所有类名以 wyz_ 开始 */
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 24px;
+            color: #2c3e50;
+        }
+        .wyz_back {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .wyz_back:hover { text-decoration: underline; }
+        .wyz_header { text-align: center; margin: 8px 0 20px; }
+        .wyz_header h2 { margin: 0 0 8px; }
+        .wyz_header p { color: #666; font-size: 14px; margin: 0; }
+        .wyz_panel {
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            max-width: 1280px;
+            margin: 0 auto 16px;
+        }
+        .wyz_panel h3 { margin: 0 0 12px; font-size: 17px; }
+        .wyz_charts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .wyz_card {
+            flex: 1 1 480px;
+            min-width: 480px;
+            border: 1px solid #e7edf5;
+            border-radius: 10px;
+            padding: 14px 16px 10px;
+        }
+        .wyz_card > h3 { font-size: 15px; margin: 0 0 10px; color: #1e293b; }
+        .wyz_canvas {
+            width: 100%;
+            height: 360px;
+            display: block;
+            background: #0f172a;
+            border-radius: 8px;
+        }
+        .wyz_hint { font-size: 12px; color: #6b7280; margin: 8px 2px 4px; line-height: 1.6; }
+        .wyz_tips {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+        .wyz_tip {
+            background: #f8faff;
+            border: 1px solid #e3ebfa;
+            border-left: 4px solid #3b82f6;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        .wyz_tip strong { color: #1d4ed8; }
+        .wyz_tip code {
+            background: #e7efff;
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-family: Consolas, "Courier New", monospace;
+            color: #1e40af;
+        }
+        @media (max-width: 640px) {
+            body { padding: 14px; }
+            .wyz_panel { padding: 14px; }
+            .wyz_card { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 王宇智，建立时间：2026-11-05 16:00，使用大模型：GLM-5.3，功能名称：Three.js 3D 柱状图与环形图 -->
+    <a class="wyz_back" href="index.html">← 返回首页</a>
+
+    <div class="wyz_header">
+        <h2>王宇智的 JavaScript · Three.js 3D 可视化</h2>
+        <p>① 3D 柱状图（各月销售额）　② 3D 环形图（品类销售占比）</p>
+    </div>
+
+    <div class="wyz_panel">
+        <div class="wyz_charts">
+            <div class="wyz_card">
+                <h3>① 3D 柱状图（各月销售额 / 万元）</h3>
+                <canvas id="wyz_bar" class="wyz_canvas"></canvas>
+                <p class="wyz_hint">拖拽旋转查看，柱高表示销售额；图表自动缓慢旋转。</p>
+            </div>
+            <div class="wyz_card">
+                <h3>② 3D 环形图（品类销售占比 / %）</h3>
+                <canvas id="wyz_pie" class="wyz_canvas"></canvas>
+                <p class="wyz_hint">扇区角度与厚度表示占比，自动旋转展示。</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="wyz_panel">
+        <h3>本页用到的 Three.js 知识点</h3>
+        <div class="wyz_tips">
+            <div class="wyz_tip"><strong>场景三件套</strong><br><code>Scene</code> + <code>PerspectiveCamera</code> + <code>WebGLRenderer</code> 构成 3D 渲染基础。</div>
+            <div class="wyz_tip"><strong>几何体</strong><br>柱状图用 <code>BoxGeometry</code>，环形图用 <code>CylinderGeometry</code> 的 <code>thetaStart/thetaLength</code> 切出扇形。</div>
+            <div class="wyz_tip"><strong>材质与光照</strong><br><code>MeshStandardMaterial</code> 配合 <code>AmbientLight</code> + <code>DirectionalLight</code> 产生明暗立体感。</div>
+            <div class="wyz_tip"><strong>交互控制</strong><br>若有 <code>OrbitControls</code> 可拖拽旋转，并可用 <code>autoRotate</code> 自动环绕。</div>
+            <div class="wyz_tip"><strong>动画循环</strong><br>用 <code>requestAnimationFrame</code> 持续 <code>renderer.render</code>，并让物体/相机缓慢旋转。</div>
+            <div class="wyz_tip"><strong>本地依赖</strong><br><code>three.min.js</code>（及可选 <code>OrbitControls.js</code>）已下载至 <code>cdn/</code>，离线可用。</div>
+        </div>
+    </div>
+
+    <!-- 本地 CDN 依赖（已下载至 cdn 目录） -->
+    <script src="cdn/three.min.js"></script>
+    <script src="cdn/OrbitControls.js"></script>
+    <script>
+        (function () {
+            if (typeof THREE === "undefined") {
+                console.error("[18-7] Three.js 未加载，请检查 cdn/three.min.js");
+                return;
+            }
+
+            function wyz_make_control(wyz_cam, wyz_dom) {
+                if (THREE.OrbitControls) {
+                    var wyz_c = new THREE.OrbitControls(wyz_cam, wyz_dom);
+                    wyz_c.enableDamping = true;
+                    wyz_c.dampingFactor = 0.08;
+                    wyz_c.autoRotate = true;
+                    wyz_c.autoRotateSpeed = 1.2;
+                    return wyz_c;
+                }
+                return null;
+            }
+
+            // 生成可始终面向相机的文字标签（Sprite + CanvasTexture）
+            function wyz_make_label(wyz_l1, wyz_l2, wyz_color) {
+                var wyz_c = document.createElement("canvas");
+                wyz_c.width = 256; wyz_c.height = 128;
+                var wyz_ctx = wyz_c.getContext("2d");
+                wyz_ctx.clearRect(0, 0, 256, 128);
+                wyz_ctx.fillStyle = wyz_color || "#ffffff";
+                wyz_ctx.textAlign = "center";
+                wyz_ctx.textBaseline = "middle";
+                wyz_ctx.font = 'bold 46px "Microsoft YaHei", sans-serif';
+                if (wyz_l1) { wyz_ctx.fillText(wyz_l1, 128, 46); }
+                if (wyz_l2) {
+                    wyz_ctx.font = 'bold 40px "Microsoft YaHei", sans-serif';
+                    wyz_ctx.fillText(wyz_l2, 128, 92);
+                }
+                var wyz_tex = new THREE.CanvasTexture(wyz_c);
+                wyz_tex.minFilter = THREE.LinearFilter;
+                var wyz_mat = new THREE.SpriteMaterial({ map: wyz_tex, transparent: true, depthTest: false });
+                var wyz_sp = new THREE.Sprite(wyz_mat);
+                wyz_sp.scale.set(4, 2, 1);
+                return wyz_sp;
+            }
+
+            // ========== 图① 3D 柱状图 ==========
+            function wyz_init_bar() {
+                var wyz_canvas = document.getElementById("wyz_bar");
+                var wyz_renderer = new THREE.WebGLRenderer({ canvas: wyz_canvas, antialias: true });
+                wyz_renderer.setPixelRatio(window.devicePixelRatio || 1);
+                var wyz_w = wyz_canvas.clientWidth || 480;
+                var wyz_h = wyz_canvas.clientHeight || 360;
+                wyz_renderer.setSize(wyz_w, wyz_h, false);
+
+                var wyz_scene = new THREE.Scene();
+                wyz_scene.background = new THREE.Color(0x0f172a);
+                var wyz_camera = new THREE.PerspectiveCamera(45, wyz_w / wyz_h, 0.1, 1000);
+                wyz_camera.position.set(0, 16, 30);
+                wyz_camera.lookAt(0, 4, 0);
+
+                wyz_scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+                var wyz_dir = new THREE.DirectionalLight(0xffffff, 0.85);
+                wyz_dir.position.set(20, 30, 20);
+                wyz_scene.add(wyz_dir);
+
+                var wyz_group = new THREE.Group();
+                wyz_scene.add(wyz_group);
+
+                var wyz_grid = new THREE.GridHelper(24, 12, 0x334155, 0x1e293b);
+                wyz_group.add(wyz_grid);
+
+                var wyz_data = [120, 200, 150, 80, 70, 110, 130, 90, 160, 210, 240, 180];
+                var wyz_n = wyz_data.length;
+                var wyz_gap = 1.8;
+                var wyz_barW = 1.1;
+                var wyz_max = Math.max.apply(null, wyz_data);
+                for (var wyz_i = 0; wyz_i < wyz_n; wyz_i++) {
+                    var wyz_bh = (wyz_data[wyz_i] / wyz_max) * 12 + 0.2;
+                    var wyz_geo = new THREE.BoxGeometry(wyz_barW, wyz_bh, wyz_barW);
+                    var wyz_col = new THREE.Color().setHSL(0.6 - (wyz_data[wyz_i] / wyz_max) * 0.5, 0.7, 0.55);
+                    var wyz_mat = new THREE.MeshStandardMaterial({ color: wyz_col, metalness: 0.1, roughness: 0.6 });
+                    var wyz_bar = new THREE.Mesh(wyz_geo, wyz_mat);
+                    wyz_bar.position.set((wyz_i - (wyz_n - 1) / 2) * wyz_gap, wyz_bh / 2, 0);
+                    wyz_group.add(wyz_bar);
+                    // 柱顶文字标签：月份 + 销售额数值
+                    var wyz_lbl = wyz_make_label((wyz_i + 1) + "月", wyz_data[wyz_i] + " 万", "#e2e8f0");
+                    wyz_lbl.position.set((wyz_i - (wyz_n - 1) / 2) * wyz_gap, wyz_bh + 1.1, 0);
+                    wyz_group.add(wyz_lbl);
+                }
+                return { renderer: wyz_renderer, scene: wyz_scene, camera: wyz_camera, group: wyz_group };
+            }
+
+            // ========== 图② 3D 环形图 ==========
+            function wyz_init_pie() {
+                var wyz_canvas = document.getElementById("wyz_pie");
+                var wyz_renderer = new THREE.WebGLRenderer({ canvas: wyz_canvas, antialias: true });
+                wyz_renderer.setPixelRatio(window.devicePixelRatio || 1);
+                var wyz_w = wyz_canvas.clientWidth || 480;
+                var wyz_h = wyz_canvas.clientHeight || 360;
+                wyz_renderer.setSize(wyz_w, wyz_h, false);
+
+                var wyz_scene = new THREE.Scene();
+                wyz_scene.background = new THREE.Color(0x0f172a);
+                var wyz_camera = new THREE.PerspectiveCamera(45, wyz_w / wyz_h, 0.1, 1000);
+                wyz_camera.position.set(0, 22, 18);
+                wyz_camera.lookAt(0, 0, 0);
+
+                wyz_scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+                var wyz_dir = new THREE.DirectionalLight(0xffffff, 0.7);
+                wyz_dir.position.set(10, 30, 10);
+                wyz_scene.add(wyz_dir);
+
+                var wyz_group = new THREE.Group();
+                wyz_scene.add(wyz_group);
+
+                var wyz_items = [
+                    { name: "手机", v: 35, c: 0x3b82f6 },
+                    { name: "电脑", v: 25, c: 0x10b981 },
+                    { name: "配件", v: 15, c: 0xf59e0b },
+                    { name: "家电", v: 12, c: 0xef4444 },
+                    { name: "服饰", v: 8,  c: 0x8b5cf6 },
+                    { name: "其他", v: 5,  c: 0xec4899 }
+                ];
+                var wyz_total = wyz_items.reduce(function (wyz_s, wyz_x) { return wyz_s + wyz_x.v; }, 0);
+                var wyz_R = 8, wyz_H = 3, wyz_seg = 64, wyz_start = 0;
+                for (var wyz_i = 0; wyz_i < wyz_items.length; wyz_i++) {
+                    var wyz_ang = wyz_items[wyz_i].v / wyz_total * Math.PI * 2;
+                    var wyz_geo = new THREE.CylinderGeometry(wyz_R, wyz_R, wyz_H, wyz_seg, 1, false, wyz_start, wyz_ang);
+                    var wyz_mat = new THREE.MeshStandardMaterial({ color: wyz_items[wyz_i].c, metalness: 0.15, roughness: 0.5 });
+                    var wyz_slice = new THREE.Mesh(wyz_geo, wyz_mat);
+                    wyz_slice.rotation.x = Math.PI / 2; // 平躺，法线朝上
+                    wyz_group.add(wyz_slice);
+                    // 扇区文字标签：品类名 + 占比
+                    var wyz_mid = wyz_start + wyz_ang / 2;
+                    var wyz_lr = wyz_R * 1.18;
+                    var wyz_lbl = wyz_make_label(wyz_items[wyz_i].name, wyz_items[wyz_i].v + "%", "#ffffff");
+                    wyz_lbl.position.set(Math.cos(wyz_mid) * wyz_lr, -Math.sin(wyz_mid) * wyz_lr, 0.3);
+                    wyz_group.add(wyz_lbl);
+                    wyz_start += wyz_ang;
+                }
+                var wyz_core = new THREE.Mesh(
+                    new THREE.CylinderGeometry(2.2, 2.2, wyz_H + 0.4, 48),
+                    new THREE.MeshStandardMaterial({ color: 0x1e293b })
+                );
+                wyz_core.rotation.x = Math.PI / 2;
+                wyz_group.add(wyz_core);
+                return { renderer: wyz_renderer, scene: wyz_scene, camera: wyz_camera, group: wyz_group };
+            }
+
+            var wyz_b = wyz_init_bar();
+            var wyz_p = wyz_init_pie();
+            var wyz_renderers = [wyz_b.renderer, wyz_p.renderer];
+            var wyz_scenes = [wyz_b.scene, wyz_p.scene];
+            var wyz_cameras = [wyz_b.camera, wyz_p.camera];
+            var wyz_groups = [wyz_b.group, wyz_p.group];
+            var wyz_controls = [];
+
+            for (var wyz_k = 0; wyz_k < wyz_cameras.length; wyz_k++) {
+                var wyz_ctl = wyz_make_control(wyz_cameras[wyz_k], wyz_renderers[wyz_k].domElement);
+                wyz_controls.push(wyz_ctl);
+            }
+
+            function wyz_on_resize() {
+                for (var wyz_i = 0; wyz_i < wyz_renderers.length; wyz_i++) {
+                    var wyz_cv = wyz_renderers[wyz_i].domElement;
+                    var wyz_w = wyz_cv.clientWidth || 480;
+                    var wyz_h = wyz_cv.clientHeight || 360;
+                    wyz_cameras[wyz_i].aspect = wyz_w / wyz_h;
+                    wyz_cameras[wyz_i].updateProjectionMatrix();
+                    wyz_renderers[wyz_i].setSize(wyz_w, wyz_h, false);
+                }
+            }
+            window.addEventListener("resize", wyz_on_resize);
+
+            function wyz_animate() {
+                requestAnimationFrame(wyz_animate);
+                for (var wyz_i = 0; wyz_i < wyz_renderers.length; wyz_i++) {
+                    if (wyz_controls[wyz_i]) {
+                        wyz_controls[wyz_i].update();
+                    } else {
+                        wyz_groups[wyz_i].rotation.y += 0.005;
+                    }
+                    wyz_renderers[wyz_i].render(wyz_scenes[wyz_i], wyz_cameras[wyz_i]);
+                }
+            }
+            wyz_animate();
+            console.log("[18-7] Three.js 双图（柱状图 + 环形图）已初始化并渲染。作者：王宇智");
+        })();
+    </script>
+</body>
+</html>
